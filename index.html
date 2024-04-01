@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Visual Encodings</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style-import.css">
+    <link rel="stylesheet" href="./style-splitting.css">
+    <script src="./bubbles.js" type="module" defer></script>
+    <script src="./startproject.js" type="module" defer></script>
+    <script src="./assets/cases/cases.js" type="module" defer></script>
+
+</head>
+
+<body>
+    <div class="ve-bgpattern"></div>
+
+
+
+    <div class="ve-startproject">
+        <div class="ve-dropzone prevent-select"> Drop files here</div>
+
+        <input class="ve-openfile" type="file" id="files" name="files" multiple>
+        <label for="email">Enter your email:</label>
+        <input type="email" id="email" name="email">
+        <br>
+        <p>We will contact you by email when your demo is ready</p>
+        <button>Send</button>
+    </div>
+
+
+
+    <header>
+        <div class="ve-logo">
+            <img src="./assets/images/logo.png">
+        </div>
+        <div class="ve-menu">
+            <a href="#portfolio">Solutions</a>
+            <a>Corporate Workshops</a>
+            <a>Free video lectures</a>
+        </div>
+        <div class="ve-actions">
+            <button class="ve-cta">Start a project</button>
+            <a class="ve-login">Login</a>
+        </div>
+    </header>
+
+
+
+
+
+
+    <section class="ve-hero">
+        <div class="ve-bgimage"></div>
+        <div class="ve-bubbles"></div>
+        <h1>Humans are lost in data but remember the circus tricks</h1>
+        <h1 class="ve-title prevent-select" data-splitting>Let us make Bespoke charts for you</h1>
+        <div class="ve-timeslider prevent-select">
+            <div class="ve-ts-play">
+                <input type="checkbox" value="None" id="playpause" name="check" />
+                <label for="playpause" tabindex=1></label>
+            </div>
+            
+            <svg class="ve-ts-slider"><g><rect></rect><circle></circle></g></svg>
+        </div>
+        <p>animated, expressive, custom data explanations <br/>for genuine understanding</p>
+        <button class="ve-cta">Start a project</button>
+    </section>
+
+
+
+
+
+    <section class="ve-subhero">The team behind Gapminder’s world famous visualizations has 10 years of experience finding and sharing the untold stories hidden in complex data.</section>
+
+
+
+
+
+
+    <section class="ve-easysteps">
+        <h1>With our help you can become a source of clarity for your organisation in 3 easy steps:</h1>
+        <div class="ve-box">
+            <div class="ve-step">
+                <div class="ve-img" style='background-image: url("./assets/images/easy1.png")'>
+                    <div class="ve-stepnumber">1</div>
+                </div>
+                <div class="ve-steptext">Upload your data</div>
+            </div>
+            <div class="ve-step">
+                <div class="ve-img" style='background-image: url("./assets/images/easy2.png")'>
+                    <div class="ve-stepnumber">2</div>
+                </div>
+                <div class="ve-steptext">Receive a free demo + a customised offer</div>
+            </div>
+            <div class="ve-step">
+                <div class="ve-img" style='background-image: url("./assets/images/easy3.png")'>
+                    <div class="ve-stepnumber">3</div>
+                </div>
+                <div class="ve-steptext">Explore your demo. Take it to stage! <br/>...<br/>If you accept the offer, we’ll make cool special graphs for you</div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="ve-youget">
+        <div class="ve-left">
+            <h1>What you get</h1>
+            <p>You get a usable free demo graph with your data in it. You can use the demo graph as you like — explore your data to make fact-based decisions or take it on stage to present like a TED-talk</p>
+            <p>You get expert suggestions how we can collaborate on customising the graphs to serve your needs better, with price and time estimates</p>            
+            <p>You get to become a source of clarity in your organisation</p>
+        </div>
+        <div class="ve-right">
+            <div class="ve-video"></div>
+            <div class="ve-videotext">How to work with us? <br/> Watch the video</h1>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="ve-portfolio" id="portfolio">
+        <div class="ve-popup">
+            <div class="ve-header">
+                <h1 class="ve-title"></h1>
+                <h1 class="ve-close prevent-select">╳</h1>
+            </div>
+            <div class="ve-content"></div>
+            <div class="ve-description"></div>
+            <div class="ve-link"><a class = "ve-goto"></a></div>
+        </div>
+        <h1>Our solutions</h1>
+        <div class="ve-grid"></div>
+        <button class="ve-cta">Start a project</button>
+    </section>
+
+
+
+
+    <section class="ve-faq">        
+        <h1>Questions and answers</h1>
+        <div class="ve-question">
+            <div class="ve-header">How can i be sure my data is safe with you?</div>
+            <div class="ve-answer">We treat customer data with respect and care</div>
+        </div>
+
+        <div class="ve-question">
+            <div class="ve-header">What does it cost?</div>
+            <div class="ve-answer">Depends a lot on how complex is the data. The maintenance of the basic demo for 1 year costs 200 USD, beyond that there are multiple options with how the charts can be customised or developed for your particular case. That's why we need to see the data first to give you an offer with different price options.</div>
+        </div>
+        
+        <div class="ve-question">
+            <div class="ve-header">What file formats do you support?</div>
+            <div class="ve-answer">xlsx, csv, tsv, google or microsoft online spreadsheet</div>
+        </div>
+        
+        <div class="ve-question">
+            <div class="ve-header">Will the demo keep working?</div>
+            <div class="ve-answer">Yes for 3 weeks. This may be all you need, otherwise we offer a 1 year maintenance of the demo for a small fee</div>
+        </div>
+        
+        <div class="ve-question">
+            <div class="ve-header">Ask your question!</div>
+            <div class="ve-answer"> <a href="mailto:angie@gapminder.org" target="_blank">Send an email</a></div>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="ve-negative">
+        Many organisations pile up the stats without a good way to communicate them within the team or outside. Will your next data presentation be so boring it makes everyone look down in their phones and forget what you say?
+    </section>
+
+
+
+
+
+
+
+    <footer>
+        <div class="ve-footerbox">
+            <a style="grid-column: 1">Start a project</a>
+            <a style="grid-column: 1">Corporate Workshops</a>
+            <a style="grid-column: 1">Free video lectures & PDFs</a>
+            <a style="grid-column: 2; grid-row: 1;">About & Who we are</a>
+            <a style="grid-column: 2; grid-row: 2;">Contact info</a>
+            <a style="grid-column: 3; grid-row: 1;" href="https://gapminder.org" target="_blank">Gapminder.org</a>
+        </div>
+        <div class="ve-cornerthing"></div>
+    </footer>
+
+</body>

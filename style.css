@@ -1,0 +1,598 @@
+:root {
+    --theme-color1: #00bc8d;
+    --theme-color2: #72e7ca;
+}
+
+@media screen and (min-width: 1024px) {
+    :root {
+        --xlarge: 48px;
+        --large: 36px;
+        --medium: 24px;
+        --small: 18px;
+        --section-margin: 50px;
+    }
+  }
+
+@media screen and (min-width: 640px) and (max-width: 1023px) {
+    :root {
+        --xlarge: 36px;
+        --large: 24px;
+        --medium: 18px;
+        --small: 12px;
+        --section-margin: 40px;
+    }
+}
+  
+@media screen and (max-width: 659px) {
+    :root {
+        --xlarge: 24px;
+        --large: 18px;
+        --medium: 12px;
+        --small: 8px;
+        --section-margin: 30px;
+    }
+}
+
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+  }
+
+html{
+    position:relative;
+    font-size: var(--medium);
+}
+body{
+    margin: 0;
+    height: 100%; 
+}
+.ve-bgpattern {
+    z-index: -9999;
+    position: absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color: var(--theme-color1);
+    opacity: 0.15;
+    background: linear-gradient(135deg, #ffffff55 25%, var(--theme-color2) 25%) -10px 0/ 20px 20px, linear-gradient(225deg, #ffffff 25%, var(--theme-color2) 25%) -10px 0/ 20px 20px, linear-gradient(315deg, #ffffff55 25%, var(--theme-color2) 25%) 0px 0/ 20px 20px, linear-gradient(45deg, #ffffff 25%, var(--theme-color1) 50%) 0px 0/ 20px 20px;
+}
+* {
+    box-sizing: border-box;
+    font-family: "Nunito Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+}
+a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+}
+a:hover {
+    text-decoration-thickness: 2px;
+}
+button {
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    white-space: nowrap;
+    cursor: pointer;
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+.ve-cta {
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: 800;
+    height: 2em;
+    background-color: var(--theme-color1);
+    font-size: var(--large);
+    opacity: 0.8;
+    background-image:  repeating-radial-gradient( circle at 0 0, var(--theme-color2) 0, var(--theme-color1) 4px ), repeating-linear-gradient( #ffffff55, #ffffff );
+    cursor: pointer;
+}
+.ve-cta:hover {
+    background-image:  repeating-radial-gradient( circle at 0 0, var(--theme-color1) 0, var(--theme-color1) 4px ), repeating-linear-gradient( #ffffff55, #ffffff );
+}
+
+.ve-subhero, .ve-easysteps, .ve-youget, .ve-portfolio, .ve-faq, .ve-negative, .ve-footerbox {
+    max-width: 800px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: var(--section-margin);
+    margin-bottom: var(--section-margin);
+}
+
+
+
+.ve-startproject {
+    display: none;
+    
+    max-width: 600px;
+    max-height: 800px;
+    width: 80%;
+    height: 80%;
+    position: fixed;
+    top: 30vh;
+    left: 50vw;
+    transform: translate(-25vw, -25vh);
+    background-color: white;
+    border: 1px solid black;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 8px;
+    z-index: 3;
+    display: none;
+    padding: 40px 40px;
+}
+
+.ve-dropzone {
+    width: 100%;
+    height: 60%;
+    border: 1px solid black;
+    text-align: center;
+    padding: 30% 0;
+
+    font-size: var(--xlarge);
+    text-transform: uppercase;
+    color: var(--theme-color1);
+    font-weight: 800;
+
+    border-radius: 8px;
+    opacity: 0.6;
+    background-image: radial-gradient(black 0.5px, var(--theme-color2) 0.5px);
+    background-size: 10px 10px;
+}
+
+.ve-openfile {
+    margin-top: 10px;
+    font-size: var(--medium);
+}
+
+/* 
+====================
+
+
+HEADER
+
+
+==================== 
+*/
+
+
+
+header {          
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    align-items: center;
+    row-gap: 20px;
+}
+    header .ve-logo { 
+    }
+        header .ve-logo img {
+            width: 40px;             
+            height: 40px;             
+        }
+    header .ve-menu {
+        padding-left: 20px;
+    }
+    header a {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+    header .ve-actions {
+    }
+        header .ve-actions .ve-cta {
+            min-width: 150px;
+            margin-right: 10px;
+            font-size: var(--medium);
+        }
+
+
+
+/* 
+====================
+
+
+HERO
+
+
+==================== 
+*/
+
+
+
+.ve-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.ve-hero .ve-bgimage {
+    position: absolute;
+    background-image: url("./assets/images/hero.webp");
+    background-size: cover;
+    background-position-y: center;
+    background-position-x: center;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2;
+    z-index: -2;
+    -webkit-mask: conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/40px 100%;
+}
+.ve-hero .ve-bubbles {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+}
+.ve-hero .ve-title {
+    font-size: 5.5vw;
+    width: 95%;
+    max-width: unset;
+    z-index: 1;
+}
+.ve-hero h1, .ve-hero p {
+    text-align: center;
+    width: 90%;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    font-size: var(--large);
+    z-index: 1;
+}
+.ve-hero .ve-cta {
+    width: 40%;
+    min-width: 250px;
+    margin-top: 0.4em;
+    margin-bottom: 70px;
+    z-index: 1;
+}
+.ve-hero .ve-timeslider {
+    margin-top: 1em;
+    margin-bottom: 0.4em;
+}
+.ve-hero .ve-timeslider .ve-ts-play {
+    display: inline-block;
+
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    z-index: 1;
+    overflow: hidden;
+    background-color: var(--theme-color1);
+    border: 1px solid black;
+}
+
+.ve-hero .ve-timeslider .ve-ts-play label {
+    display: block;
+    box-sizing: border-box;
+    width: 0;
+    height: 26px;
+
+    border-color: transparent transparent transparent var(--theme-color2);
+    transition: 100ms all ease;
+    cursor: pointer;
+    border-style: double;
+    border-width: 0px 0 0px 26px;
+    position: relative;
+    left: 11px;
+    top: 12px;
+}
+
+.ve-hero .ve-timeslider .ve-ts-play input[type="checkbox"] {
+    position: absolute;
+    left: -9999px;
+}
+
+.ve-hero .ve-timeslider .ve-ts-play input[type="checkbox"]:checked+label {
+    border-style: solid;
+    border-width: 12px 0 12px 26px;
+    left: 14px;
+}
+
+.ve-hero .ve-timeslider .ve-ts-slider {
+    display: inline-block;
+    position: relative;
+    top: 10px;
+}
+.ve-hero .ve-timeslider .ve-ts-slider rect {
+    stroke: black;
+    fill: var(--theme-color2);
+    cursor: pointer;
+}
+.ve-hero .ve-timeslider .ve-ts-slider circle {
+    stroke: black;
+    fill: var(--theme-color1);
+    pointer-events: none;
+}
+
+
+.ve-subhero {
+    text-align: center;
+}
+
+
+
+/* 
+====================
+
+
+EASY STEPS
+
+
+==================== 
+*/
+
+
+
+.ve-easysteps h1 {
+    text-align: center;
+}
+.ve-easysteps .ve-box {
+    display: flex;
+    gap: 30px;
+    justify-content: space-evenly;
+}
+.ve-easysteps .ve-step {
+    flex-basis: 30%;
+}
+
+.ve-easysteps .ve-img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background-size: cover;
+    background-position-y: center;
+    background-position-x: center;
+    position: relative;
+    margin-bottom: calc(3vw + 10px);
+}
+
+.ve-easysteps .ve-stepnumber {
+    background-color: var(--theme-color2);
+    border: 1px solid black;
+    width: 6vw;
+    height: 6vw;
+    border-radius: 3vw;
+    text-align: center;
+    line-height: 6vw;
+    position: absolute;
+    bottom: -3vw;
+    left: calc(50% - 3vw);
+    font-size: var(--large);
+}
+
+
+/* 
+====================
+
+
+YOU GET
+
+
+==================== 
+*/
+
+
+.ve-youget {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10%;
+}
+
+.ve-youget .ve-left {
+    flex-basis: 60%;
+}
+.ve-youget .ve-right {
+    flex-basis: 40%;
+    text-align: center;
+}
+.ve-youget .ve-right .ve-video {
+    width: 30vw;
+    aspect-ratio: 3/2;
+    border: 1px solid red;
+    margin: 0 auto;
+}
+
+
+/* 
+====================
+
+
+PORTFOLIO
+
+
+==================== 
+*/
+
+
+.ve-portfolio .ve-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-evenly;
+    margin-bottom: 30px;
+}
+.ve-portfolio .ve-grid .ve-case {
+    flex-basis: 30%;
+    cursor: pointer;
+}
+.ve-portfolio .ve-grid .ve-case .ve-img {
+    aspect-ratio: 1070/620;
+    background-size: cover;
+    background-color: var(--theme-color1);
+    border: 1px solid var(--theme-color1);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin-bottom: 10px;
+}
+.ve-portfolio .ve-cta {
+    margin: 0 auto;
+    width: 40%;
+    min-width: 250px;
+    display: block;
+}
+
+
+.ve-portfolio .ve-popup {
+    position: fixed;
+    top: var(--section-margin);
+    bottom: var(--section-margin);
+    left: var(--section-margin);
+    right: var(--section-margin);
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 8px;
+    z-index: 2;
+    display: none;
+    padding: 0px 40px;
+    overflow-y: auto;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.ve-portfolio .ve-popup .ve-header {
+    display: flex;
+    justify-content: space-between;
+}
+.ve-portfolio .ve-popup .ve-header .ve-close {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    cursor: pointer;
+    border: 1px solid white;
+    text-align: center;
+}
+.ve-portfolio .ve-popup .ve-header .ve-close:hover {
+    border-radius: 2em;
+    border: 1px solid black;
+}
+.ve-portfolio .ve-popup .ve-content {
+    display: flex;
+    justify-content: center;
+}
+.ve-portfolio .ve-popup .ve-content iframe,
+.ve-portfolio .ve-popup .ve-content video {
+    width: 100%;
+    aspect-ratio: 16/9;
+    max-width: 800px;
+    border: 1px solid black;
+}
+.ve-portfolio .ve-popup .ve-description {
+    margin-top: 50px;
+}
+.ve-portfolio .ve-popup .ve-link {
+    margin-top: 50px;
+    font-size: var(--large);
+}
+
+
+
+/* 
+====================
+
+
+FAQ
+
+
+==================== 
+*/
+
+
+.ve-faq h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 0px;
+}
+.ve-faq .ve-question {
+    position: relative;
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+.ve-faq .ve-question .ve-header{
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+
+    cursor: pointer;
+
+    background: linear-gradient(0deg, #eee, #ffffff );
+}
+.ve-faq .ve-question .ve-header:hover{
+    background: linear-gradient(0deg, #ddd, #eee );
+}
+.ve-faq .ve-question::after {
+    position: absolute;
+    content: "▼";
+    color: #555;
+    right: 10px;
+    top: 0.8em;
+    font-size: var(--small);
+    pointer-events: none;
+}
+.ve-faq .ve-answer {
+    max-height: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+
+    transition: all 0.5s;  
+    transition-timing-function: linear;
+    overflow: hidden;
+    pointer-events: none;
+}
+.ve-faq .ve-answer a {
+    pointer-events: visible;
+    cursor: pointer;
+}
+
+/* 
+====================
+
+
+NEGATIVE
+
+
+==================== 
+*/
+
+.ve-negative {
+    font-size: var(--large);
+}
+
+/* 
+====================
+
+
+FOOTER
+
+
+==================== 
+*/
+
+footer {
+    background-color: var(--theme-color2);
+    padding-top: 30px;
+    padding-bottom: 30px
+}
+
+footer .ve-footerbox {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-column-gap: 1%;
+    grid-row-gap: 10%;
+    
+}
+
+footer .ve-footerbox a {
+    display: block;
+    
+    
+}
