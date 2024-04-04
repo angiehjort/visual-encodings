@@ -22,17 +22,21 @@
 
 
 
-    <div class="ve-startproject">
-        <div class="ve-dropzone prevent-select"> Drop files here</div>
+    <div class="ve-startproject-outer-overlay">
+        <div class="ve-startproject-inner-overlay">            
+            <form class="ve-startproject">
+                <div class="ve-dropzone prevent-select">Drop files here</div>
 
-        <input class="ve-openfile" type="file" id="files" name="files" multiple>
-        <label for="email">Enter your email:</label>
-        <input type="email" id="email" name="email">
-        <br>
-        <p>We will contact you by email when your demo is ready</p>
-        <button>Send</button>
+                <input class="ve-openfile" type="file" id="files" name="files" multiple required>
+                <hr>
+                <label for="email">Enter your email:</label>
+                <input class="ve-email" type="email" id="email" name="email" required>
+                <p>We will contact you by email when your demo is ready</p>
+                <button class="ve-send">Send</button>
+            </form>
+            <div class="ve-status"></div>
+        </div>
     </div>
-
 
 
     <header>
