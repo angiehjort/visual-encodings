@@ -12,7 +12,10 @@
         --small: 18px;
         --section-margin: 50px;
         --popup-width: max(40vw, 600px);
-        --popup-height: max(40vh, 600px);
+        --popup-height: max(70vh, 900px);
+
+        --large-popup-width: min(80vw, 900px);
+        --large-popup-height: min(80vh, 900px);
     }
   }
 
@@ -25,6 +28,8 @@
         --section-margin: 40px;
         --popup-width: 70vw;
         --popup-height: 70vh;
+        --large-popup-width: min(80vw, 900px);
+        --large-popup-height: min(80vh, 900px);
     }
 }
   
@@ -37,6 +42,8 @@
         --section-margin: 30px;
         --popup-width: 80vw;
         --popup-height: 80vh;
+        --large-popup-width: min(80vw, 900px);
+        --large-popup-height: min(80vh, 900px);
     }
 }
 
@@ -121,7 +128,6 @@ button {
 
 .ve-startproject-outer-overlay {
     display: none;
-
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -138,6 +144,7 @@ button {
 .ve-startproject {
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     
     /* width: 80%; */
     /* height: 80%; */
@@ -163,7 +170,7 @@ button {
 .ve-dropzone {
     display: grid;
     align-items: center;
-    min-height: 19vh;
+    min-height: 20vh;
     border: 1px solid black;
     text-align: center;
 
@@ -184,13 +191,24 @@ button {
 }
 
 .ve-email, .ve-send {
+    margin-top: 20px;
     font-size: var(--medium);
 }
 
 .ve-status {
-    position: absolute;
-    bottom: 3px;
-    padding-left: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+.ve-startproject .ve-question {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.ve-startproject .ve-question a {
+    font-size: var(--small);
+}
+.ve-startproject .ve-answer {
+    font-size: var(--small);
+    margin-top: 10px;
 }
 
 
@@ -440,6 +458,7 @@ YOU GET
     text-align: center;
 }
 .ve-youget .ve-right .ve-video {
+    max-width: 400px;
     width: 30vw;
     aspect-ratio: 3/2;
     border: 1px solid red;
@@ -484,37 +503,51 @@ PORTFOLIO
     display: block;
 }
 
-
-.ve-portfolio .ve-popup {
+.ve-portfolio .ve-popup-outer {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     position: fixed;
-    top: var(--section-margin);
-    bottom: var(--section-margin);
-    left: var(--section-margin);
-    right: var(--section-margin);
+    height: 100vh;
+    width: 100vw;
+    z-index: 2;
+    top: 0; bottom: 0; left: 0; right: 0;
+    
+}
+.ve-portfolio .ve-popup {
+    position: relative;
     background-color: white;
     border: 1px solid black;
     border-radius: 8px;
     z-index: 2;
-    display: none;
-    padding: 0px 40px;
+    padding: 0px 40px 20px 40px;
     overflow-y: auto;
+    max-width: var(--large-popup-width);
+    max-height: var(--large-popup-height);
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .ve-portfolio .ve-popup .ve-header {
-    display: flex;
-    justify-content: space-between;
+    margin-right: 30px;
 }
-.ve-portfolio .ve-popup .ve-header .ve-close {
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
+.ve-portfolio .ve-popup .ve-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 2em;
+    height: 2em;
+    line-height: 2em;
+    aspect-ratio: 1/1;
     cursor: pointer;
-    border: 1px solid white;
-    text-align: center;
-}
-.ve-portfolio .ve-popup .ve-header .ve-close:hover {
-    border-radius: 2em;
     border: 1px solid black;
+    border-radius: 2em;
+    text-align: center;
+    font-size: var(--small);
+}
+.ve-portfolio .ve-popup .ve-close:hover {
+    border-radius: 2em;
+    background-color: #000;
+    color: white;
 }
 .ve-portfolio .ve-popup .ve-content {
     display: flex;
@@ -522,7 +555,7 @@ PORTFOLIO
 }
 .ve-portfolio .ve-popup .ve-content iframe,
 .ve-portfolio .ve-popup .ve-content video {
-    width: 100%;
+    width: 80vw;
     aspect-ratio: 16/9;
     max-width: 800px;
     border: 1px solid black;

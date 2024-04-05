@@ -81,7 +81,7 @@ class SendFiles {
 
     onSent(result) {
         if (result.every(({error}) => !error)) {
-            this.status.text("Files uploaded successfully.");
+            this.status.text("Files uploaded successfully. We will contact you by email when your demo is ready.");
         } else {
             this.status.text("Error! Please try again.");
         }

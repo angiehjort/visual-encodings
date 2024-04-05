@@ -22,8 +22,8 @@ const cases = [{
     },{
         text: "For interactive teaching",
         title: "Case: Income mountains — ongoing since 2015",
-        description: "",
-        linktext: "Live version " + newTab,
+        description: "Custom education tool made for Gapminder",
+        linktext: "Expand the live version " + newTab,
         link: "https://www.gapminder.org/tools/#$model$markers$billy$encoding$selected$data$;;;;;;&chart-type=mountain&url=v1",
         image: "./assets/cases/mountains.jpg",
         gif: "./assets/cases/mountains.gif",
@@ -89,14 +89,15 @@ d3.select(".ve-portfolio .ve-grid").selectAll(".ve-case")
        // d3.select(this).select(".ve-img").attr("style", `background-image: url("${d.image}")`)
     })
     .on("click", function(event, d){
-        const popup = d3.select(".ve-portfolio .ve-popup").style("display", "block");
+        const container = d3.select(".ve-portfolio .ve-popup-outer").style("display", "flex")
+        const popup = container.select(".ve-portfolio .ve-popup");
         popup.select(".ve-title").text(d.title);
         popup.select(".ve-content").html(() => {
             if (d.iframe) return getYouTubeIframe(d.iframe, d["max-width"]);
             if (d.video) return getVideo(d.video, d["max-width"])
             return "";
         })
-        popup.select(".ve-close").on("click", () => {popup.style("display", "none")});
+        popup.select(".ve-close").on("click", () => {container.style("display", "none")});
         popup.select(".ve-description").html(d.description);
         popup.select(".ve-goto").attr("href", d.link).attr("target", "_blank").text(d.linktext);
     })
