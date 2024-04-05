@@ -44,9 +44,9 @@
             <img src="./assets/images/logo.png">
         </div>
         <div class="ve-menu">
-            <a href="#portfolio">Solutions</a>
-            <a>Corporate Workshops</a>
-            <a>Free video lectures</a>
+            <a onclick="scrollto('portfolio')">Solutions</a>
+            <!-- <a>Corporate Workshops</a>
+            <a>Free video lectures</a> -->
         </div>
         <div class="ve-actions">
             <button class="ve-cta">Start a project</button>
@@ -174,7 +174,7 @@
         
         <div class="ve-question">
             <div class="ve-header">Ask your question!</div>
-            <div class="ve-answer"> <a href="mailto:angie@gapminder.org" target="_blank">Send an email</a></div>
+            <div class="ve-answer"> <a href="mailto:angie@gapminder.org" target="_blank" rel="noopener noreferrer">Send an email</a></div>
         </div>
     </section>
 
@@ -194,14 +194,65 @@
 
     <footer>
         <div class="ve-footerbox">
-            <a style="grid-column: 1">Start a project</a>
-            <a style="grid-column: 1">Corporate Workshops</a>
-            <a style="grid-column: 1">Free video lectures & PDFs</a>
-            <a style="grid-column: 2; grid-row: 1;">About & Who we are</a>
-            <a style="grid-column: 2; grid-row: 2;">Contact info</a>
-            <a style="grid-column: 3; grid-row: 1;" href="https://gapminder.org" target="_blank">Gapminder.org</a>
+            <a style="grid-column: 1" onclick="scrollto('portfolio')">Solutions</a>
+            <!-- <a style="grid-column: 1">Corporate Workshops</a>
+            <a style="grid-column: 1">Free video lectures & PDFs</a> -->
+            <a style="grid-column: 2; grid-row: 1;" onclick="toggle('about')" >About & Who we are</a>
+            <a style="grid-column: 2; grid-row: 2;" onclick="toggle('contact')" >Contact info</a>
+            <a style="grid-column: 3; grid-row: 1; white-space: nowrap;" href="https://gapminder.org" target="_blank">⧉ Gapminder.org</a>
         </div>
         <div class="ve-cornerthing"></div>
+        <div class="ve-copyright">© 2024 Visual Encodings AB</div>
     </footer>
 
+    <section class="ve-contact" id="contact" style="display: none;">
+        <h1>Contact info</h1>
+        <p>Visual Encodings AB</p>
+        <p>email: <a href="mailto:angie@gapminder.org" target="_blank" rel="noopener noreferrer">angie@gapminder.org</a></p>
+        <p>Post address: <br/> c/o Helio och Gapminder <br/> Hornsbruksgatan 23 B <br/> 117 34 Stockholm, Sweden</p>
+        <p>VAT number: SE559474020001</p>
+        <p>Org number: 559474-0200</p>
+    </section>
+
+    <section class="ve-about" id="about" style="display: none;">
+        <h1>About & Who we are</h1>
+        <div class="ve-box">
+            <div class="ve-team">
+                <div class="ve-img" style='background-image: url("./assets/images/angie.jpeg")'></div>
+                <div class="ve-text">Angie Hjort</div>
+                <p>Founder and button presser</p>
+            </div>
+            <div class="ve-team">
+                <div class="ve-img" style='background-image: url("./assets/images/dab.jpeg")'></div>
+                <div class="ve-text">Dmitry Basov</div>
+                <p>Software developer</p>
+            </div>
+            <div class="ve-team">
+                <div class="ve-img" style='background-image: url("./assets/images/ola.jpeg")'></div>
+                <div class="ve-text">Ola Rosling</div>
+                <p>Advisor</p>
+            </div>
+        </div>
+        <h1>History</h1>
+        <p>
+            We grew our expertise about charts and data stories at Gapminder, a non-profit independent foundation on a mission of fighting ignorance with a fact-based worldview. To keep the foundation focused on the mission we had to turn down most of the commercial requests from companies and organizations who would like to use beautiful Gapminder animated graphs for their own purposes. 
+        </p>            
+        <p>            
+            Visual Encodings AB is our separate for-profit company that helps you use these graphs with your own data and add customisations for your own stories. Or we can make new graphs for you. 
+        </p>
+    </section>
+
 </body>
+
+<script>
+    function toggle(id) {
+        var view = document.getElementById(id);
+        view.style.display = (view.style.display === "none" ? "block" : "none");
+        scrollto(id);        
+    }
+    function scrollto(id) {
+        var view = document.getElementById(id);
+        var y = view.getBoundingClientRect().top + window.scrollY;
+        window.scroll({top: y, behavior: 'smooth'});
+    }
+</script>
