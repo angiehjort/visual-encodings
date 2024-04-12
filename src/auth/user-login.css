@@ -1,0 +1,132 @@
+.app-user-login button,
+.app-user-login span.button {
+  margin: 20px 0;
+  cursor: pointer;
+  font-size: var(--medium);
+}
+
+.app-user-login.open .user-login-form-wrapper {
+  display: flex;
+  z-index: 9999;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: #fff;
+}
+.app-user-login.logged .user-login-title {
+  display: none;
+}
+.app-user-login.logged .user-logged-title {
+  display: block;
+}
+.app-user-login.logged.open .user-login-form-wrapper {
+  display: none;
+}
+.app-user-login.logged.open .user-logged-form-wrapper {
+  display: flex;
+}
+.app-user-login .user-logged-title {
+  padding: 2px 6px;
+  text-wrap: nowrap;
+  border: #ffca34 solid 1px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.app-user-login .user-logged-title {
+  display: none;
+  color: #ffca34;
+  width: 30px;
+}
+.app-user-login .user-logged-title:after {
+  content: '\25BC';
+  padding: 0 0 0 4px;
+  border-left: 1px solid #ffca34;
+  color: #ffca34;
+  position: absolute;
+  right: 4px;
+}
+.app-user-login .user-logged-form-wrapper {
+  display: none;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  z-index: 1;
+  position: absolute;
+  top: 31px;
+  width: 200px;
+  right: 0px;
+  
+  border: 1px solid #ffca34;
+  color: #ffca34;
+}
+.app-user-login .user-logged-form-wrapper button {
+  margin: 0;
+  padding: 2px 10px;
+}
+.app-user-login .user-logged-form-wrapper hr {
+  width: 80%;
+}
+.app-user-login .user-logged-form-wrapper .user-logged-name {
+  align-self: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.app-user-login .user-login-form-wrapper {
+  display: none;
+  position: absolute;
+  justify-content: center;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+}
+.app-user-login .user-login-form-wrapper .user-login-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+.app-user-login .user-login-form-wrapper .user-login-close:hover {
+  font-weight: 800;
+}
+.app-user-login .user-login-form-wrapper .user-login-form .panel {
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  align-items: center;
+  margin: 24px 30px 4px;
+}
+.app-user-login .user-login-form-wrapper .user-login-form .panel label {
+  margin-top: 20px;
+  align-self: flex-start;
+}
+.app-user-login .user-login-form-wrapper .user-login-form .panel hr {
+  margin-bottom: 0;
+  width: 100%;
+}
+.app-user-login .user-login-form-wrapper .user-login-form .panel .hr-text-center {
+  margin-top: -0.7em;
+  padding: 0 5px;
+  background-color: #fff;
+}
+.app-user-login .user-login-form-wrapper .user-login-form .panel .login-oauth {
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+.app-user-login .user-login-form-wrapper .user-login-form .signup-panel {
+  display: none;
+}
+.app-user-login .user-login-form-wrapper .user-login-form.signup .signup-panel {
+  display: flex;
+}
+.app-user-login .user-login-form-wrapper .user-login-form.signup .login-panel {
+  display: none;
+}
+

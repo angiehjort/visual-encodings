@@ -1,101 +1,7 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import * as splitting from "https://cdn.jsdelivr.net/npm/splitting/+esm"
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
-
-window.d3 = d3;
-
-const S_ID = "ljbyyhiaaezetjldooim";
-const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqYnl5aGlhYWV6ZXRqbGRvb2ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTAwODE2MzQsImV4cCI6MjAyNTY1NzYzNH0.bO6QvpF45pe42nwuWTEnJc6c6R5MDlJhtJHPqjDKnLQ";
-
-
 
 const addYear = (date) => d3.utcParse("%Y")( "" + (date.getUTCFullYear() + 1) ) 
 
-d3.csv("./assets/data/basic.csv", (d) => {
-    return {
-        time: d3.utcParse("%Y")(d.time), 
-        GDP: +d.GDP,
-        LEX: +d.LEX,
-        POP: +d.POP,
-        geo: d.geo, 
-        region: d.world_region,
-        category: d.category
-    }
-}).then((data) => {
-    data = data
-        .filter(f => f.GDP > 0 && f.LEX > 0 && f.POP > 0 && f.region && f.geo && f.category !== "global" && f.category !== "region")
-        .sort((b,a) => a.POP - b.POP);
-    new Main({data})
-})
-
-class SendFiles {
-    constructor({element}) {
-
-        const sURL = `https://${S_ID}.supabase.co`;
-        this.supabase = createClient(sURL, S_KEY);
-
-        this.element = element;
-        element
-            .on("click", (e) => {
-                if (e.target !== element.node()) return;
-                element.style("display", null);
-                this.onClose();
-            })
-            .on("submit", e => {this.onSend(e)})
-            .on("drop", e => {this.allowDrop(e)})
-            .on("dragover", e => {this.allowDrop(e)});
-        this.dropZone = element.select(".ve-dropzone");
-        this.dropZone
-            .on("dragover", e => {this.allowDrop(e)})
-            .on("drop", e => {this.onDrop(e)});
-        this.sendForm = element.select(".ve-startproject")
-        this.inputFiles = element.select(".ve-openfile");
-        this.email = element.select(".ve-email");
-        this.status = element.select(".ve-status");
-
-    }
-
-    onDrop(e) {
-        e.preventDefault();
-
-        this.inputFiles.node().files = e.dataTransfer.files;
-    }
-    
-    allowDrop(e) {
-        e.preventDefault();
-    }
-
-    async onSend(e) {
-        e.preventDefault();
-        const data = new FormData(e.target);
-        const email = data.get("email");
-        const files = data.getAll("files");
-
-        this.sendForm.classed("ve-uploading", true);
-        this.status.text("Sending...");
-
-        Promise.all(files.map(async file => await this.supabase.storage.from("demo_data").upload(`${email}/${file.name}`, file, {
-            upsert: true,
-        }))).then(result => this.onSent(result))
-    }
-
-    onSent(result) {
-        if (result.every(({error}) => !error)) {
-            this.status.text("Files uploaded successfully. We will contact you by email when your demo is ready.");
-        } else {
-            this.status.text("Error! Please try again.");
-        }
-    }
-
-    onClose() {
-        this.inputFiles.node().value = "";
-        this.email.node().value = "";
-        this.status.text("");
-        this.sendForm.classed("ve-uploading", false);
-    }
-}
-
-class Main {
+export default class Bubbles {
     constructor({data}){
 
         const dataMap = d3.rollup(data, v => v[0], d => d.time, d => d.geo);
@@ -114,7 +20,7 @@ class Main {
         this.chart = new Chart({dataMap, xDomain, yDomain, sDomain, parent: this})
         this.slider = new TimeSlider({domain: tDomain, parent: this})
         this.morphText = new MorphText({domain: tDomain});
-        this.sendFiles = new SendFiles({element: d3.select(".ve-startproject-outer-overlay")});
+        
 
         this.checkbox = d3.select(".ve-ts-play input").on("change", () => {
             this.setPlaying(!this.playing);
@@ -383,14 +289,5 @@ class TimeSlider{
     }
 }
 
-d3.selectAll(".ve-faq .ve-question .ve-header")
-    .on("click", function(){
-        const view = d3.select(this.parentNode).select(".ve-answer");
-        const collapsed = view.style("max-height") === "0px";
-        view
-            .style("max-height",  collapsed ? "500px" : "0px")
-            .style("margin-bottom",  collapsed ? "30px" : "0px")
-            .style("margin-top",  collapsed ? "10px" : "0px");
 
-    })
 
