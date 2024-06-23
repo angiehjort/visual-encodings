@@ -253,7 +253,7 @@
  
 </body>
 
-<script>
+<script defer>
     function toggle(id, scroll) {
         var view = document.getElementById(id);
         view.style.display = (view.style.display === "none" ? "block" : "none");
@@ -264,4 +264,6 @@
         var y = view.getBoundingClientRect().top + window.scrollY;
         window.scroll({top: y, behavior: 'smooth'});
     }
+
+    if(window.location.hash === "#portfolio") scrollto(window.location.hash.split("#").pop());
 </script>
