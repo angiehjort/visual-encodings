@@ -479,6 +479,9 @@ PORTFOLIO
 ==================== 
 */
 
+.ve-portfolio {
+    max-width: 1500px;
+}
 
 .ve-portfolio .ve-grid {
     display: flex;
