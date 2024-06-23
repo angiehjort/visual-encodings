@@ -15,8 +15,8 @@
         --popup-width: max(40vw, 600px);
         --popup-height: max(70vh, 900px);
 
-        --large-popup-width: min(90vw, 1000px);
-        --large-popup-height: min(90vh, 1000px);
+        --large-popup-width: min(90vw, 1200px);
+        --large-popup-height: min(90vh, 1200px);
     }
   }
 
@@ -524,7 +524,7 @@ PORTFOLIO
     border: 1px solid black;
     border-radius: 8px;
     z-index: 2;
-    padding: 0px 40px 20px 40px;
+    padding: 0px 20px 20px 20px;
     overflow-y: auto;
     max-width: var(--large-popup-width);
     max-height: var(--large-popup-height);
@@ -536,8 +536,8 @@ PORTFOLIO
 }
 .ve-portfolio .ve-popup .ve-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
     width: 2em;
     height: 2em;
     line-height: 2em;
@@ -561,14 +561,8 @@ PORTFOLIO
 .ve-portfolio .ve-popup .ve-content video {
     width: 80vw;
     max-width: 900px;
-    border: 1px solid black;
-}
-.ve-portfolio .ve-popup .ve-content iframe {
     height: 60vh;
     max-height: 800px;
-}
-.ve-portfolio .ve-popup .ve-content video {
-    aspect-ratio: 16/9;
 }
 .ve-portfolio .ve-popup .ve-description {
     margin-top: 25px;

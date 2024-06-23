@@ -1,9 +1,8 @@
-function getYouTubeIframe(src, maxwidth){
+function getIframe(src){
     return `
         <iframe
             src="${src}"
-            style="max-width:${maxwidth}; aspect-ratio: 16/9; height: auto; max-height: auto;"
-            title="YouTube video player"
+            style="${src.includes("youtube.com")? "aspect-ratio: 16/9; height: auto; max-height: auto;" : ""}"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -12,9 +11,9 @@ function getYouTubeIframe(src, maxwidth){
     `
 } 
 
-function getVideo(src, maxwidth){
+function getVideo(src){
     return `
-        <video max-width=${maxwidth} controls>
+        <video style="aspect-ratio: 16/9; height: auto; max-height: auto;" controls>
             <source src="${src}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -41,8 +40,8 @@ export default function Portfolio(selector, CASES) {
             const popup = container.select(".ve-portfolio .ve-popup");
             popup.select(".ve-title").text(d.title);
             popup.select(".ve-content").html(() => {
-                if (d.iframe) return getYouTubeIframe(d.iframe, d["max-width"]);
-                if (d.video) return getVideo(d.video, d["max-width"])
+                if (d.iframe) return getIframe(d.iframe);
+                if (d.video) return getVideo(d.video)
                 return "";
             })
             popup.select(".ve-close").on("click", () => {container.style("display", "none")});
