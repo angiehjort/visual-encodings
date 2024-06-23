@@ -1,0 +1,189 @@
+var toolsPage_toolset = [
+  {
+    id: "combo-emap-bc",
+    tool: "Combo",
+    toolVariation: "Base",
+    toolComponents: [
+      "ExtApiMap",
+      "BubbleChart"
+    ],
+    config: "Combo-eam-bc-boendebarom",
+    dataSources: [
+      "boendebarom"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "combo-emap-bc",
+    hideThumbnail: true,
+    image: "/assets/images/chart/combo-emap-bc.png"
+  },
+  {
+    id: "bubbles",
+    tool: "BubbleChart",
+    toolVariation: "Base",
+    config: "BubbleChart-boendebarom",
+    dataSources: [
+      "boendebarom"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "bubbles",
+    image: "/assets/images/chart/bubble-chart.png"
+  },
+  {
+    id: "barrank",
+    tool: "BarRank",
+    toolVariation: "Base",
+    config: "BarRank-reactive",
+    dataSources: [
+      "sg",
+      "wdi",
+      "fasttrack"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "ranks",
+    image: "/assets/images/chart/ranks-chart.png"
+  },
+  {
+    id: "clickmap",
+    tool: "BubbleMap",
+    toolVariation: "ClickMap",
+    config: "Click-to-navigate-map",
+    dataSources: [
+      "sg",
+      "fasttrack"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "clickmap",
+    hideThumbnail: true,
+    image: "/assets/images/chart/maps-chart.png"
+  },
+  {
+    id: "linechart",
+    tool: "LineChart",
+    toolVariation: "Base",
+    config: "LineChart-reactive",
+    dataSources: [
+      "sg",
+      "wdi",
+      "fasttrack"
+    ],
+    transition: [
+      "show",
+      "time"
+    ],
+    title: "trends",
+    image: "/assets/images/chart/trends-chart.png"
+  },
+  {
+    id: "mountain",
+    tool: "MountainChart",
+    toolVariation: "Base",
+    config: "MountainChart-v8",
+    dataSources: [
+      "povcalnet",
+      "sg",
+      "fasttrack",
+      "billy"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "income",
+    image: "/assets/images/chart/income-chart.png"
+  },
+  {
+    id: "map",
+    tool: "BubbleMap",
+    toolVariation: "Base",
+    config: "BubbleMap-reactive",
+    dataSources: [
+      "sg",
+      "wdi",
+      "fasttrack"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "maps",
+    image: "/assets/images/chart/maps-chart.png"
+  },
+  {
+    id: "linechart-global",
+    tool: "LineChart",
+    toolVariation: "Base",
+    dataSources: [
+      "sg",
+      "wdi",
+      "fasttrack"
+    ],
+    transition: [
+      "none"
+    ],
+    title: "globaltrends",
+    config: "LineChart-global",
+    hideThumbnail: true,
+    image: "/assets/images/chart/globaltrends-chart.png"
+  },
+  {
+    id: "popbyage",
+    title: "ages",
+    image: "/assets/images/chart/ages-chart.png",
+    tool: "PopByAge",
+    toolVariation: "Base",
+    config: "PopByAge-v5",
+    dataSources: [
+      "pop"
+    ]
+  },
+  {
+    id: "spreadsheet",
+    title: "spreadsheet",
+    image: "/assets/images/chart/spreadsheet.png",
+    dataSources: [
+      "sg",
+      "wdi",
+      "fasttrack"
+    ],
+    tool: "Spreadsheet",
+    toolVariation: "Base",
+    config: "Spreadsheet-reactive",
+    hideThumbnail: true
+  },
+  {
+    id: "extapimap",
+    tool: "ExtApiMap",
+    toolVariation: "Base",
+    config: "ExtApiMap",
+    dataSources: [
+      "sg",
+      "wdi",
+      "fasttrack"
+    ],
+    transition: [
+      "select",
+      "time"
+    ],
+    title: "extapimap",
+    hideThumbnail: true,
+    image: "/assets/images/chart/extapimap.png"
+  },
+  {
+    id: "dollar-street",
+    url: "http://www.gapminder.org/dollar-street",
+    image: "/assets/images/chart/dollar-street.png",
+    title: "dollar_street"
+  }
+];

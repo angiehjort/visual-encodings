@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Södertörnsmodellen</title>
+    <link rel="stylesheet" type="text/css" href="libs/vizabi.css">
+    
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="libs/vizabi.css">
+    <link rel="stylesheet" type="text/css" href="libs/barchart-ds.css">
+    <link rel="stylesheet" type="text/css" href="libs/barrankchart.css">
+    <link rel="stylesheet" type="text/css" href="libs/bubblechart.css">
+    <link rel="stylesheet" type="text/css" href="libs/extapimap.css">
+    <link rel="stylesheet" type="text/css" href="libs/linechart.css">
+    <link rel="stylesheet" type="text/css" href="combo.css">
+        
+    <script src="libs/vizabi.min.js"></script>
+
+    <script src="libs/barchart-ds.min.js"></script>
+    <script src="libs/extapimap.min.js"></script>
+    <script src="libs/bubblechart.min.js"></script>
+    <script src="libs/barrankchart.min.js"></script>
+    <script src="libs/linechart.min.js"></script>
+    <script src="combo.js"></script>
+
+    <script src="libs/vizabi-ddfcsv-reader.js"></script>
+    <script src="libs/vizabi-ws-reader.js"></script>
+    
+    <style>
+      .header {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 35px;
+        padding-left: 20px;
+        padding-right: 20px;
+        background-color: #333333;
+        overflow: hidden;
+      }
+      .header div a {
+        text-transform: uppercase;
+        font-size: calc(7px + .4vw);
+        letter-spacing: 1px;
+        text-decoration: underline;
+        cursor: pointer;
+        color: #a6c4ff;
+        font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+        margin-right: 10px;
+        padding: 2px;
+        line-height: 35px;
+      }
+      .header div a.active {
+        cursor: default;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      #langlist {
+        position: absolute;
+        right: 0;
+      }
+      #toolslist {
+        position: absolute;
+        left: 10px;
+        margin-right: 50px;
+      }
+      #placeholder {
+        border-top: 2px solid #f2fafc;
+        position: absolute;
+        top: 35px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+      body {
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <div id="langlist"></div>
+      <div id="toolslist"></div>
+    </div>
+
+    <script>
+
+      const url = new URL(window.location.href);
+      const urlParams = new URLSearchParams(url.search);
+
+      function setUrl(key,value){
+        if(urlParams.get(key) === value) return;
+        urlParams.set(key,value);
+        window.location.search = urlParams.toString();
+      }
+            
+      //WS reader integration
+      var wsReader = WsReader.WsReader.getReader();
+      Vizabi.Reader.extend("waffle", wsReader);
+
+      //DDFCSV reader integration
+      var ddfReader = new DDFCsvReader.getDDFCsvReaderObject()
+      Vizabi.Reader.extend("ddf", ddfReader);
+
+      var viz = null;
+      var VIZABI_MODEL = {};
+      
+      var tools = {
+        "bubbles": {config: "BubbleChart-sodertorn.js", toolID: "BubbleChart"},
+        "map-kommun": {config: "ExtApiMap-sodertorn-kommun.js", toolID: "ExtApiMap"},
+        "map-basomrade": {config: "ExtApiMap-sodertorn.js", toolID: "ExtApiMap"},
+        "combo": {config: "Combo-map-and-bubbles.js", toolID: "combo"},
+        "barchart-ds": {config: "BarChartDS-sodertorn.js", toolID: "BarChartDS"}
+      }
+      
+      var TRANSLATION_DICTIONARY = {
+        "en": {
+          "bubbles":"Bubbles",
+          "bubbles-sdrtrn":"Only Södertörn",
+          "map-kommun":"Municipality map",
+          "map-basomrade":"Locality map", 
+          "combo":"Map and bubbles combo",
+          "barchart-ds":"Income and education by gender",
+          "en": "en",
+          "sv-SE": "sv"
+        },
+        "sv-SE": {
+          "bubbles":"Bubblor",
+          "bubbles-sdrtrn":"Bara Södertörn",
+          "map-kommun":"Kommun karta",
+          "map-basomrade":"Basområde karta", 
+          "combo":"Karta och bubblor kombo",
+          "barchart-ds":"Inkomst och utbildning efter kön",
+          "en": "en",
+          "sv-SE": "sv"
+        }
+      }
+      
+      var translate = function(string){
+        return (TRANSLATION_DICTIONARY[appState.language] || {})[string || ""] || string;
+      }
+      
+      var locales = {
+        "sv-SE": "se",
+        "en": "en"
+      }
+      
+      var toolLinks = d3.select("#toolslist")
+        .selectAll("a").data(d3.keys(tools)).enter().append("a")
+        .on("click", function(d) {return setTool(d)});
+      
+      var langLinks = d3.select("#langlist")
+        .selectAll("a").data(d3.keys(locales)).enter().append("a")
+        .on("click", function(d) {return setLocale(d)});
+
+      function setLocale(arg){
+        if (!arg) arg = appState.language;
+        if (!viz || !viz.model) return;
+        
+        setUrl("language", arg);
+
+        viz.model.locale.id = arg;
+        appState.language = arg;
+        updateView();
+      }
+      
+      function setTool(arg){
+        if (!arg) arg = appState.tool;
+        setUrl("tool", arg)
+        
+        Vizabi.clearInstances();
+        
+        d3.select("#placeholder").remove();        
+        d3.select("body").append("div").attr("id","placeholder");
+                
+        loadJS(tools[arg].config, function(){
+          VIZABI_MODEL.locale = {
+            "id": appState.language,
+            "filePath": "assets/translation/"
+          };
+          
+          VIZABI_MODEL.data = {
+            "reader": 'ddf',
+            //"path": 'https://waffle-server.gapminder.org/api/ddf/ql',
+            //"dataset": 'open-numbers/ddf--sodertornsmodellen',
+            //"assetsPath": 'https://import-waffle-server.gapminder.org/api/ddf/assets/'
+            "path": "https://raw.githubusercontent.com/open-numbers/ddf--sodertornsmodellen/master/"
+            // "path": "/ddf--sodertornsmodellen-new"
+          };
+          
+          viz = Vizabi(tools[arg].toolID, document.getElementById('placeholder'), VIZABI_MODEL);
+        }, document.body);
+        
+        appState.tool = arg;
+        updateView();
+      }
+      
+      var updateView = function(){
+        toolLinks
+          .classed("active", function(d) {return appState.tool === d})
+          .html(function(d) {return translate(d)});
+        langLinks
+          .classed("active", function(d) {return appState.language === d})
+          .html(function(d) {return translate(d)});
+      }
+      
+      var loadJS = function(url, implementationCode, location){
+        //url is URL of external file, implementationCode is the code
+        //to be called from the file, location is the location to 
+        //insert the <script> element
+
+        var scriptTag = document.createElement('script');
+        scriptTag.src = url;
+
+        scriptTag.onload = implementationCode;
+        scriptTag.onreadystatechange = implementationCode;
+
+        location.appendChild(scriptTag);
+      };
+
+      var appState = {tool: urlParams.get("tool") || "bubbles", language: urlParams.get("language") || "en"};
+      setTool();  
+      
+    </script>
+  </body>
+</html>
+
+
+
+

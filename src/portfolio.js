@@ -2,7 +2,7 @@ function getYouTubeIframe(src, maxwidth){
     return `
         <iframe
             src="${src}"
-            style="max-width:${maxwidth}"
+            style="max-width:${maxwidth}; aspect-ratio: 16/9; height: auto; max-height: auto;"
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
