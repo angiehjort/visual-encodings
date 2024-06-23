@@ -25,7 +25,14 @@ export default function SendFiles(selector, supabase) {
     const popup = d3.select(".ve-startproject-outer-overlay");
 
     d3.selectAll(".ve-cta")
-        .on("click", () => popup.style("display", "flex"))
+        .on("click", () => {
+            const email = "info@visual-encodings.com";
+            const subject = "Collaboration request";
+            const emailBody = "Please provide info about your organisation and how you would like to collaborate. Attach example data files if you have any.";
+            document.location = "mailto:"+email+"?subject="+subject+"&body="+emailBody;
+
+            //popup.style("display", "flex")
+        })
 
 
     function onDrop(e) {
