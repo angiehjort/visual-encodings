@@ -5,7 +5,7 @@ VIZABI_MODEL = {
         requiredEncodings: ["x", "y", "size"],
         data: {
           source: "boendebarom",
-          space: ["deso", "year"],
+          space: ["geo", "year"],
           filter: {
           }
         },
@@ -147,12 +147,12 @@ VIZABI_MODEL = {
 
     //ui
     "buttons": {
-      "buttons": ["colors", "find", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
+      "buttons": ["colors", "markercontrols", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
     },
     "dialogs": {
       "dialogs": {
-        "popup": ["colors", "find", "moreoptions"],
-        "sidebar": ["colors", "find", "size", "zoom"],
+        "popup": ["colors", "markercontrols", "moreoptions"],
+        "sidebar": ["colors", "markercontrols", "size", "zoom"],
         "moreoptions": [
           "opacity",
           "speed",
@@ -167,9 +167,9 @@ VIZABI_MODEL = {
           "about"
         ]
       },
-      "find": {
-        enableSelectShowSwitch: false,
-        enableMarkerSpaceOptions: false,
+      "markercontrols": {
+        "disableAddRemoveGroups": true,
+        "primaryDim": "geo"
       }
     },
 
@@ -227,9 +227,8 @@ VIZABI_MODEL = {
     "tree-menu": {
       "showDataSources": false,
       "folderStrategyByDataset": {
-        "sg": "spread",
-        "fasttrack": "spread",
-        "deso_flags": "spread",
+        "kolada": "spread",
+        "boendebarom": "spread",
         "wdi": "folder:other_datasets"
       }
     }

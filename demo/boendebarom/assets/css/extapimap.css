@@ -931,6 +931,7 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .vzb-tool .vzb-extapimap .vzb-bmc-map-background .land {
   fill: #999;
   opacity: 0.4;
+  stroke-width: 0.5px;
 }
 .vzb-tool .vzb-extapimap .vzb-bmc-map-background .boundary {
   fill: none;

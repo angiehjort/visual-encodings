@@ -2,11 +2,11 @@ VIZABI_MODEL = {
   model: {
     markers: {
       bubble: {
-        requiredEncodings: ["x", "y", "centroid", "size"],
+        requiredEncodings: [],
         data: {
           locale: "en",
           source: "boendebarom",
-          space: ["deso", "year"],
+          space: ["geo", "year"],
         },
         encoding: {
           "selected": {
@@ -98,19 +98,19 @@ VIZABI_MODEL = {
           },
           "centroid": {
             data: {
-              space: ["deso", "year"],
-              concept: "deso"
+              space: ["geo", "year"],
+              concept: "geo"
             }
           },
           // "lat": {
           //   data: {
-          //     space: ["deso"],
+          //     space: ["geo"],
           //     concept: "latitude"
           //   }
           // },
           // "lon": {
           //   data: {
-          //     space: ["deso"],
+          //     space: ["geo"],
           //     concept: "longitude"
           //   }
           // },
@@ -191,12 +191,12 @@ VIZABI_MODEL = {
 
     //ui
     "buttons": {
-      "buttons": ["colors", "mapcolors", "find", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
+      "buttons": ["colors", "mapcolors", "markercontrols", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
     },
     "dialogs": {
       "dialogs": {
-        "popup": ["colors", "find", "moreoptions"],
-        "sidebar": ["colors", "find", "mapcolors", "zoom"],
+        "popup": ["colors", "markercontrols", "moreoptions"],
+        "sidebar": ["colors", "markercontrols", "mapcolors", "zoom"],
         "moreoptions": [
           "opacity",
           "speed",
@@ -213,9 +213,9 @@ VIZABI_MODEL = {
           "about"
         ]
       },
-      "find": {
-        enableSelectShowSwitch: false,
-        enableMarkerSpaceOptions: false,
+      "markercontrols": {
+        "disableAddRemoveGroups": true,
+        "primaryDim": "geo"
       }
     },
 
@@ -268,6 +268,7 @@ VIZABI_MODEL = {
         }
       },
       "map": {
+        "missingDataColor": "none", //"#999" or "none" for transparent. "none" makes it faster
         "scale": 1,
         "preserveAspectRatio": true,
         "mapEngine": "mapbox",
@@ -287,12 +288,12 @@ VIZABI_MODEL = {
         },
         "projection": "mercator",
         topology: {
-          path: "assets/01_03_wgs84.json",
+          path: "assets/shapes.json",
           objects: {
-            geo: "01_03_wgs84_geojson",
-            boundaries: "01_03_wgs84_geojson"
+            areas: "shapes",
+            boundaries: false
           },
-          geoIdProperty: "Deso",
+          geoIdProperty: "id",
         }
       }
     },
@@ -303,8 +304,8 @@ VIZABI_MODEL = {
     "tree-menu": {
       "showDataSources": false,
       "folderStrategyByDataset": {
-        "sg": "spread",
-        "fasttrack": "spread",
+        "kolada": "spread",
+        "boendebarom": "spread",
         "wdi": "folder:other_datasets"
       }
     }
