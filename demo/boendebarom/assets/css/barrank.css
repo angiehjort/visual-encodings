@@ -38,9 +38,13 @@
 }
 
 .vzb-tool .vzb-barrank .vzb-br-header .vzb-br-title {
-  color: #425663;
+  color: #363E40;
   cursor: pointer;
   fill: currentColor;
+  stroke: white;
+  paint-order: stroke;
+  stroke-width: 4px;
+  stroke-opacity: 0.8;
 }
 .vzb-tool .vzb-barrank .vzb-br-header .vzb-br-title:hover {
   text-decoration: underline;

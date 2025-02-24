@@ -72,7 +72,7 @@ VIZABI_MODEL = {
           frame: {
             modelType: "frame",
             speed: 200,
-            value: "2022",
+            value: "2023",
             data: {
               concept: "time"
             }
@@ -138,7 +138,7 @@ VIZABI_MODEL = {
         "moreoptions": ["opacity", "speed", "colors", "axes", "technical", "repeat", "presentation", "about"]
       },
       "markercontrols": {
-        "disableAddRemoveGroups": true,
+        "disableAddRemoveGroups": false,
         "primaryDim": "geo"
       }
     },
@@ -146,7 +146,7 @@ VIZABI_MODEL = {
       showForecast: false,
       showForecastOverlay: true,
       pauseBeforeForecast: true,
-      endBeforeForecast: "2022",
+      endBeforeForecast: "2023",
       opacityHighlight: 1.0,
       opacitySelect: 1.0,
       opacityHighlightDim: 0.1,

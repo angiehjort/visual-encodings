@@ -45,8 +45,7 @@ VIZABI_MODEL = {
               source: "fasttrack",
             },
             scale: {
-              modelType: "size",
-              allowedTypes: ["linear", "log", "genericLog", "pow", "point"]
+              modelType: "size"
             }
           },
           "y": {
@@ -56,8 +55,7 @@ VIZABI_MODEL = {
             },
             scale: {
               domain: [0, 100],
-              zoomed: [19, 86],
-              allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
+              zoomed: [19, 86]
             }
           },
           "x": {
@@ -68,8 +66,7 @@ VIZABI_MODEL = {
             scale: {
               domain: [300, 180000],
               zoomed: [400, 96000],
-              type: "log",
-              allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
+              type: "log"
             }
           },
           "color": {
@@ -95,13 +92,13 @@ VIZABI_MODEL = {
             scale: {
               modelType: "size",
               extent: [0, 0.34],
-              allowedTypes: ["linear", "log", "genericLog", "pow", "point"]
+              allowedTypes: ["linear", "point"]
             }
           },
           frame: {
             modelType: "frame",
             speed: 200,
-            value: "2022",
+            value: "2023",
             splash: true,
             data: {
               concept: "time"
@@ -208,7 +205,7 @@ VIZABI_MODEL = {
       },
       "markercontrols": {
         "disableSlice": true,
-        "disableAddRemoveGroups": true
+        "disableAddRemoveGroups": false
       }
     },
 
@@ -217,7 +214,7 @@ VIZABI_MODEL = {
       showForecast: false,
       showForecastOverlay: true,
       pauseBeforeForecast: true,
-      endBeforeForecast: "2022",
+      endBeforeForecast: "2023",
       opacityHighlight: 1.0,
       opacitySelect: 1.0,
       opacityHighlightDim: 0.1,
@@ -259,7 +256,14 @@ VIZABI_MODEL = {
         }
       },
       map: {
-        overflowBottom: 0
+        overflowBottom: 0,
+        topology: {
+          path: "assets/world-50m.json",
+          objects: {
+            areas: "countries",
+            boundaries: "countries"
+          }
+        }
       }
     },
     "data-warning": {

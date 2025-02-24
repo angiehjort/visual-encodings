@@ -316,6 +316,10 @@
   grid-column-start: 1;
   transform: translateZ(0);
   overflow: visible;
+  pointer-events: none;
+}
+.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-axis-titles {
+  pointer-events: all;
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-bubbles-crop {
   touch-action: none;
@@ -329,7 +333,7 @@
   stroke: #999;
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-eventarea {
-  pointer-events: all;
+  pointer-events: none;
   fill: none;
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-entity.vzb-super-highlighted {
@@ -355,11 +359,20 @@
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-trails .vzb-bc-entity .vzb-bc-label-line {
   stroke: #999;
 }
+.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-panhand canvas {
+  cursor: grab !important;
+}
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-panhand .vzb-bc-bubbles-crop {
   cursor: grab;
 }
-.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
+.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-panhand .vzb-zooming canvas {
+  cursor: grabbing !important;
+}
+.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-panhand .vzb-zooming .vzb-bc-bubbles-crop {
   cursor: grabbing;
+}
+.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomin canvas {
+  cursor: zoom-in !important;
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomin .vzb-bc-bubbles-crop, .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomin .vzb-bc-labels-crop {
   cursor: zoom-in;
@@ -370,6 +383,9 @@
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomin .vzb-bc-bubbles-crop .vzb-bc-labels .vzb-label-fill, .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomin .vzb-bc-labels-crop .vzb-bc-labels .vzb-label-fill {
   pointer-events: none;
+}
+.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomout canvas {
+  cursor: zoom-out !important;
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomout .vzb-bc-bubbles-crop, .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg.vzb-zoomout .vzb-bc-labels-crop {
   cursor: zoom-out;
@@ -428,9 +444,6 @@
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-bubble-crown .vzb-crown,
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-bubble-crown .vzb-crown-glow {
   pointer-events: none;
-}
-.vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-bubble-crown .vzb-crown {
-  stroke: #333;
 }
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg .vzb-bc-bubble-crown .vzb-crown-glow {
   stroke-width: 6px;

@@ -7,6 +7,7 @@ VIZABI_MODEL = {
           source: "boendebarom",
           space: ["geo", "year"],
           filter: {
+            dimensions: { "geo": { "$or": [{ "is--kommun": true }] } }
           }
         },
         encoding: {
@@ -33,16 +34,17 @@ VIZABI_MODEL = {
           },
           "size": {
             data: {
-              concept: "m_syssel_deso_20_64"
+              concept: "antal"
             },
             scale: {
               modelType: "size",
+              extent: [0, 1],
               allowedTypes: ["linear", "log", "genericLog", "pow", "point"]
             }
           },
           "y": {
             data: {
-              concept: "m_efterg_deso_25_64",
+              concept: "m_efterg_25_64",
             },
             scale: {
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
@@ -50,16 +52,17 @@ VIZABI_MODEL = {
           },
           "x": {
             data: {
-              concept: "m_dispin_deso_20_64"
+              concept: "m_dispin_20_64"
             },
             scale: {
-              type: "log",
+              zoomed: [100, 1000],
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
             }
           },
           "color": {
             data: {
-              concept: "kommun"
+              space: ["geo"],
+              concept: "region"
             },
             scale: {
               modelType: "color",
@@ -78,13 +81,14 @@ VIZABI_MODEL = {
             },
             scale: {
               modelType: "size",
-              allowedTypes: ["linear", "log", "genericLog", "pow", "point", "ordinal"]
+              allowedTypes: ["linear", "log", "genericLog", "pow", "point", "ordinal"],
+              extent: [0, 0.22]
             }
           },
           frame: {
             modelType: "frame",
             speed: 200,
-            value: "2017",
+            value: "2022",
             splash: true,
             data: {
               concept: "year"
@@ -134,7 +138,7 @@ VIZABI_MODEL = {
           order: {
             modelType: "order",
             direction: "asc",
-            data: { concept: "rank" }
+            data: { concept: "name" }
           },
           map: { data: { concept: "shape_lores_svg" } }
         }
@@ -142,7 +146,7 @@ VIZABI_MODEL = {
     }
   },
   ui: {
-    locale: { id: "en", shortNumberFormat: true },
+    locale: { id: "sv-SE", shortNumberFormat: true },
     layout: { projector: false },
 
     //ui
@@ -168,8 +172,12 @@ VIZABI_MODEL = {
         ]
       },
       "markercontrols": {
-        "disableAddRemoveGroups": true,
-        "primaryDim": "geo"
+        "disableSlice": true,
+        "disableAddRemoveGroups": false,
+        "primaryDim": "geo",
+        "drilldown": "region.kommun.regso",
+        "shortcutForSwitch": true,
+        "shortcutForSwitch_allow": ["geo", "kommun", "regso"],
       }
     },
 
@@ -188,10 +196,10 @@ VIZABI_MODEL = {
       yearInBackground: true,
       yearInTrails: true,
       lockNonSelected: 0,
-      panWithArrow: false,
+      panWithArrow: true,
       adaptMinMaxZoom: false,
       cursorMode: "arrow",
-      zoomOnScrolling: false,
+      zoomOnScrolling: true,
       superhighlightOnMinimapHover: true,
       whenHovering: {
         showProjectionLineX: true,

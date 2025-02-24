@@ -7,6 +7,9 @@ VIZABI_MODEL = {
           locale: "en",
           source: "boendebarom",
           space: ["geo", "year"],
+          filter: {
+            dimensions: { "geo": { "$or": [{ "is--kommun": true }] } }
+          }
         },
         encoding: {
           "selected": {
@@ -32,17 +35,17 @@ VIZABI_MODEL = {
           },
           "size": {
             data: {
-              concept: "m_syssel_deso_20_64"
+              concept: "antal"
             },
             scale: {
-              extent: [0, 0.05],
+              extent: [0, 1],
               modelType: "size",
-              allowedTypes: ["linear", "log", "genericLog", "pow"]
+              allowedTypes: ["linear", "log", "genericLog", "pow", "point"]
             }
           },
           "y": {
             data: {
-              concept: "m_efterg_deso_25_64",
+              concept: "m_efterg_25_64",
             },
             scale: {
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
@@ -50,17 +53,17 @@ VIZABI_MODEL = {
           },
           "x": {
             data: {
-              concept: "m_dispin_deso_20_64"
+              concept: "m_dispin_20_64"
             },
             scale: {
-              type: "log",
               zoomed: [100, 1000],
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
             }
           },
           "color": {
             data: {
-              concept: "kommun"
+              space: ["geo"],
+              concept: "region"
             },
             scale: {
               modelType: "color",
@@ -79,13 +82,14 @@ VIZABI_MODEL = {
             },
             scale: {
               modelType: "size",
-              allowedTypes: ["linear", "log", "genericLog", "pow", "point", "ordinal"]
+              allowedTypes: ["linear", "log", "genericLog", "pow", "point", "ordinal"],
+              extent: [0, 0.22]
             }
           },
           frame: {
             modelType: "frame",
             speed: 200,
-            value: "2017",
+            value: "2022",
             splash: true,
             data: {
               concept: "year"
@@ -116,7 +120,7 @@ VIZABI_MODEL = {
           // },
           "color_map": {
             data: {
-              concept: "m_syssel_deso_20_64"
+              concept: "m_efterg_25_64"
             },
             scale: {
               modelType: "color"
@@ -154,7 +158,7 @@ VIZABI_MODEL = {
           order: {
             modelType: "order",
             direction: "asc",
-            data: { concept: "rank" }
+            data: { concept: "name" }
           },
           map: { data: { concept: "shape_lores_svg" } }
         }
@@ -186,17 +190,17 @@ VIZABI_MODEL = {
     }
   },
   ui: {
-    locale: { id: "en" },
+    locale: { id: "sv-SE" },
     layout: { projector: false },
 
     //ui
     "buttons": {
-      "buttons": ["colors", "mapcolors", "markercontrols", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
+      "buttons": ["colors", "markercontrols", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
     },
     "dialogs": {
       "dialogs": {
         "popup": ["colors", "markercontrols", "moreoptions"],
-        "sidebar": ["colors", "markercontrols", "mapcolors", "zoom"],
+        "sidebar": ["colors", "markercontrols", "mapcolors", "size", "zoom"],
         "moreoptions": [
           "opacity",
           "speed",
@@ -208,14 +212,16 @@ VIZABI_MODEL = {
           "label",
           "zoom",
           "technical",
-          "repeat",
-          "presentation",
           "about"
         ]
       },
       "markercontrols": {
-        "disableAddRemoveGroups": true,
-        "primaryDim": "geo"
+        "disableSlice": true,
+        "disableAddRemoveGroups": false,
+        "primaryDim": "geo",
+        "drilldown": "region.kommun.regso",
+        "shortcutForSwitch": true,
+        "shortcutForSwitch_allow": ["kommun", "regso"],
       }
     },
 
@@ -240,7 +246,7 @@ VIZABI_MODEL = {
       zoomOnScrolling: true,
       superhighlightOnMinimapHover: true,
       splitVertical: true,
-      splitRatio: 0.4,
+      splitRatio: 0.65,
       whenHovering: {
         showProjectionLineX: true,
         showProjectionLineY: true,
@@ -250,7 +256,7 @@ VIZABI_MODEL = {
       labels: {
         enabled: true,
         dragging: true,
-        removeLabelBox: false
+        removeLabelBox: true
       },
       margin: {
         left: 0,
@@ -268,7 +274,9 @@ VIZABI_MODEL = {
         }
       },
       "map": {
-        "missingDataColor": "none", //"#999" or "none" for transparent. "none" makes it faster
+        "useBivariateColorScaleWithDataFromXY": false,
+        "bivariateColorPalette": "BlPu5",
+        "missingDataColor": false, //"#999" or false for transparent
         "scale": 1,
         "preserveAspectRatio": true,
         "mapEngine": "mapbox",
@@ -284,7 +292,7 @@ VIZABI_MODEL = {
         },
         "path": null,
         "bounds": {
-          west: 17.6, north: 59.5, east: 18.2, south: 59.2
+          west: 4, north: 69, east: 25, south: 56
         },
         "projection": "mercator",
         topology: {
@@ -298,8 +306,7 @@ VIZABI_MODEL = {
       }
     },
     "data-warning": {
-      doubtDomain: [1800, 1950, 2015],
-      doubtRange: [0, 0, 0]
+      enable: false
     },
     "tree-menu": {
       "showDataSources": false,

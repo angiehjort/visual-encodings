@@ -1,4 +1,4 @@
-// undefined v1.0.0 Copyright 2024 Gapminder Foundation
+// undefined v1.0.0 Copyright 2025 Gapminder Foundation
 (function () {
 'use strict';
 
@@ -7452,12 +7452,13 @@ function deepArrayEquals(a, b) {
   return true;
 }
 
-const DEFAULT_LANGUAGE = { key: "en", text: "English" };
+const DEFAULT_LANGUAGE = { key: "sv-SE", text: "Svenska" };
 const AVAILABLE_LANGUAGES = [
   DEFAULT_LANGUAGE,
   { key: "ar-SA", text: "العربية", isRtl: true },
   { key: "he-IL", text: "עִבְרִית", isRtl: true },
   { key: "es-ES", text: "Español", isRtl: false },
+  { key: "en", text: "English", isRtl: false },
   { key: "vi-VN", text: "Tiếng Việt", isRtl: false, fontFamily: "Helvetica, Arial, Sans-Serif" },
   { key: "ru-RU", text: "Русский", isRtl: false, fontFamily: "Helvetica, Arial, Sans-Serif" },
   { key: "th-TH", text: "ภาษาไทย", isRtl: false, fontFamily: "Helvetica, Arial, Sans-Serif" }
@@ -7825,7 +7826,7 @@ function googleAnalyticsLoadEvents(viz) {
           console.timeEnd(id);
           const time = timeLogger.snapOnce(id);
           if (gtag && time) gtag("event", "timing_complete", {
-            "name": id + " load",
+            "name": time < 30000 ? `${id} load` : `${id} load above 30s`,
             "value": time,
             "event_category": "Page load",
             "event_label": appState.tool
@@ -8001,6 +8002,79 @@ function setTool(tool, skipTransition) {
         googleAnalyticsLoadEvents(viz);
 
         window.viz = viz;
+
+/*
+CUSTOM EVENT ANALYTICS CODE
+see https://github.com/Gapminder/tools-page-analytics-server
+
+        const searchInput =  viz.element.select("input.vzb-treemenu-search");
+        viz.element.select(".vzb-treemenu-wrap").on("click.tm", function(e) {
+          const sourceData = d3.select(e.srcElement).datum();
+          if (sourceData.concept_type !== "measure" && sourceData.concept_type !== "string") return;
+
+          // if (gtag) gtag("event", "concept_request", {
+          //   "name": searchInput.node().value ? "search" : "menu",
+          //   "value": sourceData.id,
+          //   "event_category": sourceData?.byDataSources?.[0]?.dataSource?.id,
+          //   "event_label": appState.tool
+          // });
+
+          const options = `\
+concept=${sourceData.id}\
+&space=${sourceData?.byDataSources?.[0]?.spaces?.[0]}\
+&tool=${appState.tool}\
+&dataset=${sourceData?.byDataSources?.[0]?.dataSource?.id}\
+&type=${searchInput.node().value ? "search" : "menu"}\
+&referer=${window.location.host}\
+`;
+        
+          fetch(`https://tools-page-analytics-server.gapminder.org/record?${options}`);
+        }, { capture: true });
+*/
+
+        // const mainMarkerName = Object.keys(VIZABI_MODEL.model.markers).filter(m => MAIN_MARKERS.includes(m))?.[0];
+        // if (mainMarkerName) {
+        //   const ignoredConcepts = [
+        //     'time',
+        //     'name',
+        //     'geo',
+        //     'country', 
+        //     'world_4region',
+        //     'world_6region',
+        //     'is--', 
+        //     'un_sdg_region',
+        //     'g77_and_oecd_countries', 
+        //     'global', 
+        //     'income_3groups', 
+        //     'income_groups', 
+        //     'landlocked', 
+        //     'main_religion_2008', 
+        //     'un_sdg_ldc', 
+        //     'unhcr_region', 
+        //     'unicef_region', 
+        //     'west_and_rest', 
+        //     'age', 
+        //     'gender',
+        //     'latitude',
+        //     'longitude'
+        //   ];
+        //   const defaultSource = VIZABI_MODEL.model.markers[mainMarkerName].data.source;
+        //   const encodings = VIZABI_MODEL.model.markers[mainMarkerName].encoding;
+        //   const passedConcepts = [];
+        //   Object.keys(encodings).filter(enc => enc !== "frame").forEach(encKey => {
+        //     const encData = encodings[encKey]?.data;
+        //     const concept = encData?.concept;
+        //     if (!concept || passedConcepts.includes(concept) || encData.constant || ignoredConcepts.includes(concept)) return;
+        //     passedConcepts.push(concept);
+            
+        //     if (gtag) gtag("event", "concept_request", {
+        //       "name": "url",
+        //       "value": concept,
+        //       "event_category": encData.source || defaultSource,
+        //       "event_label": appState.tool
+        //     });
+        //   });
+        // } 
 
         window.VIZABI_DEFAULT_MODEL = diffObject(
           mobx.toJS(viz.model.config, { recurseEverything: true }),
@@ -10144,7 +10218,7 @@ const readersSchema = {
 const defaultValues = {
   "reader": "ddfbw",
   "nameColumnIndex": 1,
-  "service": "https://big-waffle.gapminder.org"
+  "service": "https://small-waffle.gapminder.org"
 };
 const propDependency = {
   "nameColumnIndex": {
@@ -10293,128 +10367,7 @@ var menuItems = {
   "menu_label": "Home",
   "caption": null,
   "url": null,
-  "children": [
-    {
-      "node_id": null,
-      "menu_label": "facts",
-      "caption": null,
-      "url": null,
-      "children": [
-        {
-          "node_id": null,
-          "menu_label": "tools_offline",
-          "caption": "download_these_tools",
-          "url": "http://www.gapminder.org/tools-offline",
-          "icon_url": "/images/icons/menu/bubchart.png",
-          "$$hashKey": "object:8"
-        },
-        {
-          "node_id": null,
-          "menu_label": "answers",
-          "caption": "watch_Hans_Rosling_answer",
-          "url": "http://www.gapminder.org/answers/",
-          "icon_url": "/images/icons/menu/answers.png",
-          "$$hashKey": "object:9"
-        },
-        {
-          "node_id": null,
-          "menu_label": "massive_ignorance",
-          "caption": "beware_the_shocking_results",
-          "url": "https://upgrader.gapminder.org/",
-          "icon_url": "/images/icons/menu/igmo.png",
-          "$$hashKey": "object:10"
-        },
-        {
-          "node_id": null,
-          "menu_label": "data",
-          "caption": "download_tables_with_stats",
-          "url": "http://www.gapminder.org/data",
-          "icon_url": "/images/icons/menu/data.png",
-          "$$hashKey": "object:11"
-        }
-      ]
-    },
-    {
-      "node_id": null,
-      "menu_label": "teach",
-      "caption": null,
-      "url": null,
-      "children": [
-        {
-          "node_id": null,
-          "menu_label": "teachers",
-          "caption": "see_how_teachers_use_Gapminder",
-          "url": "https://www.gapminder.org/teaching/materials/",
-          "icon_url": "/images/icons/menu/teach.png",
-          "$$hashKey": "object:21"
-        },
-        {
-          "node_id": null,
-          "menu_label": "slideshows",
-          "caption": "download_and_edit_our_modular_slides",
-          "url": "https://drive.google.com/drive/folders/0B9jWD65HiLUnTTJNQ3Bna2w2blU",
-          "icon_url": "/images/icons/menu/slides.png",
-          "$$hashKey": "object:22"
-        },
-        {
-          "node_id": null,
-          "menu_label": "workshops",
-          "caption": "let_your_students_practice_analytical_skills_without_computers",
-          "url": "http://www.gapminder.org/workshops",
-          "icon_url": "/images/icons/menu/workshops.png",
-          "$$hashKey": "object:23"
-        },
-        {
-          "node_id": null,
-          "menu_label": "test_questions",
-          "caption": "boost_your_students_confidence",
-          "url": "http://www.gapminder.org/test-questions",
-          "icon_url": "/images/icons/menu/testquestion.png",
-          "$$hashKey": "object:24"
-        }
-      ]
-    },
-    {
-      "node_id": null,
-      "menu_label": "about",
-      "caption": null,
-      "url": null,
-      "children": [
-        {
-          "node_id": null,
-          "menu_label": "our_organization",
-          "caption": "read_about_the_Gapminder_Foundation",
-          "url": "https://www.gapminder.org/about/",
-          "icon_url": "/images/icons/menu/gapminder.png",
-          "$$hashKey": "object:34"
-        },
-        {
-          "node_id": null,
-          "menu_label": "news",
-          "caption": "stay_tuned_with_our_blog",
-          "url": "http://www.gapminder.org/news",
-          "icon_url": "/images/icons/menu/news.png",
-          "$$hashKey": "object:35"
-        },
-        {
-          "node_id": null,
-          "menu_label": "faq",
-          "caption": "find_answers",
-          "url": "http://www.gapminder.org/faq_frequently_asked_questions",
-          "icon_url": "/images/icons/menu/faq.png",
-          "$$hashKey": "object:36"
-        },
-        {
-          "node_id": null,
-          "menu_label": "open_license",
-          "caption": "copy_change_spread_material",
-          "url": "http://www.gapminder.org/free-material",
-          "icon_url": "/images/icons/menu/license.png",
-          "$$hashKey": "object:37"
-        }
-      ]
-    }
-  ]
+  "children": []
 };
 
 var relatedItems = [];
@@ -10543,29 +10496,13 @@ const Footer = function(placeHolder, translator, dispatch) {
             </div>
             <div class="general-menu">
                 <ul class="nav">
-                    <!--li><a href="//gapminder.org/world/?use_gapminder_world" data-text="old_bubble_chart"></a></li-->
-                    <li><a href="//gapminder.org/for-teachers/" data-text="for_teachers"></a></li>
-                    <li><a href="https://docs.google.com/document/d/1bzTWStFYAq2Oj9kV3vm261Dj9FW8C2tS7Jwj1wtTn1Q" data-text="help_to_translate"></a></li>
+                    <li><a href="https://visual-encodings.com/" data-text="madeby"></a></li>
                 </ul>
             </div>
-            <div class="main-menu">
-                <ul class="nav">
-                    <li><a href="//gapminder.org/about/" data-text="about"></a></li>
-                    <li><a href="//gapminder.org/about/press-room/contact/" data-text="contact"></a></li>
-                    <li><a href="//gapminder.org/news/" data-text="blog"></a></li>
-                    <li><a href="//gapminder.org/donations/" data-text="donate"></a></li>
-                    <li><a href="//gapminder.org/privacy/terms-of-use/" data-text="terms"></a></li>
-                    <li><a href="//gapminder.org/about/press-room/" data-text="media"></a></li>
-                    <li><a href="//gapminder.org/faq_frequently_asked_questions/" data-text="help"></a></li>
-                    <li><a href="//vizabi.org/tutorials/" data-text="labs"></a></li>
-                    <li><a href="//github.com/Gapminder/tools-page/issues" data-text="report_problem"></a></li>
-                </ul>
-            </div>
+            
         </div>
         <div class="footer-container service-container">
             <div class="service-content">
-                <a href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fwww.gapminder.org&related=Gapminder&text=Gapminder&tw_p=tweetbutton&url=http%3A%2F%2Fwww.gapminder.org%2Ftools%2F"><img src="assets/images/footer/twitter-gray.png"></a>
-                <a href="http://www.addtoany.com/add_to/facebook?linkurl=http%3A%2F%2Fwww.gapminder.org%2Ftools%2F&"><img src="assets/images/footer/facebook-gray.png"></a>
             </div>
         </div>
     </div>

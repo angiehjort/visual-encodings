@@ -1749,7 +1749,8 @@ body {
   padding: 15px 40px 0 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 40px;
 }
 @media (max-width: 785px) {
   .other-tools-container {

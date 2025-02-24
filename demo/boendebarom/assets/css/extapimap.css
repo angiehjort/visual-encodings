@@ -910,6 +910,32 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
   fill: none;
   stroke: #999;
 }
+.vzb-tool .vzb-extapimap .vzb-map-background .mapboxgl-ctrl-bottom-left {
+  transform: rotate(-90deg);
+  bottom: 50%;
+  left: -25px;
+}
+.vzb-tool .vzb-extapimap .vzb-map-background .mapboxgl-ctrl {
+  opacity: 0.3;
+}
+.vzb-tool .vzb-extapimap .vzb-map-background .mapboxgl-ctrl:hover {
+  opacity: 1;
+}
+.vzb-tool .vzb-extapimap .vzb-map-foreground {
+  position: absolute;
+}
+.vzb-tool .vzb-extapimap .vzb-map-foreground.vzb-zoomin canvas {
+  cursor: zoom-in !important;
+}
+.vzb-tool .vzb-extapimap .vzb-map-foreground.vzb-zoomout canvas {
+  cursor: zoom-out !important;
+}
+.vzb-tool .vzb-extapimap .vzb-map-foreground.vzb-panhand canvas {
+  cursor: grab !important;
+}
+.vzb-tool .vzb-extapimap .vzb-map-foreground.vzb-panhand.vzb-zooming canvas {
+  cursor: grabbing !important;
+}
 .vzb-tool .vzb-extapimap .vzb-bmc-map-background {
   position: absolute;
 }
@@ -938,8 +964,41 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
   stroke: #fff;
   stroke-width: 0.5px;
 }
+.vzb-tool .vzb-extapimap .vzb-bmc-color-legend {
+  position: absolute;
+  pointer-events: none;
+  max-width: 310px;
+  width: 310px;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-color-legend div.vzb-cl-color-legend {
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-color-legend .vzb-cl-holder {
+  overflow: visible;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-color-legend .vzb-cl-holder .vzb-cl-rainbow-holder {
+  left: -15px;
+  right: -15px;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-color-legend .vzb-cl-holder .vzb-cl-rainbow-holder .vzb-cl-rainbow, .vzb-tool .vzb-extapimap .vzb-bmc-color-legend .vzb-cl-holder .vzb-cl-rainbow-holder .vzb-cl-subtitle {
+  left: 15px;
+  right: 15px;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-bivariate-legend {
+  position: absolute;
+  pointer-events: none;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-bivariate-legend text {
+  paint-order: stroke;
+  stroke: white;
+  stroke-width: 2px;
+}
+.vzb-tool .vzb-extapimap .vzb-bmc-bivariate-legend span {
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+}
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg {
   position: absolute;
+  pointer-events: none;
 }
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg.vzb-zoomin {
   cursor: zoom-in;
@@ -952,6 +1011,9 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 }
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg.vzb-panhand.vzb-zooming {
   cursor: grabbing;
+}
+.vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-titles {
+  pointer-events: all;
 }
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-date {
   font-size: 15em;
@@ -1003,7 +1065,10 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
   unicode-bidi: embed;
 }
 
-.vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-labels rect {
+.vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-labels .vzb-bmc-tooltip {
+  pointer-events: none;
+}
+.vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-labels .vzb-bmc-entity rect {
   pointer-events: visible;
 }
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-labels .vzb-bmc-entity .vzb-bmc-label-x {
@@ -1085,6 +1150,22 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-style {
   display: none;
 }
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content label {
+  display: inline;
+  margin-right: 5px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-style label, .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-layers label {
+  display: block;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] .vzb-options-container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-sidebar .vzb-caxis-selector,
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-sidebar .vzb-clegend-container, .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-bivariate .vzb-caxis-selector,
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-bivariate .vzb-clegend-container {
+  display: none;
+}
 
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content label {
   display: inline;
@@ -1095,5 +1176,22 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 }
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-engine,
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-style {
+  display: none;
+}
+
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content label {
+  display: inline;
+  margin-right: 5px;
+}
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-style label, .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-layers label {
+  display: block;
+}
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] .vzb-options-container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-sidebar .vzb-caxis-selector,
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-sidebar .vzb-clegend-container, .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-bivariate .vzb-caxis-selector,
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-bivariate .vzb-clegend-container {
   display: none;
 }

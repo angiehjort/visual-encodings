@@ -89,7 +89,7 @@ VIZABI_MODEL = {
           "frame": {
             modelType: "frame",
             speed: 200,
-            value: "2022",
+            value: "2023",
             splash: true,
             data: {
               concept: "time"
@@ -185,7 +185,7 @@ VIZABI_MODEL = {
       showForecast: false,
       showForecastOverlay: true,
       pauseBeforeForecast: true,
-      endBeforeForecast: "2022",
+      endBeforeForecast: "2023",
       opacityHighlight: 1.0,
       opacitySelect: 1.0,
       opacityHighlightDim: 0.1,
@@ -213,7 +213,7 @@ VIZABI_MODEL = {
         topology: {
           path: "assets/world-50m.json",
           objects: {
-            boundaries: "countries"
+            areas: "countries"
           },
           geoIdProperty: "id",
         }

@@ -1,16 +1,6 @@
 var toolsPage_properties = {
   LANGUAGES: [
-    "en",
-    "ar-SA",
-    "de-DE",
-    "es-ES",
-    "fr-FR",
-    "he-IL",
-    "id-ID",
-    "ru-RU",
     "sv-SE",
-    "vi-VN",
-    "zh-CN",
-    "th-TH"
+    "en"
   ]
 };

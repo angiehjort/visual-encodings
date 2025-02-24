@@ -98,7 +98,7 @@ VIZABI_MODEL = {
           "frame": {
             modelType: "frame",
             speed: 200,
-            value: "2022",
+            value: "2023",
             splash: true,
             data: {
               concept: "time"
@@ -192,7 +192,7 @@ VIZABI_MODEL = {
       },
       "markercontrols": {
         "disableSlice": true,
-        "disableAddRemoveGroups": true
+        "disableAddRemoveGroups": false
       }
     },
     "chart": {
@@ -202,7 +202,14 @@ VIZABI_MODEL = {
         removeLabelBox: false
       },
       map: {
-        overflowBottom: 0
+        overflowBottom: 0,
+        topology: {
+          path: "assets/world-50m.json",
+          objects: {
+            areas: "countries",
+            boundaries: "countries"
+          }
+        }
       }
     },
     "tree-menu": {

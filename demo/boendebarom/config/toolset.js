@@ -41,31 +41,29 @@ var toolsPage_toolset = [
     title: "spreadsheet",
     image: "/assets/images/chart/spreadsheet.png",
     dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
+      "boendebarom",
+      "kolada"
     ],
     tool: "Spreadsheet",
     toolVariation: "Base",
-    config: "Spreadsheet-reactive",
+    config: "Spreadsheet-boendebarom",
     hideThumbnail: true
   },
   {
     id: "extapimap",
     tool: "ExtApiMap",
     toolVariation: "Base",
-    config: "ExtApiMap",
+    config: "ExtApiMap-boendebarom",
     dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
+      "boendebarom",
+      "kolada"
     ],
     transition: [
       "select",
       "time"
     ],
     title: "extapimap",
-    hideThumbnail: true,
+    hideThumbnail: false,
     image: "/assets/images/chart/extapimap.png"
   }
 ];

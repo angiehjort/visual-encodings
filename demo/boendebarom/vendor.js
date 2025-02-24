@@ -1,4 +1,4 @@
-// undefined v1.0.0 Copyright 2024 Gapminder Foundation
+// undefined v1.0.0 Copyright 2025 Gapminder Foundation
 // https://d3js.org v6.7.0 Copyright 2021 Mike Bostock
 (function () {
 'use strict';
