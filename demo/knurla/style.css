@@ -1,0 +1,129 @@
+:root {
+    --theme-color-bg-light: #f2f7ea;
+    --theme-color-center-light: #fbf0fb;
+}
+
+* {
+	box-sizing: border-box;
+	font-family: sans-serif;
+}
+
+h1 {
+	font-weight: normal;
+	margin-top: 0;
+	width: 100%;
+	text-align: center;
+}
+body {
+	margin: 0;
+}
+div#rootcontainer {
+	width: 100%;
+	height: 100vh;
+	background-color: var(--theme-color-bg-light);
+	display: flex;
+	justify-content: center;
+
+}
+
+div#appcontainer {
+	width: 40%;
+	max-width: 800px;
+	min-width: 480px;
+	height: 100%;
+	background-color: var(--theme-color-center-light);
+	padding: 20px;
+	
+}
+
+div#datavis-section {
+	width: 100%;
+	
+}
+div#datavis-section svg {
+	width: 100%;
+}
+#calendar-section h3 {
+	margin-bottom: 5px;
+	margin-top: 10px;
+}
+#calendar-section .calendar-grid {
+	display: inline-block;
+}
+#calendar-section .week {
+	display: inline-block;
+	margin-right: 20px;
+	font-size: 14px;
+}
+#calendar-section .updownbuttons {
+	display: inline-block;
+}
+#calendar-section .trackables {
+}
+#calendar-section .weekday {
+	display: inline-block;
+	width: 42px;
+	padding: 5px;
+	margin-right: 5px;
+	font-size: 12px;
+}
+#calendar-section .weekday.weekend {
+	color: red;
+}
+#calendar-section .button {
+	display: inline-block;
+	width: 42px;
+	height: 50px;
+	max-height: 50px;
+	overflow: hidden;
+	padding: 5px;
+	border: 1px solid black;
+	border-radius: 4px;
+	margin-right: 5px;
+	white-space: nowrap;
+}
+#calendar-section .week .button {
+	font-variant-caps: small-caps;
+}
+#calendar-section .button.selected {
+	border: 3px solid black;
+	padding: 3px;
+}
+#calendar-section .week .button.today {
+	background-color: #DDEEFF;
+}
+
+#calendar-section .week .button.disabled {
+	opacity: 0.3;
+	pointer-events: none;
+}
+#calendar-section .updownbuttons .button {
+	text-align: center;
+	line-height: 40px;
+	font-size: 24px;
+	color: #514;
+	width: 40px;
+}
+#calendar-section .trackables .button {
+	text-align: center;
+	width: 60px;
+}
+#calendar-section .trackables .button .icon {
+	display: block;
+	font-size: 24px;
+	top: -3px;
+}
+#calendar-section .trackables .button .text {
+	display: block;
+	position: relative;
+	top: -4px;
+	font-size: 12px;
+}
+#calendar-section .button:not(.disabled):hover {
+	background-color: #DDEEFF;
+	cursor: pointer;
+}
+
+
+	
+
