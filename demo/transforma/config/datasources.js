@@ -1,44 +1,14 @@
 var toolsPage_datasources = {
-  billy: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "billy/master",
-    name: "billy/master"
+  tva_branscher: {
+    modelType: "ddfcsv",
+    path: "https://raw.githubusercontent.com/amelia-bodin/ddf_bransch.github.io/refs/heads/main/data/bransch_ddf/"
   },
-  povcalnet: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "povcalnet/master",
-    name: "povcalnet/master"
+  tva_countries: {
+    modelType: "ddfcsv",
+    path: "https://raw.githubusercontent.com/amelia-bodin/ddf_countries.github.io/refs/heads/main/data/ddf_countries-main/"
   },
-  sg: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "sg/master",
-    name: "sg/master"
-  },
-  pop: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "population/master",
-    name: "population/master"
-  },
-  wdi: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "wdi/master",
-    name: "wdi/master"
-  },
-  fasttrack: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "fasttrack/master",
-    name: "fasttrack/master"
-  },
-  country_flags: {
-    modelType: "ddfbw",
-    service: "https://small-waffle.gapminder.org",
-    dataset: "country-flags",
-    name: "country-flags"
+  tva_lan: {
+    modelType: "ddfcsv",
+    path: "https://raw.githubusercontent.com/amelia-bodin/ddf_lan.github.io/refs/heads/main/data/ddf_lan/"
   }
 };

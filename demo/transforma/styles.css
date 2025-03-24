@@ -98,7 +98,7 @@
   font-variant: all-petite-caps;
 }
 .footer-container a:hover {
-  color: #ffca34;
+  color: #222;
 }
 :root {
   --header-height: 50px;
@@ -153,7 +153,7 @@
   padding: 7px;
 }
 .chart-switcher-options .selected a {
-  color: #ffca34;
+  color: #222;
 }
 .chart-switcher-options div {
   padding: 3px;
@@ -237,7 +237,7 @@ a {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  color: #ffca34;
+  color: #222;
 }
 .header a:hover {
   text-decoration: underline;
@@ -354,7 +354,7 @@ a {
 .header .menu-mobile .social-share-icon {
   margin: 4px;
   color: #fff;
-  background: #ffca34;
+  background: #222;
   border: none;
   font-size: 15px;
   margin: 5px 0;
@@ -381,12 +381,12 @@ a {
   transition-duration: 0.2s;
   width: 30px;
   height: 3px;
-  background-color: #ffca34;
+  background-color: #222;
 }
 .header .menu-mobile .menu-icon .icon:before,
 .header .menu-mobile .menu-icon .icon:after {
   transition-duration: 0.5s;
-  background-color: #ffca34;
+  background-color: #222;
   position: absolute;
   content: "";
   width: 30px;
@@ -412,14 +412,14 @@ a {
   transform: rotate(45deg);
 }
 .header-divider {
-  background-color: #ffca34;
+  background-color: #222;
   height: 2px;
   margin: 0;
   padding: 0;
   width: 100%;
 }
 .how-to-use-video:hover {
-  color: #ffca34 !important;
+  color: #222 !important;
 }
 @media only screen and (max-width: 785px) {
   .how-to-use-video {
@@ -438,7 +438,7 @@ a {
     display: inline-block;
     width: 26px;
     color: #fff;
-    background: #ffca34;
+    background: #222;
     border: none;
     font-size: 15px;
     border-radius: 4px;
@@ -492,11 +492,11 @@ a {
     font-family: "Rubik Light", "Lucida Sans Unicode", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
   .how-to-content .nav-faq-help-links a:hover {
-    color: #ffca34;
+    color: #222;
   }
 }
 .button-close {
-  color: #ffca34;
+  color: #222;
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -698,7 +698,7 @@ a {
   position: relative;
   font-size: 13px;
   padding: 1px 6px 1px 10px;
-  border: 1px solid #ffca34;
+  border: 1px solid #222;
   border-radius: 4px;
   cursor: pointer;
 /*+for_breakpoint(medium)
@@ -713,8 +713,8 @@ a {
 .lang-wrapper .lang-current:after {
   content: '\25BC';
   padding: 0 0 0 4px;
-  border-left: 1px solid #ffca34;
-  color: #ffca34;
+  border-left: 1px solid #222;
+  color: #222;
   position: absolute;
   right: 4px;
 }
@@ -723,7 +723,7 @@ a {
   list-style: none;
   z-index: 10;
   left: -1px;
-  border: 1px solid #ffca34;
+  border: 1px solid #222;
   top: 18px;
   margin: 0;
   border-top: none;
@@ -735,7 +735,7 @@ a {
   text-transform: capitalize;
   text-align: right;
   padding: 4px 8px;
-  border-bottom: 1px dotted #ffca34;
+  border-bottom: 1px dotted #222;
   margin: 0 4px;
 }
 .lang-wrapper ul li:last-child {
@@ -770,7 +770,7 @@ a {
   justify-content: center;
 }
 .mobile-share-menu-item a.menu-item:hover {
-  color: #ffca34 !important;
+  color: #222 !important;
   cursor: default !important;
 }
 li.nav-expandable {
@@ -788,7 +788,7 @@ li.nav-expandable .nav-expandable-item {
   }
 }
 li.nav-expandable .nav-expandable-item a.menu-item {
-  color: #ffca34;
+  color: #222;
   cursor: pointer;
   display: block;
   font-family: "Rubik Regular", "Lucida Sans Unicode", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -812,8 +812,8 @@ li.nav-expandable .nav-expandable-item a.menu-item {
   }
 }
 li.nav-expandable .nav-expandable-item .nav-expanded:hover + .nav-toggle-expanded {
-  border-left-color: #ffca34;
-  border-right-color: #ffca34;
+  border-left-color: #222;
+  border-right-color: #222;
 }
 li.nav-expandable .nav-expandable-item .nav-toggle-expanded {
   border-left: 2px solid transparent;
@@ -821,12 +821,12 @@ li.nav-expandable .nav-expandable-item .nav-toggle-expanded {
 }
 li.nav-expandable .nav-expandable-item .nav-toggle-expanded:hover {
   background-color: #fff;
-  color: #ffca34;
+  color: #222;
 }
 @media only screen and (max-width: 785px) {
   li.nav-expandable .nav-expandable-item .nav-toggle-expanded.active {
     background-color: #fff;
-    color: #ffca34;
+    color: #222;
   }
   li.nav-expandable .nav-expandable-item .nav-toggle-expanded.active + .nav-expanded {
     z-index: 55;
@@ -842,7 +842,7 @@ li.nav-expandable .nav-expandable-item .nav-toggle-expanded:hover {
 }
 li.nav-expandable .nav-expandable-item .how-to-use-video.active {
   background-color: #fff;
-  color: #ffca34;
+  color: #222;
 }
 li.nav-expandable .nav-expandable-item .how-to-use-video.active + .nav-expanded {
   z-index: 55;
@@ -858,9 +858,9 @@ li.nav-expandable .nav-expandable-item .nav-expanded {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   background-color: #fff;
-  border-left: 2px solid #ffca34;
-  border-right: 2px solid #ffca34;
-  border-bottom: 2px solid #ffca34;
+  border-left: 2px solid #222;
+  border-right: 2px solid #222;
+  border-bottom: 2px solid #222;
   border-top: 2px solid #fff;
   box-sizing: border-box;
   display: none;
@@ -1003,7 +1003,7 @@ li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns.nav-e
   margin-bottom: 5px;
 }
 li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns.nav-expanded-columns-bulletpoints .column-item-icon {
-  background-color: #ffca34;
+  background-color: #222;
   border-radius: 50%;
   width: 11px;
   height: 11px;
@@ -1039,7 +1039,7 @@ li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-
 }
 li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-expanded-columns-inner make-row .column-item-icon,
 li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-expanded-columns-inner .expanded-column-item .column-item-icon {
-  color: #ffca34;
+  color: #222;
   font-size: 32px;
   position: absolute;
 }
@@ -1101,7 +1101,7 @@ li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-
   font-family: "Rubik Light", "Lucida Sans Unicode", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .how-to-content .nav-faq-help-links a:hover {
-  color: #ffca34;
+  color: #222;
 }
 @media only screen and (max-width: 785px) {
   .how-to-content {
@@ -1128,7 +1128,7 @@ li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-
   position: relative;
   text-align: center;
   padding: 10px;
-  border: 2px solid #ffca34;
+  border: 2px solid #222;
   border-bottom: none;
   line-height: 1.5em;
 }
@@ -1163,7 +1163,7 @@ li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-
 }
 .social-list .button {
   color: #fff;
-  background: #ffca34;
+  background: #222;
   border: none;
   font-size: 15px;
   margin: 5px 0;
@@ -1311,10 +1311,10 @@ li.nav-expandable .nav-expandable-item .nav-expanded .nav-expanded-columns .nav-
   background: #8a8a8a;
 }
 .btn.primary {
-  background: #ffca34;
+  background: #222;
 }
 .btn.primary:hover {
-  background: #ffc215;
+  background: #1f1f1f;
 }
 .btn.block {
   width: 100%;
@@ -1372,7 +1372,7 @@ body .page-lang-rtl .lang-wrapper .lang-current:after {
   right: auto;
   padding: 0 4px 0 0;
   border-left: none;
-  border-right: 1px solid #ffca34;
+  border-right: 1px solid #222;
 }
 @media only screen and (min-width: 786px) {
   body .page-lang-rtl .lang-wrapper {

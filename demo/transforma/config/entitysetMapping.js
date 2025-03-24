@@ -10,8 +10,7 @@ these keys will be replaced with their corresponding values
 */
 
 const toolsPage_entitysetMapping = {
-  "chartTypes": ["bubbles", "map", "linechart", "barrank", "spreadsheet"],
+  "chartTypes": [],
   "entitySets": {
-    //"country": "geo"  this moved to upgradeUrlV1toV2.js
   }
 };

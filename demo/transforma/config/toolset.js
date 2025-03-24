@@ -1,205 +1,44 @@
 var toolsPage_toolset = [
   {
-    id: "bubbles",
-    tool: "BubbleChart",
-    toolVariation: "Base",
-    config: "BubbleChart-reactive",
-    mainMarker: "bubble",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack",
-      "country_flags"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "bubbles",
-    image: "assets/images/chart/bubble-chart.png"
+    "id": "bubble_bransch",
+    "tool": "BubbleChart",
+    "toolVariation": "Base",
+    "mainMarker": "bubble",
+    "config": "BubbleChart-basic",
+    "dataSources": ["tva_branscher"],
+    "transition": "none",
+    "title": "Bransch",
+    "hideThumbnail": false,
+    "image": "assets/images/chart/bubble-chart.png",
+    "icon": "assets/images/chart/vizabi_bubbles.svg",
+    "url": ""
   },
   {
-    id: "mountain",
-    tool: "MountainChart",
-    toolVariation: "Base",
-    config: "MountainChart-v8",
-    mainMarker: "mountain",
-    dataSources: [
-      "povcalnet",
-      "sg",
-      "fasttrack",
-      "billy"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "income",
-    image: "assets/images/chart/income-chart.png"
+    "id": "bubble_countries",
+    "tool": "BubbleChart",
+    "toolVariation": "Base",
+    "mainMarker": "bubble",
+    "config": "BubbleChart-basic",
+    "dataSources": ["tva_countries"],
+    "transition": "none",
+    "title": "Countries",
+    "hideThumbnail": false,
+    "image": "assets/images/chart/bubble-chart.png",
+    "icon": "assets/images/chart/vizabi_bubbles.svg",
+    "url": ""
   },
   {
-    id: "clickmap",
-    tool: "BubbleMap",
-    toolVariation: "ClickMap",
-    config: "Click-to-navigate-map",
-    mainMarker: "bubble",
-    dataSources: [
-      "sg",
-      "fasttrack"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "clickmap",
-    hideThumbnail: true,
-    image: "assets/images/chart/maps-chart.png"
-  },
-  {
-    id: "map",
-    tool: "BubbleMap",
-    toolVariation: "Base",
-    config: "BubbleMap-reactive",
-    mainMarker: "bubble",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "maps",
-    image: "assets/images/chart/maps-chart.png"
-  },
-  {
-    id: "linechart",
-    tool: "LineChart",
-    toolVariation: "Base",
-    config: "LineChart-reactive",
-    mainMarker: "line",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    transition: [
-      "show",
-      "time"
-    ],
-    title: "trends",
-    image: "assets/images/chart/trends-chart.png"
-  },
-  {
-    id: "linechart-global",
-    tool: "LineChart",
-    toolVariation: "Base",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    transition: [
-      "none"
-    ],
-    title: "globaltrends",
-    config: "LineChart-global",
-    mainMarker: "line",
-    hideThumbnail: true,
-    image: "assets/images/chart/globaltrends-chart.png"
-  },
-  {
-    id: "barrank",
-    tool: "BarRank",
-    toolVariation: "Base",
-    config: "BarRank-reactive",
-    mainMarker: "bar",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "ranks",
-    image: "assets/images/chart/ranks-chart.png"
-  },
-  {
-    id: "popbyage",
-    title: "ages",
-    image: "assets/images/chart/ages-chart.png",
-    tool: "PopByAge",
-    toolVariation: "Base",
-    config: "PopByAge-v5",
-    mainMarker: "pyramid",
-    dataSources: [
-      "pop"
-    ]
-  },
-  {
-    id: "spreadsheet",
-    title: "spreadsheet",
-    image: "assets/images/chart/spreadsheet.png",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    tool: "Spreadsheet",
-    toolVariation: "Base",
-    config: "Spreadsheet-reactive",
-    mainMarker: "spreadsheet",
-    hideThumbnail: true
-  },
-  {
-    id: "extapimap",
-    tool: "ExtApiMap",
-    toolVariation: "Base",
-    config: "ExtApiMap",
-    mainMarker: "bubble",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "extapimap",
-    hideThumbnail: true,
-    image: "assets/images/chart/extapimap.png"
-  },
-  {
-    id: "combo-emap-bc",
-    tool: "Combo",
-    toolVariation: "Base",
-    toolComponents: [
-      "ExtApiMap",
-      "BubbleChart"
-    ],
-    config: "Combo-emap-bc",
-    mainMarker: "bubble",
-    dataSources: [
-      "sg",
-      "wdi",
-      "fasttrack"
-    ],
-    transition: [
-      "select",
-      "time"
-    ],
-    title: "combo-emap-bc",
-    hideThumbnail: true,
-    image: "assets/images/chart/combo-emap-bc.png"
-  },
-  {
-    id: "dollar-street",
-    url: "http://www.gapminder.org/dollar-street",
-    image: "assets/images/chart/dollar-street.png",
-    title: "dollar_street"
+    "id": "bubble_lan",
+    "tool": "BubbleChart",
+    "toolVariation": "Base",
+    "mainMarker": "bubble",
+    "config": ["BubbleChart-basic"],
+    "dataSources": "tva_lan",
+    "transition": "none",
+    "title": "Län",
+    "hideThumbnail": false,
+    "image": "assets/images/chart/bubble-chart.png",
+    "icon": "assets/images/chart/vizabi_bubbles.svg",
+    "url": ""
   }
 ];
