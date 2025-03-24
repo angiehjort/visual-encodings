@@ -1,0 +1,248 @@
+@charset "UTF-8";
+@keyframes rotate-forever {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+.vzb-hidden {
+  display: none !important;
+}
+
+.vzb-invisible {
+  visibility: hidden !important;
+}
+
+.vzb-pointerevents-none {
+  pointer-events: none !important;
+}
+
+.vzb-blur {
+  filter: blur(3px);
+}
+
+.vzb-transparent {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.vzb-tool .vzb-spreadsheet {
+  direction: ltr;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-auto-rows: 0;
+  grid-auto-columns: 0;
+}
+
+.vzb-tool .vzb-spreadsheet {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  grid-row-start: 1;
+  grid-row-end: -1;
+  grid-column-start: 1;
+  grid-column-end: -1;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-title {
+  flex: none;
+  width: 100%;
+  padding: 10px 5px;
+  cursor: pointer;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-title:hover {
+  text-decoration: underline;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-title::after {
+  margin-left: 3px;
+  content: "▾";
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-select {
+  display: inline-block;
+  position: relative;
+  width: unset;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-select::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 0.4em solid transparent;
+  border-top: 0.6em solid #425663;
+  top: calc(50% - 0.3em);
+  right: 0.2em;
+  pointer-events: none;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-select select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: inherit;
+  padding: 0.2em 1.2em 0.2em 0.2em;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about {
+  flex: none;
+  padding: 10px 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-conceptkey {
+  font-style: italic;
+  margin-right: 5px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-conceptvalue {
+  white-space: normal;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about div {
+  width: 100%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions {
+  flex: none;
+  padding: 10px 5px;
+  text-transform: uppercase;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div {
+  position: absolute;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div.vzb-spreadsheet-viewas {
+  left: 5px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div.vzb-spreadsheet-downloadas {
+  right: 5px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions a {
+  margin-left: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions a:hover {
+  text-decoration: underline;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div.vzb-spreadsheet-downloadas a::before {
+  content: "⏬";
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table {
+  flex: auto;
+  padding: 10px 5px 0px 5px;
+  display: flex;
+  flex-direction: row;
+  overflow: scroll;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers {
+  overflow: hidden;
+  padding-right: 0;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-keytable-wrapper .viz-spreadsheet-keytable {
+  overflow: hidden;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper {
+  display: flex;
+  overflow: hidden;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table-header {
+  overflow: hidden;
+  flex: none;
+  max-height: calc(2em + 3px);
+  padding-right: 5px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table {
+  overflow: scroll;
+  padding-right: 5px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table .viz-spreadsheet-headrow {
+  line-height: 0;
+  opacity: 0;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table .viz-spreadsheet-headrow td {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-keycell {
+  display: none;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table .viz-spreadsheet-tablerow td {
+  height: 2em;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table .vzb-spreadsheet-loading {
+  font-style: italic;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+.vzb-tool table {
+  border-spacing: 2px 0;
+}
+.vzb-tool table tr {
+  line-height: 2em;
+}
+.vzb-tool table tr:first-child {
+  font-weight: bold;
+}
+.vzb-tool table tr:first-child td {
+  border-bottom: 1px solid #607889;
+}
+.vzb-tool table .viz-spreadsheet-tablerow:nth-child(2n+3) {
+  background: #f2fafc;
+}
+.vzb-tool table.viz-spreadsheet-table, .vzb-tool table.viz-spreadsheet-table-header {
+  display: block;
+}
+.vzb-tool table.viz-spreadsheet-table .viz-spreadsheet-keycell, .vzb-tool table.viz-spreadsheet-table-header .viz-spreadsheet-keycell {
+  font-family: inherit;
+  text-align: inherit;
+  padding-left: inherit;
+}
+.vzb-tool table.viz-spreadsheet-table td, .vzb-tool table.viz-spreadsheet-table-header td {
+  font-family: monospace;
+  text-align: right;
+  padding-left: 10px;
+}
+.vzb-tool .viz-spreadsheet-keytable {
+  display: block;
+}
+.vzb-tool .viz-spreadsheet-keytable .viz-spreadsheet-headrow td::before {
+  content: attr(data-caption);
+  position: absolute;
+  margin-top: calc(-2em + 1px);
+  width: calc(100% - 5px);
+  border-bottom: 1px solid #607889;
+  background-color: white;
+}
+.vzb-tool .viz-spreadsheet-keytable-wrapper {
+  position: relative;
+  margin-top: 2em;
+  flex: none;
+}
+.vzb-tool .viz-spreadsheet-table-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.vzb-tool.vzb-small .vzb-spreadsheet {
+  font-size: 8px;
+}
+.vzb-tool.vzb-small .vzb-spreadsheet div#vzb-spreadsheet-title {
+  font-size: 1.38em;
+}
+.vzb-tool.vzb-medium .vzb-spreadsheet {
+  font-size: 12px;
+}
+.vzb-tool.vzb-medium .vzb-spreadsheet div#vzb-spreadsheet-title {
+  font-size: 1.6em;
+}
+.vzb-tool.vzb-large .vzb-spreadsheet {
+  font-size: 16px;
+}
+.vzb-tool.vzb-large .vzb-spreadsheet div#vzb-spreadsheet-title {
+  font-size: 2.1em;
+}

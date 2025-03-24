@@ -1,0 +1,3 @@
+VIZABI_MODEL = {
+};
+

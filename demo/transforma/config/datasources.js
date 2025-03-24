@@ -1,0 +1,44 @@
+var toolsPage_datasources = {
+  billy: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "billy/master",
+    name: "billy/master"
+  },
+  povcalnet: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "povcalnet/master",
+    name: "povcalnet/master"
+  },
+  sg: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "sg/master",
+    name: "sg/master"
+  },
+  pop: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "population/master",
+    name: "population/master"
+  },
+  wdi: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "wdi/master",
+    name: "wdi/master"
+  },
+  fasttrack: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "fasttrack/master",
+    name: "fasttrack/master"
+  },
+  country_flags: {
+    modelType: "ddfbw",
+    service: "https://small-waffle.gapminder.org",
+    dataset: "country-flags",
+    name: "country-flags"
+  }
+};
