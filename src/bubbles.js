@@ -116,12 +116,14 @@ class Chart {
         this.sScale = d3.scaleSqrt().domain(sDomain);
 
         this.cScale = d3.scaleOrdinal().domain(["americas", "africa", "asia", "europe"])
-            .range(["#7feb00", "#00d5e9", "#ff5872", "#ffe700"])
-            .unknown("#ffb600");
+            //.range(["#7feb00", "#00d5e9", "#ff5872", "#ffe700"])
+            .range(["#00bc8d", "#00bc8d", "#00bc8d", "#00bc8d"])
+            .unknown("#00bc8d");
 
         this.lScale = d3.scaleOrdinal().domain(["americas", "africa", "asia", "europe"])
-            .range(["#00b900", "#0098df", "#da0025", "#fbaf09"])
-            .unknown("#fb6d19");
+            //.range(["#00b900", "#0098df", "#da0025", "#fbaf09"])
+            .range(["#00503c", "#00503c", "#00503c", "#00503c"])
+            .unknown("#00503c");
         
       }
 
@@ -174,28 +176,42 @@ class Chart {
             })
         }
 
-        const cicles = this.container.selectAll("circle")
-            .data(dataArray, d => d.geo)
-            .join("circle")
-            .style("visibility", d => !d.GDP || !d.LEX || !d.POP ? "hidden" : null)
 
+
+
+        const circles = this.container.selectAll("circle")
+            .data(dataArray, d => d.geo)
+            .style("visibility", d => !d.GDP || !d.LEX || !d.POP ? "hidden" : null)
+        
+        circles.exit().remove();
+        circles.enter().append("circle")
+            .attr("cx", d => this.xScale(d.GDP))
+            .attr("cy", d => this.yScale(d.LEX))
+            .attr("r", d => this.sScale(d.POP))
+            .attr("fill", d => this.cScale(d.region))
+            .attr("stroke", d => this.lScale(d.region))
+            .style("opacity", this.parent.dragging ? 0.6 : 0.2);
+        
         if(!duration || !this.parent.playing)
-            cicles.interrupt()
+            circles.interrupt()
                 .attr("cx", d => this.xScale(d.GDP))
                 .attr("cy", d => this.yScale(d.LEX))
                 .attr("r", d => this.sScale(d.POP))
                 .attr("fill", d => this.cScale(d.region))
                 .attr("stroke", d => this.lScale(d.region))
-                .style("opacity", this.parent.dragging ? 1 : 0.5);
+                .style("opacity", this.parent.dragging ? 0.6 : 0.2);
         else 
-            cicles
+            circles
                 .transition().duration(duration).ease(d3.easeLinear)
                 .attr("cx", d => this.xScale(d.GDP))
                 .attr("cy", d => this.yScale(d.LEX))
                 .attr("r", d => this.sScale(d.POP))
                 .attr("fill", d => this.cScale(d.region))
                 .attr("stroke", d => this.lScale(d.region))
-                .style("opacity", this.parent.dragging ? 1 : 0.5);
+                .style("opacity", d => this.parent.dragging ? 0.6 : (0.05 + Math.random() * 0.4));
+
+            
+
     }
 
 

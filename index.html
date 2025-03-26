@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Visual encodings</title>
+    <title>Vizabi Charts</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,13 +12,14 @@
     <link rel="stylesheet" href="./style-import.css">
     <link rel="stylesheet" href="./style-splitting.css">
     <link rel="stylesheet" href="./src/auth/user-login.css">
+    <link href="/assets/images/favicon.png" rel="shortcut icon">
 
     <script src="./src/index.js" type="module" defer></script>
 
 </head>
 
 <body>
-    <div class="ve-bgpattern"></div>
+    <!-- <div class="ve-bgpattern"></div> -->
 
 
 
@@ -26,7 +27,7 @@
         <div class="ve-startproject-inner-overlay">            
             <form class="ve-startproject">
                 <p class="ve-question">Upload an example of your data. <a onclick="toggle('why')">Why and how?</a></p>
-                <p class="ve-answer" id="why" style="display: none;">Every dataset is unique. Oftentimes importing it is tricky, so we prefer doing it manually for now to ensure your demo is as useful as possible. <br/> It's better if the dataset is large and varied encough, but we don't need all your data. Some 50-100 datapoints over 10-50 time intervals could be a good start. <br/> Send CSV or Excel files up to 10 MB each.</p>
+                <p class="ve-answer" id="why" style="display: none;">Every dataset is unique. Oftentimes importing it is tricky, so we prefer doing it manually for now to ensure your demo is as useful as possible. <br/> It's better if the dataset is large and varied enough, but we don't need all your data. Some 50-100 datapoints over 10-50 time intervals could be a good start. <br/> Send CSV or Excel files up to 10 MB each.</p>
 
                 <div class="ve-dropzone prevent-select">Drop files here</div>
 
@@ -42,16 +43,25 @@
 
 
     <header>
-        <div class="ve-logo">
-            <img src="./assets/images/logo.png">
-        </div>
+        <div id="ve-logo">
+            <span id="logo-container">
+                <script>
+                fetch('/assets/images/vizabi-logo-plainsvg.svg')
+                .then(r => r.text())
+                .then(svgText => {
+                    document.getElementById('logo-container').innerHTML = svgText;
+                });
+                </script>
+            </span>
+            <span>Vizabi Charts</span>
+        </div>        
         <div class="ve-menu">
-            <a onclick="scrollto('portfolio')">Solutions</a>
+            <a onclick="scrollto('portfolio')">Examples</a>
             <!-- <a>Corporate Workshops</a>
             <a>Free video lectures</a> -->
         </div>
         <div class="ve-actions">
-            <button class="ve-cta">Get in touch now</button>
+            <button class="ve-cta">Get help with charts</button>
             <!--span class="ve-login app-user-login"></span-->
         </div>
     </header>
@@ -64,8 +74,8 @@
     <section class="ve-hero">
         <div class="ve-bgimage"></div>
         <div class="ve-bubbles"></div>
-        <h1>Your work is important, your field is complex.</h1>
-        <h1 class="ve-title prevent-select" data-splitting>Do others understand what you do?</h1>
+        <h1>Your data work is important, but your charts have no life :(</h1>
+        <h1 class="ve-title prevent-select" data-splitting>Add «Play» Button to Your Data</h1>
         <div class="ve-timeslider prevent-select">
             <div class="ve-ts-play">
                 <input type="checkbox" value="None" id="playpause" name="check" />
@@ -74,63 +84,35 @@
             
             <svg class="ve-ts-slider"><g><rect></rect><circle></circle></g></svg>
         </div>
-        <p>We help to explain your data visually with our custom graphs<br/>so that the truth can win over buzzwords</p>
-        <button class="ve-cta">Get in touch now</button>
+        <p>Vizabi is a software that animates numbers over time, bringing them to life — <br/>so that the truth can win over buzzwords</p>
+        
     </section>
 
 
 
 
 
-    <section class="ve-subhero">The team behind Gapminder’s <a href="https://gapminder.org/tools/" target="_blank">world famous visualizations</a> has 10 years of experience finding and sharing the untold stories hidden in complex data.</section>
+    <section class="ve-subhero">We are the team behind Gapminder’s <a href="https://gapminder.org/tools/" target="_blank">world famous visualizations</a>. <br/>We have 10+ years of experience making fun charts for telling complex data stories. <br/>You can use these charts too now!</section>
 
-
-
-
-
-
-    <section class="ve-easysteps">
-        <h1>With our help you can become a source of clarity at your organisation in 3 easy steps:</h1>
-        <div class="ve-box">
-            <div class="ve-step">
-                <div class="ve-img" style='background-image: url("./assets/images/easy1.png")'>
-                    <div class="ve-stepnumber">1</div>
-                </div>
-                <div class="ve-steptext">Upload your data</div>
-            </div>
-            <div class="ve-step">
-                <div class="ve-img" style='background-image: url("./assets/images/easy2.png")'>
-                    <div class="ve-stepnumber">2</div>
-                </div>
-                <div class="ve-steptext">Receive a free demo + a customised offer</div>
-            </div>
-            <div class="ve-step">
-                <div class="ve-img" style='background-image: url("./assets/images/easy3.png")'>
-                    <div class="ve-stepnumber">3</div>
-                </div>
-                <div class="ve-steptext">Explore your demo. Take it to stage! <br/>...<br/>Make us your vendor of visual explanations</div>
-            </div>
-        </div>
+    <a href="https://gapminder.org/tools/" target="_blank">
+    <section class="ve-chartsfromtoolspage">
+        <img src="/assets/images/charts.png"/>
     </section>
-
-
-
+    </a>
 
 
     <section class="ve-youget">
         <div class="ve-left">
-            <h1>What you get</h1>
-            <p>You get a usable free demo graph with your data in it. You can use the demo graph as you like — explore your data to make fact-based decisions or take it on stage to present like a TED-talk</p>
-            <p>You get expert suggestions how we can collaborate on customising the graphs to serve your needs better, with price and time estimates</p>            
-            <p>You get to become a source of clarity at your organisation — for yourself, your employees, your clients and investors</p>
+            <h1>Free to use</h1>
+            <p>Vizabi software is open source, offered under MIT license. Anyone can use it for free, even commerially.</p>
+            <p>We didn't write proper documentation <span style="font-style:italic">yet</span>, but there are examples in our Observable notebooks, <a href="https://observablehq.com/@vizabi/bubblechart-minimalist-example">take a look</a></p>
         </div>
-        <!--div class="ve-right">
-            <div class="ve-video"></div>
-            <div class="ve-videotext">How to work with us? <br/> Watch the video</h1>
-        </div-->
+        <div class="ve-right">
+            <h1>Pay for support and customisation</h1>
+            <p>We can help you with data wrangling, adding data to the charts and customising them. Or make new charts for you.</p>
+            <button class="ve-cta">Get in touch now</button>
+        </div>
     </section>
-
-
 
 
 
@@ -146,10 +128,49 @@
                 <div class="ve-link"><a class = "ve-goto"></a></div>
             </div>
         </div>
-        <h1>Our solutions</h1>
+        <h1>Examples</h1>
         <div class="ve-grid"></div>
+    </section>
+
+
+
+
+
+
+
+
+
+    <section class="ve-easysteps">
+        <h1>Our process looks like this:</h1>
+        <div class="ve-box">
+            <div class="ve-step">
+                <!-- <div class="ve-img" style='background-image: url("./assets/images/easy1.png")'>
+                    <div class="ve-stepnumber">1</div>
+                </div> -->
+                <div class="ve-steptext">1. You send us a sample of your data, describe your needs and get a quote</div>
+            </div>
+            <div class="ve-step">
+                <!-- <div class="ve-img" style='background-image: url("./assets/images/easy2.png")'>
+                    <div class="ve-stepnumber">2</div>
+                </div> -->
+                <div class="ve-steptext">2. We start with a small chart demo and adjust with your feedback, until the chart works for you</div>
+            </div>
+            <div class="ve-step">
+                <!-- <div class="ve-img" style='background-image: url("./assets/images/easy3.png")'>
+                    <div class="ve-stepnumber">3</div>
+                </div> -->
+                <div class="ve-steptext">3. You embed the result in your web page. Use it to learn and teach your data stories</div>
+            </div>
+        </div>
         <button class="ve-cta">Get in touch now</button>
     </section>
+
+
+
+
+
+
+
 
 
 
@@ -157,23 +178,28 @@
     <section class="ve-faq">        
         <h1>Questions and answers</h1>
         <div class="ve-question">
+            <div class="ve-header">Do you expect me to pay for open source software that is available to everyone?</div>
+            <div class="ve-answer">Yes.</div>
+        </div>
+
+        <div class="ve-question">
             <div class="ve-header">How can i be sure my data is safe with you?</div>
             <div class="ve-answer">We treat customer data with respect and care. We sign NDA if needed.</div>
         </div>
 
         <div class="ve-question">
             <div class="ve-header">What does it cost?</div>
-            <div class="ve-answer">Depends a lot on how complex is the data. There are multiple options with how the charts can be customised or developed for your particular case. That's why we need to see the data first to give you an offer with different price options.</div>
+            <div class="ve-answer">Depends a lot on how complex is the data. Prices range between 1000$ and 100&nbsp000$ and last between a week and a year. There are multiple options with how the charts can be customised or developed for your particular case. That's why we need to see the data first to give you an offer with different price options.</div>
         </div>
         
         <div class="ve-question">
             <div class="ve-header">What file formats do you support?</div>
-            <div class="ve-answer">Xlsx, csv, tsv. As well as google or microsoft online spreadsheet</div>
+            <div class="ve-answer">Let's get started with xlsx, csv, tsv or google/microsoft online spreadsheet. It's better if the dataset is large and varied enough, but we don't need all your data. Some 50-100 datapoints over 10-50 time intervals could be a good start. If the project evolves, we can add a bridge to your database</div>
         </div>
         
         <div class="ve-question">
             <div class="ve-header">Will the demo keep working?</div>
-            <div class="ve-answer">Yes for 3 weeks. This may be all you need, otherwise we offer a 1 year maintenance of the demo for a small fee</div>
+            <div class="ve-answer">Yes, for 3 weeks. This may be all you need, otherwise we offer a 1 year maintenance of the demo for a small fee</div>
         </div>
         
         <div class="ve-question">
@@ -218,10 +244,10 @@
         </div>
         <h1>History</h1>
         <p>
-            We grew our expertise about charts and data stories at Gapminder, a non-profit independent foundation on a mission of fighting ignorance with a fact-based worldview. To keep the foundation focused on the mission we had to turn down most of the commercial requests from companies and organizations who would like to use beautiful Gapminder animated graphs for their own purposes. 
+            We built Vizabi charts at Gapminder, a non-profit independent foundation on a mission of fighting ignorance with a fact-based worldview. To keep the foundation focused on the mission we had to turn down most of the commercial requests from companies and organizations who wanted to use beautiful Gapminder animated graphs for their own purposes. 
         </p>            
         <p>            
-            Visual Encodings AB is our separate for-profit company that helps you use these graphs with your own data and add customisations for your own stories. Or we can make new graphs for you. 
+            Visual Encodings AB is Angie's for-profit company that was established for exactly that purpose — helping you to use Vizabi software and our chart expertise
         </p>
     </section>
 
@@ -231,14 +257,13 @@
         <h1>Contact info</h1>
         <p>Visual Encodings LLC</p>
         <p>email: <a href="mailto:info@visual-encodings.com" target="_blank" rel="noopener noreferrer">info@visual-encodings.com</a></p>
-        <p>Post address: <br/> c/o Helio och Gapminder <br/> Hornsbruksgatan 23 B <br/> 117 34 Stockholm, Sweden</p>
         <p>VAT number: SE559474020001</p>
         <p>Org number: 559474-0200</p>
     </section>
 
     <footer>
         <div class="ve-footerbox">
-            <a style="grid-column: 1" onclick="scrollto('portfolio')">Solutions</a>
+            <a style="grid-column: 1" onclick="scrollto('portfolio')">Examples</a>
             <!-- <a style="grid-column: 1">Corporate Workshops</a>
             <a style="grid-column: 1">Free video lectures & PDFs</a> -->
             <a style="grid-column: 2; grid-row: 1;" onclick="toggle('about', true)" >About & Who we are</a>

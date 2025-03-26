@@ -5,7 +5,7 @@
 }
 
 /* LARGE */
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1381px) {
     :root {
         --xlarge: 48px;
         --large: 36px;
@@ -21,12 +21,15 @@
   }
 
 /* MEDIUM */
-@media screen and (min-width: 640px) and (max-width: 1023px) {
+@media screen and (min-width: 900px) and (max-width: 1380px) {
+    br {
+        display: none;
+    }
     :root {
         --xlarge: 36px;
-        --large: 24px;
-        --medium: 18px;
-        --small: 12px;
+        --large: 30px;
+        --medium: 22px;
+        --small: 16px;
         --section-margin: 40px;
         --popup-width: 70vw;
         --popup-height: 70vh;
@@ -36,12 +39,12 @@
 }
 
 /* SMALL */
-@media screen and (max-width: 659px) {
+@media screen and (max-width: 899px) {
     :root {
         --xlarge: 24px;
-        --large: 18px;
-        --medium: 12px;
-        --small: 8px;
+        --large: 20px;
+        --medium: 18px;
+        --small: 12px;
         --section-margin: 30px;
         --popup-width: 80vw;
         --popup-height: 80vh;
@@ -49,6 +52,7 @@
         --large-popup-height: min(95vh, 900px);
     }
 }
+
 
 .prevent-select {
     -webkit-user-select: none; /* Safari */
@@ -120,14 +124,22 @@ button {
     background-image:  repeating-radial-gradient( circle at 0 0, var(--theme-color1) 0, var(--theme-color1) 4px ), repeating-linear-gradient( #ffffff55, #ffffff );
 }
 
-.ve-subhero, .ve-easysteps, .ve-youget, .ve-portfolio, .ve-faq, .ve-negative, .ve-footerbox, .ve-contact, .ve-about {
-    max-width: 800px;
+.ve-subhero, .ve-easysteps, .ve-youget, .ve-portfolio, .ve-faq, .ve-negative, .ve-footerbox, .ve-contact, .ve-about, .ve-chartsfromtoolspage img{
+    max-width: 900px;
     width: 80%;
     margin-left: auto;
     margin-right: auto;
     margin-top: var(--section-margin);
     margin-bottom: var(--section-margin);
 }
+
+.ve-chartsfromtoolspage {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #f5f9fb;
+}
+
 
 .ve-startproject-outer-overlay {
     display: none;
@@ -236,12 +248,22 @@ header {
     align-items: center;
     row-gap: 20px;
 }
-    header .ve-logo { 
+
+    header #ve-logo svg {
+        width: 50px;             
+        height: 50px; 
+        margin-right: 10px;            
     }
-        header .ve-logo img {
-            width: 40px;             
-            height: 40px;             
-        }
+    header #ve-logo svg path {
+        fill: var(--theme-color0)
+
+    }
+    header #ve-logo {
+        height: 50px;     
+        height: 50px;
+        display: flex;
+        align-items: center;        
+    }
     header .ve-menu {
         padding-left: 20px;
     }
@@ -300,16 +322,21 @@ HERO
     z-index: -1;
 }
 .ve-hero .ve-title {
-    font-size: 5.5vw;
+    font-size: 6vw;
     width: 95%;
     max-width: unset;
     z-index: 1;
+}
+.ve-hero p {
+    margin-bottom: 1em;
+}
+.ve-hero h1 {
+    margin-bottom: 0.4em;
 }
 .ve-hero h1, .ve-hero p {
     text-align: center;
     width: 90%;
     margin-top: 0.4em;
-    margin-bottom: 0.4em;
     font-size: var(--large);
     z-index: 1;
 }
@@ -448,7 +475,6 @@ YOU GET
 
 .ve-youget {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: 10%;
 }
@@ -502,8 +528,8 @@ PORTFOLIO
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     margin-bottom: 10px;
 }
-.ve-portfolio .ve-cta {
-    margin: 0 auto;
+.ve-portfolio .ve-cta, .ve-easysteps .ve-cta {
+    margin: 1em auto;
     width: 40%;
     min-width: 250px;
     display: block;

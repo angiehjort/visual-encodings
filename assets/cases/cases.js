@@ -3,22 +3,13 @@ const newTab = "⧉";
 export default function CASES() {return [
     {
         text: "For municipal statistics",
-        title: "Case: Södertörnsmodellen (Södertörn model) — 2018",
-        description: "The Södertörn model is an open tool that makes it easier to highlight differences, similarities and trends between different areas in the municipalities of Södertörn area. The tool shows facts about ecological, economic and social sustainability.",
+        title: "Case: Boendebarometer (The Housing Gauge) — 2025",
+        description: "",
         linktext: "Live version " + newTab,
-        link: "./demo/sodertornsmodellen/",
-        image: "./assets/cases/sodertorn.jpg",
-        gif: "./assets/cases/sodertorn.gif",
-        iframe: "https://www.youtube.com/embed/0mElY3bN-Sg?si=Lu_6pNDo8M7Pxh9X"
-    },{
-        text: "For census results and policy analysis",
-        title: "Case: Migration between provinces in South Africa — 2016",
-        description: "Made as part of a presentation for Community survey (small census) of 2016 in collaboration with Stats SA through Gapminder",
-        linktext: "Expand the live version " + newTab,
-        link: "./demo/migration/index.html",
-        image: "./assets/cases/migration.jpg",
-        gif: "./assets/cases/migration.gif",
-        iframe: "./demo/migration/index.html?embedded=true"
+        link: "./demo/boendebarom/",
+        image: "./assets/cases/city.jpg",
+        gif: "./assets/cases/city.gif",
+        iframe: "https://www.youtube.com/embed/lSYU5X3ETf8?si=LZpmhJMaMbdXLe5b&rel=0"
     },{
         text: "For interactive teaching",
         title: "Case: Income mountains — ongoing since 2015",
@@ -28,6 +19,15 @@ export default function CASES() {return [
         image: "./assets/cases/mountains.jpg",
         gif: "./assets/cases/mountains.gif",
         iframe: "https://www.gapminder.org/tools/?embedded=true#$model$markers$billy$encoding$selected$data$;;;;;;&chart-type=mountain&url=v1"
+    },{
+        text: "For census results and policy analysis",
+        title: "Case: Migration between provinces in South Africa — 2016",
+        description: "Made as part of a presentation for Community survey (small census) of 2016 in collaboration with Stats SA through Gapminder",
+        linktext: "Expand the live version " + newTab,
+        link: "./demo/migration/index.html",
+        image: "./assets/cases/migration.jpg",
+        gif: "./assets/cases/migration.gif",
+        iframe: "./demo/migration/index.html?embedded=true"
     },{
         text: "For more complex data and stories",
         title: "Case: Södertörnsmodellen (Södertörn model) — 2018",
@@ -48,12 +48,14 @@ export default function CASES() {return [
         iframe: "https://www.youtube.com/embed/v7WUpgPZzpI?si=dzjT6W-yH3dgaHBg?cc_load_policy=1&cc_lang_pref=en"
     },{
         text: "For sustainable cities",
-        title: "Case: Boendebarometer (The Housing Gauge) — 2024",
-        description: "",
+        title: "Case: Södertörnsmodellen (Södertörn model) — 2018",
+        description: "The Södertörn model is an open tool that makes it easier to highlight differences, similarities and trends between different areas in the municipalities of Södertörn area. The tool shows facts about ecological, economic and social sustainability.",
         linktext: "Live version " + newTab,
-        link: "./demo/boendebarom/",
-        image: "./assets/cases/city.jpg",
-        gif: "./assets/cases/city.gif",
-        video: "./assets/cases/city-large.mp4"
+        link: "./demo/sodertornsmodellen/",
+        image: "./assets/cases/sodertorn.jpg",
+        gif: "./assets/cases/sodertorn.gif",
+        iframe: "https://www.youtube.com/embed/0mElY3bN-Sg?si=Lu_6pNDo8M7Pxh9X"
+
+
     }
 ]};
