@@ -6,12 +6,16 @@
 
 /* LARGE */
 @media screen and (min-width: 1381px) {
+    .small{
+        display: none;
+    }
     :root {
         --xlarge: 48px;
         --large: 36px;
         --medium: 24px;
         --small: 18px;
         --section-margin: 50px;
+        --width: 80%;
         --popup-width: max(40vw, 600px);
         --popup-height: max(70vh, 900px);
 
@@ -25,12 +29,16 @@
     br {
         display: none;
     }
+    .small{
+        display: none;
+    }
     :root {
         --xlarge: 36px;
         --large: 30px;
         --medium: 22px;
         --small: 16px;
         --section-margin: 40px;
+        --width: 80%;
         --popup-width: 70vw;
         --popup-height: 70vh;
         --large-popup-width: min(90vw, 900px);
@@ -40,12 +48,22 @@
 
 /* SMALL */
 @media screen and (max-width: 899px) {
+    br {
+        display: none;
+    }
+    .large{
+        display: none;
+    }
+    .medium{
+        display: none;
+    }
     :root {
         --xlarge: 24px;
         --large: 20px;
         --medium: 18px;
         --small: 12px;
         --section-margin: 30px;
+        --width: 90%;
         --popup-width: 80vw;
         --popup-height: 80vh;
         --large-popup-width: min(90vw, 900px);
@@ -126,7 +144,7 @@ button {
 
 .ve-subhero, .ve-easysteps, .ve-youget, .ve-portfolio, .ve-faq, .ve-negative, .ve-footerbox, .ve-contact, .ve-about, .ve-chartsfromtoolspage img{
     max-width: 900px;
-    width: 80%;
+    width: var(--width);
     margin-left: auto;
     margin-right: auto;
     margin-top: var(--section-margin);
@@ -240,6 +258,7 @@ HEADER
 
 
 header {          
+    position: relative;
     width: 100%;
     display: flex;
     padding: 10px;
@@ -484,7 +503,6 @@ YOU GET
 }
 .ve-youget .ve-right {
     flex-basis: 40%;
-    text-align: center;
 }
 .ve-youget .ve-right .ve-video {
     max-width: 400px;
