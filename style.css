@@ -263,7 +263,7 @@ header {
     display: flex;
     padding: 10px;
     justify-content: space-around;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     row-gap: 20px;
 }
@@ -495,13 +495,16 @@ YOU GET
 .ve-youget {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 10%;
 }
 
 .ve-youget .ve-left {
-    flex-basis: 60%;
+    flex-grow: 1.5;
+    flex-basis: 50%;
 }
 .ve-youget .ve-right {
+    flex-grow: 1;
     flex-basis: 40%;
 }
 .ve-youget .ve-right .ve-video {
