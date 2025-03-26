@@ -1,6 +1,9 @@
 var toolsPage_properties = {
-  LANGUAGES: [
+  locales: [
     "sv-SE",
     "en"
-  ]
+  ],
+  DOCID_CMS: "1Co50oM-GDNcXb2W47JQASUibhpyIH2G2Cub4geW8udM",
+  DOCID_I18N: "1UKBPO0fxxUtreonaYEX5MV2g_kL-zAR6Dr8GlDvHDjE",
+  DEFAULT_LOCALE: "sv-SE"
 };

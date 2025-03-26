@@ -11,6 +11,12 @@ VIZABI_MODEL = {
           }
         },
         encoding: {
+          "show": {
+            modelType: "selection",
+            data: {
+              filter: { dimensions: { "geo": { "$not": { "is--deso": 1 } } } }
+            }
+          },
           "selected": {
             modelType: "selection",
             data: {
@@ -44,18 +50,19 @@ VIZABI_MODEL = {
           },
           "y": {
             data: {
-              concept: "m_efterg_25_64",
+              concept: "mean_dispink_20_64",
             },
             scale: {
+              zoomed: [100, 1000],
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
             }
           },
           "x": {
             data: {
-              concept: "m_dispin_20_64"
+              concept: "mean_eftergym_25_64",
             },
             scale: {
-              zoomed: [100, 1000],
+              zoomed: [0.15, 0.8],
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
             }
           },
@@ -151,7 +158,7 @@ VIZABI_MODEL = {
 
     //ui
     "buttons": {
-      "buttons": ["colors", "markercontrols", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
+      "buttons": ["markercontrols", "colors", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
     },
     "dialogs": {
       "dialogs": {
@@ -165,7 +172,7 @@ VIZABI_MODEL = {
           "colors",
           "label",
           "zoom",
-          "technical",
+          //"technical",
           "repeat",
           "presentation",
           "about"
@@ -177,7 +184,7 @@ VIZABI_MODEL = {
         "primaryDim": "geo",
         "drilldown": "region.kommun.regso",
         "shortcutForSwitch": true,
-        "shortcutForSwitch_allow": ["geo", "kommun", "regso"],
+        "shortcutForSwitch_allow": ["kommun", "regso"],
       }
     },
 
@@ -193,7 +200,7 @@ VIZABI_MODEL = {
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 0.8,
-      yearInBackground: true,
+      timeInBackground: true,
       yearInTrails: true,
       lockNonSelected: 0,
       panWithArrow: true,
@@ -229,8 +236,7 @@ VIZABI_MODEL = {
       }
     },
     "data-warning": {
-      doubtDomain: [1800, 1950, 2015],
-      doubtRange: [0, 0, 0]
+      enable: true
     },
     "tree-menu": {
       "showDataSources": false,

@@ -12,6 +12,12 @@ VIZABI_MODEL = {
           }
         },
         encoding: {
+          "show": {
+            modelType: "selection",
+            data: {
+              filter: { dimensions: { "geo": { "$not": { "is--deso": 1 } } } }
+            }
+          },
           "selected": {
             modelType: "selection",
             data: {
@@ -45,18 +51,19 @@ VIZABI_MODEL = {
           },
           "y": {
             data: {
-              concept: "m_efterg_25_64",
+              concept: "mean_dispink_20_64",
             },
             scale: {
+              zoomed: [100, 1000],
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
             }
           },
           "x": {
             data: {
-              concept: "m_dispin_20_64"
+              concept: "mean_eftergym_25_64",
             },
             scale: {
-              zoomed: [100, 1000],
+              zoomed: [0.15, 0.8],
               allowedTypes: ["linear", "log", "genericLog", "pow", "time"]
             }
           },
@@ -83,7 +90,7 @@ VIZABI_MODEL = {
             scale: {
               modelType: "size",
               allowedTypes: ["linear", "log", "genericLog", "pow", "point", "ordinal"],
-              extent: [0, 0.22]
+              extent: [0, 0.34]
             }
           },
           frame: {
@@ -120,7 +127,7 @@ VIZABI_MODEL = {
           // },
           "color_map": {
             data: {
-              concept: "m_efterg_25_64"
+              concept: "mean_eftergym_25_64"
             },
             scale: {
               modelType: "color"
@@ -195,7 +202,7 @@ VIZABI_MODEL = {
 
     //ui
     "buttons": {
-      "buttons": ["colors", "markercontrols", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
+      "buttons": ["markercontrols", "colors", "trails", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
     },
     "dialogs": {
       "dialogs": {
@@ -211,7 +218,7 @@ VIZABI_MODEL = {
           "mapoptions",
           "label",
           "zoom",
-          "technical",
+          //"technical",
           "about"
         ]
       },
@@ -236,7 +243,7 @@ VIZABI_MODEL = {
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 0.8,
-      yearInBackground: true,
+      timeInBackground: true,
       yearInTrails: true,
       lockNonSelected: 0,
       numberFormatSIPrefix: true,
@@ -306,7 +313,7 @@ VIZABI_MODEL = {
       }
     },
     "data-warning": {
-      enable: false
+      enable: true
     },
     "tree-menu": {
       "showDataSources": false,

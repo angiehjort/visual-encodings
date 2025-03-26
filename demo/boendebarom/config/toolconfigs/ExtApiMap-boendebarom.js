@@ -12,6 +12,12 @@ VIZABI_MODEL = {
           }
         },
         encoding: {
+          "show": {
+            modelType: "selection",
+            data: {
+              filter: { dimensions: { "geo": { "$not": { "is--deso": 1 } } } }
+            }
+          },
           "selected": {
             modelType: "selection"
           },
@@ -40,7 +46,6 @@ VIZABI_MODEL = {
           },
           "color_map": {
             data: {
-              concept: "m_efterg_25_64"
             },
             scale: {
               modelType: "color"
@@ -48,10 +53,9 @@ VIZABI_MODEL = {
           },
           "size": {
             data: {
-              concept: "m_efterg_25_64"
             },
             scale: {
-              modelType: "size"              
+              modelType: "size"
             }
           },
           "label": {
@@ -92,7 +96,6 @@ VIZABI_MODEL = {
           "frame": {
             modelType: "frame",
             speed: 200,
-            value: "2022",
             splash: true,
             data: {
               concept: "year"
@@ -166,23 +169,23 @@ VIZABI_MODEL = {
     layout: { projector: false },
     //ui
     "buttons": {
-      "buttons": ["mapcolors", "markercontrols", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
+      "buttons": ["markercontrols", "moreoptions", "presentation", "sidebarcollapse", "fullscreen"]
     },
     "dialogs": {
       "dialogs": {
         "popup": ["markercontrols", "moreoptions"],
-        "sidebar": ["markercontrols", "zoom"],
+        "sidebar": ["markercontrols"],
         "moreoptions": [
           "opacity",
           "speed",
           //"axes",
           "size",
           "colors",
-          //"label",
+          "label",
           "mapcolors",
           "mapoptions",
-          "technical",
-          "presentation",
+          //"technical",
+          //"presentation",
           "about"
         ]
       },
@@ -198,7 +201,9 @@ VIZABI_MODEL = {
       "opacityRegular": 0.8,
       "opacityHighlightDim": 0.3,
       labels: {
-        removeLabelBox: false
+        enabled: true,
+        dragging: true,
+        removeLabelBox: true
       },
       "map": {
         "missingDataColor": false, //"#999" or false for transparent
@@ -229,6 +234,9 @@ VIZABI_MODEL = {
           geoIdProperty: "id",
         }
       }
+    },
+    "data-warning": {
+      enable: true
     },
     "tree-menu": {
       "showDataSources": false,

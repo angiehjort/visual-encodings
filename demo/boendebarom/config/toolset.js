@@ -8,6 +8,7 @@ var toolsPage_toolset = [
       "BubbleChart"
     ],
     config: "Combo-eam-bc-boendebarom",
+    mainMarker: "bubble",
     dataSources: [
       "boendebarom",
       "kolada"
@@ -18,13 +19,15 @@ var toolsPage_toolset = [
     ],
     title: "combo-emap-bc",
     hideThumbnail: false,
-    image: "/assets/images/chart/combo-emap-bc.png"
+    image: "assets/images/chart/combo-emap-bc.png",
+    icon: "assets/images/chart/vizabi_mapandbubbles.svg"
   },
   {
     id: "bubbles",
     tool: "BubbleChart",
     toolVariation: "Base",
     config: "BubbleChart-boendebarom",
+    mainMarker: "bubble",
     dataSources: [
       "boendebarom",
       "kolada"
@@ -34,12 +37,13 @@ var toolsPage_toolset = [
       "time"
     ],
     title: "bubbles",
-    image: "/assets/images/chart/bubble-chart.png"
+    image: "assets/images/chart/bubble-chart.png",
+    icon: "assets/images/chart/vizabi_bubbles.svg"
   },
   {
     id: "spreadsheet",
     title: "spreadsheet",
-    image: "/assets/images/chart/spreadsheet.png",
+    image: "assets/images/chart/spreadsheet.png",
     dataSources: [
       "boendebarom",
       "kolada"
@@ -47,6 +51,7 @@ var toolsPage_toolset = [
     tool: "Spreadsheet",
     toolVariation: "Base",
     config: "Spreadsheet-boendebarom",
+    mainMarker: "spreadsheet",
     hideThumbnail: true
   },
   {
@@ -54,6 +59,7 @@ var toolsPage_toolset = [
     tool: "ExtApiMap",
     toolVariation: "Base",
     config: "ExtApiMap-boendebarom",
+    mainMarker: "bubble",
     dataSources: [
       "boendebarom",
       "kolada"
@@ -64,6 +70,7 @@ var toolsPage_toolset = [
     ],
     title: "extapimap",
     hideThumbnail: false,
-    image: "/assets/images/chart/extapimap.png"
+    image: "assets/images/chart/extapimap.png",
+    icon: "assets/images/chart/vizabi_map.svg"
   }
 ];

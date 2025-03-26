@@ -1,3 +1,0 @@
-VIZABI_MODEL = {
-};
-

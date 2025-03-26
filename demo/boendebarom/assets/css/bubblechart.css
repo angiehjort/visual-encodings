@@ -300,14 +300,6 @@
   visibility: hidden;
   pointer-events: none;
 }
-.vzb-tool .vzb-bubblechart.vzb-sm-chart .vzb-datawarning-button {
-  visibility: hidden;
-  pointer-events: none;
-}
-.vzb-tool .vzb-bubblechart.vzb-sm-last-chart .vzb-datawarning-button {
-  visibility: visible;
-  pointer-events: all;
-}
 .vzb-tool .vzb-bubblechart .vzb-bubblechart-svg-front {
   pointer-events: none;
 }
