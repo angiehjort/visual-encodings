@@ -26,7 +26,7 @@ export default function SendFiles(selector, supabase) {
 
     d3.selectAll(".ve-cta")
         .on("click", () => {
-            const email = "info@visual-encodings.com";
+            const email = "info@enchart.me";
             const subject = "Collaboration request";
             const emailBody = "Please provide info about your organisation and how you would like to collaborate. Attach example data files if you have any.";
             document.location = "mailto:"+email+"?subject="+subject+"&body="+emailBody;
