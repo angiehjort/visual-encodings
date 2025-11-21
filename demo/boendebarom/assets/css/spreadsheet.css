@@ -43,9 +43,9 @@
   display: flex;
   flex-direction: column;
   grid-row-start: 1;
-  grid-row-end: -1;
+  grid-row-end: 3;
   grid-column-start: 1;
-  grid-column-end: -1;
+  grid-column-end: 2;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-title {
   flex: none;
@@ -105,18 +105,16 @@
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions {
   flex: none;
   padding: 10px 5px;
-  text-transform: uppercase;
   min-height: 35px;
   display: flex;
   align-items: center;
-}
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div {
-  position: absolute;
+  justify-content: space-between;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div.vzb-spreadsheet-viewas {
   left: 5px;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div.vzb-spreadsheet-downloadas {
+  text-transform: uppercase;
   right: 5px;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions a {
@@ -129,46 +127,58 @@
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-actions div.vzb-spreadsheet-downloadas a::before {
   content: "⏬";
+  margin-right: 5px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table-export {
+  display: none;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table {
   flex: auto;
-  padding: 10px 5px 0px 5px;
   display: flex;
   flex-direction: row;
   overflow: scroll;
-}
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers {
-  overflow: hidden;
-  padding-right: 0;
-}
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-keytable-wrapper .viz-spreadsheet-keytable {
-  overflow: hidden;
-}
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper {
-  display: flex;
-  overflow: hidden;
-}
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table-header {
-  overflow: hidden;
-  flex: none;
-  max-height: calc(2em + 3px);
+  margin: 10px 0 0 8px;
   padding-right: 5px;
 }
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table {
-  overflow: scroll;
-  padding-right: 5px;
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table {
+  border-spacing: 0;
 }
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table .viz-spreadsheet-headrow {
-  line-height: 0;
-  opacity: 0;
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table td {
+  border-right: 2px solid white;
 }
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-table .viz-spreadsheet-headrow td {
-  padding-top: 0;
-  padding-bottom: 0;
-  border-bottom: none;
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table .viz-spreadsheet-tablerow:nth-child(2n+3) td.viz-spreadsheet-keycell {
+  background-color: #f2fafc;
 }
-.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table-wrapper .viz-spreadsheet-keycell {
-  display: none;
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table .viz-spreadsheet-tablerow.selected {
+  background-color: #9fbbc1 !important;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table .viz-spreadsheet-tablerow.selected .viz-spreadsheet-keycell {
+  background-color: #9fbbc1 !important;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table .viz-spreadsheet-tablerow.highlighted {
+  background-color: #4b98aa !important;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table .viz-spreadsheet-tablerow.highlighted .viz-spreadsheet-keycell {
+  background-color: #4b98aa !important;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table tr.viz-spreadsheet-headrow .viz-spreadsheet-keycell {
+  z-index: 3;
+  border-bottom-right-radius: 4px;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table tr.viz-spreadsheet-headrow td {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: white;
+  border-bottom-right-radius: 2px;
+  corner-shape: notch;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table.vzb-spreadsheet-table-fix-headers .viz-spreadsheet-table .viz-spreadsheet-keycell {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: white;
+  border-right: 4px solid white;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-table .viz-spreadsheet-tablerow td {
   height: 2em;
@@ -195,34 +205,15 @@
 .vzb-tool table .viz-spreadsheet-tablerow:nth-child(2n+3) {
   background: #f2fafc;
 }
-.vzb-tool table.viz-spreadsheet-table, .vzb-tool table.viz-spreadsheet-table-header {
-  display: block;
-}
-.vzb-tool table.viz-spreadsheet-table .viz-spreadsheet-keycell, .vzb-tool table.viz-spreadsheet-table-header .viz-spreadsheet-keycell {
+.vzb-tool table.viz-spreadsheet-table .viz-spreadsheet-keycell {
   font-family: inherit;
   text-align: inherit;
   padding-left: inherit;
 }
-.vzb-tool table.viz-spreadsheet-table td, .vzb-tool table.viz-spreadsheet-table-header td {
-  font-family: monospace;
+.vzb-tool table.viz-spreadsheet-table td {
+  font-family: var(--vzb-font-family-mono, Courier New, monospace);
   text-align: right;
   padding-left: 10px;
-}
-.vzb-tool .viz-spreadsheet-keytable {
-  display: block;
-}
-.vzb-tool .viz-spreadsheet-keytable .viz-spreadsheet-headrow td::before {
-  content: attr(data-caption);
-  position: absolute;
-  margin-top: calc(-2em + 1px);
-  width: calc(100% - 5px);
-  border-bottom: 1px solid #607889;
-  background-color: white;
-}
-.vzb-tool .viz-spreadsheet-keytable-wrapper {
-  position: relative;
-  margin-top: 2em;
-  flex: none;
 }
 .vzb-tool .viz-spreadsheet-table-wrapper {
   display: flex;
