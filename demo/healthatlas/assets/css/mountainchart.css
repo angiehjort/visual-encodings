@@ -1,0 +1,629 @@
+@keyframes rotate-forever {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+.vzb-hidden {
+  display: none !important;
+}
+
+.vzb-invisible {
+  visibility: hidden !important;
+}
+
+.vzb-pointerevents-none {
+  pointer-events: none !important;
+}
+
+.vzb-blur {
+  filter: blur(3px);
+}
+
+.vzb-transparent {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.vzb-tool .vzb-mountainchart {
+  direction: ltr;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-auto-rows: 0;
+  grid-auto-columns: 0;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg {
+  color: #666;
+  margin: 0;
+  overflow: hidden;
+  grid-row-start: 1;
+  grid-row-end: -1;
+  grid-column-start: 1;
+  grid-column-end: -1;
+  align-self: stretch;
+  justify-self: stretch;
+}
+
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-axis-x,
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-mountains-labels,
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-probe,
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-tooltip,
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-axis-info, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x text,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y text {
+  font-size: 0.8em;
+}
+
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-axis-x,
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-mountains-labels,
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-probe,
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-tooltip,
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-axis-info {
+  font-size: 1em;
+}
+
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-axis-x,
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-mountains-labels,
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-probe,
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-tooltip,
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-axis-info {
+  font-size: 1.24em;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x text,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y text {
+  fill: currentColor;
+  stroke: none;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x-title, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-title, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-subtitle, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-toptext {
+  color: #363E40;
+  cursor: pointer;
+  fill: currentColor;
+  stroke: white;
+  paint-order: stroke;
+  stroke-width: 4px;
+  stroke-opacity: 0.8;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x-title:hover, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-title:hover, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-subtitle:hover, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-toptext:hover {
+  text-decoration: underline;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-disabled.vzb-mc-axis-x-title, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-disabled.vzb-mc-title, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-disabled.vzb-mc-subtitle, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-disabled.vzb-billy-toptext {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-axis-x-title,
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-title, .vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-subtitle, .vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-closecross, .vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-ultrarich .vzb-billy-toptext {
+  font-size: 1em;
+}
+
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-axis-x-title,
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-title, .vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-subtitle, .vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-closecross, .vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-ultrarich .vzb-billy-toptext {
+  font-size: 1.24em;
+}
+
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-axis-x-title,
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-title, .vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-subtitle, .vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-closecross, .vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-ultrarich .vzb-billy-toptext {
+  font-size: 1.38em;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y {
+  color: #363E40;
+  fill: none;
+  stroke: #363E40;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x path,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y path,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x line,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y line {
+  fill: none;
+  shape-rendering: crispEdges;
+  stroke: #363E40;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x .tick line,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y .tick line,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x .tick-minor,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y .tick-minor {
+  stroke: #d6d6d6;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-info, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-info {
+  cursor: pointer;
+  opacity: 0.3;
+  pointer-events: visible;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-info path, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-info path {
+  fill: #607889;
+  stroke: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-info circle, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-info circle {
+  fill: none;
+  stroke: #607889;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-info:hover, .vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-info:hover {
+  opacity: 1;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip .stroke {
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-opacity: 0.7;
+  stroke-width: 3px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip text {
+  fill: #333;
+  pointer-events: none;
+  text-anchor: end;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip rect {
+  cursor: pointer;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip .vzb-tooltip-border {
+  fill: #fff;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label-shadow {
+  filter: alpha(opacity=70);
+  opacity: 0.7;
+  fill: #fff;
+  stroke: #fff;
+}
+
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-shadow,
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-label-shadow {
+  stroke-width: 2px;
+}
+
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-shadow,
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-label-shadow {
+  stroke-width: 3px;
+}
+
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-shadow,
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-label-shadow {
+  stroke-width: 3px;
+}
+
+.vzb-tool {
+  visibility: visible !important;
+}
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-first) .vzb-mc-title,
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-first) .vzb-mc-axis-info {
+  visibility: hidden;
+}
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-last) .vzb-mc-axis-x .tick text {
+  visibility: hidden;
+}
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-last) .vzb-mc-decorations .vzb-mc-x-axis-group,
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-last) .vzb-mc-axis-x-title {
+  visibility: hidden;
+}
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-last) .vzb-mc-ultrarich .vzb-billy-text {
+  visibility: hidden;
+}
+.vzb-tool .vzb-facet .vzb-facet-inner:not(.vzb-facet-row-last) .vzb-mc-ultrarich .vzb-billy-sign {
+  visibility: hidden;
+}
+.vzb-tool .vzb-mountainchart {
+  transform: translateZ(0);
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-eventarea {
+  fill: none;
+  pointer-events: all;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountain {
+  stroke: #fff;
+  stroke-opacity: 0.5;
+  stroke-width: 1px;
+  cursor: pointer;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountain.vzb-selected {
+  stroke: #000;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe text {
+  dominant-baseline: hanging;
+  fill: #607889;
+  stroke: #f2fafc;
+  paint-order: stroke;
+  stroke-width: 3px;
+  stroke-opacity: 0.8;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe text.vzb-mc-probe-extremepoverty {
+  font-variant: small-caps;
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe .vzb-mc-probe-value-head {
+  text-anchor: middle;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe .vzb-mc-probe-value-ul,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe .vzb-mc-probe-value-dl {
+  text-anchor: end;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe .vzb-mc-probe-value-ur,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe .vzb-mc-probe-value-dr {
+  text-anchor: start;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-probe line {
+  stroke: #999;
+  stroke-dasharray: 5 5;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-hl {
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-toptext {
+  stroke: white;
+  paint-order: stroke;
+  stroke-width: 2px;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-arrow {
+  cursor: pointer;
+  pointer-events: bounding-box;
+  fill: #c2c7e8;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-arrow:hover {
+  fill: #3342ae;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-sign {
+  cursor: pointer;
+  pointer-events: visible;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-sign .fill {
+  fill: #c2c7e8;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-sign #text {
+  visibility: hidden;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-sign #text div {
+  color: #3342ae;
+  white-space: pre-wrap;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  position: absolute;
+  right: 0px;
+  bottom: 2px;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-sign:hover .fill {
+  fill: #3342ae;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-sign:hover #text {
+  visibility: visible;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-text {
+  fill: #607889;
+  text-anchor: end;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-upperbox,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-lowerbox,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-arc {
+  fill: transparent;
+  pointer-events: none;
+  stroke: #607889;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-arc {
+  marker-end: url(#triangle);
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-ultrarich .vzb-billy-deselect-click-rect {
+  fill: transparent;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-dollarstreet .vzb-mc-ds-text-group {
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-dollarstreet .vzb-mc-ds-text-group .vzb-mc-ds-name {
+  text-transform: capitalize;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-dollarstreet .vzb-mc-ds-text-group .vzb-mc-ds-closecross.vzb-mc-ds-text {
+  pointer-events: bounding-box;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-dollarstreet .vzb-mc-ds-text-group .vzb-mc-ds-hint {
+  text-anchor: middle;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-dollarstreet .vzb-mc-ds-text-group .vzb-mc-ds-text {
+  fill: white;
+  stroke: black;
+  stroke-opacity: 0.7;
+  stroke-width: 0.2em;
+  paint-order: stroke;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels text,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels circle {
+  cursor: pointer;
+  fill: #607889;
+}
+.vzb-rtl.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label-text {
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-highlight .vzb-mc-label-shadow {
+  stroke: #ff0;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x-text {
+  transition: opacity 200ms linear;
+  cursor: pointer;
+  fill: #607889;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  font-size: 0.9em;
+  stroke: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x-text.vzb-revert-color {
+  fill: #607889;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x-icon {
+  transition: opacity 200ms linear;
+  fill: #fff;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
+  transition: opacity 200ms linear;
+  cursor: pointer;
+  pointer-events: all;
+  fill: #607889;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x.vzb-revert-color {
+  fill: #fff;
+  stroke: #607889;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x,
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-y {
+  pointer-events: none;
+}
+.vzb-rtl.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-title text {
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
+.vzb-rtl.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-subtitle text {
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-title text {
+  dominant-baseline: hanging;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-closecross {
+  cursor: pointer;
+  text-anchor: end;
+  fill: #425663;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-axis-x-title {
+  text-anchor: end;
+  pointer-events: none;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-decorations .vzb-mc-x-axis-groups text {
+  fill: #999;
+  dominant-baseline: central;
+  text-transform: uppercase;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-decorations .vzb-mc-x-axis-groups line {
+  stroke: #999;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-decorations .vzb-mc-x-axis-groups rect {
+  fill: #999;
+  opacity: 0.2;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-line {
+  fill: none;
+  stroke: #999;
+  stroke-width: 1px;
+}
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip text {
+  text-anchor: middle;
+}
+.vzb-rtl.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip text {
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-probe-value-head {
+  font-size: 0.625em;
+}
+.vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-ultrarich {
+  font-size: 1em;
+}
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-probe-value-head {
+  font-size: 0.625em;
+}
+.vzb-tool.vzb-medium .vzb-mountainchart .vzb-mc-ultrarich {
+  font-size: 0.8em;
+}
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-probe-value-head {
+  font-size: 0.625em;
+}
+.vzb-tool.vzb-small .vzb-mountainchart .vzb-mc-ultrarich {
+  font-size: 0.625em;
+}
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-axis-x text,
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-axis-y text,
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-probe text,
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-mountains-labels text,
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-labels text,
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-tooltip text {
+  font-size: 1.6em;
+}
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-probe-value-head {
+  font-size: 1em;
+}
+.vzb-tool.vzb-presentation .vzb-mountainchart .vzb-mc-ultrarich {
+  font-size: 1.24em;
+}
+.vzb-tool.vzb-presentation.vzb-medium .vzb-mc-probe {
+  font-size: 1.24em;
+}
+.vzb-tool.vzb-presentation.vzb-medium .vzb-mc-probe .vzb-mc-probe-value-head {
+  font-size: 0.8em;
+}
+.vzb-tool.vzb-presentation.vzb-medium .vzb-mc-ultrarich {
+  font-size: 0.8em;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=stack] {
+  flex: none;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=stack] .vzb-dl-holder .vzb-draggable {
+  height: initial;
+}
+.vzb-tool .vzb-sidebar .vzb-dialogs-dialog[data-dlg=stack].vzb-sidebar .vzb-howtomerge,
+.vzb-tool .vzb-sidebar .vzb-dialogs-dialog[data-dlg=stack].vzb-sidebar .vzb-manual-sorting {
+  display: none;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=povertyline] .vzb-dialog-content .vzb-povertylinetype label {
+  display: block;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=povertyline] .vzb-dialog-content .vzb-povertylinecustomvalue-field {
+  margin-left: 5px;
+  margin-right: 10px;
+  width: auto;
+  max-width: 30%;
+  padding: 5px;
+  display: inline-block;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content {
+  display: flex;
+  flex-direction: row;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-show {
+  flex-basis: 150px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-howmany {
+  flex-basis: 85px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-howmany .vzb-slider-holder {
+  top: 8px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-count {
+  padding-top: 9px;
+  flex-basis: 35px;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=billy] .vzb-dialog-title {
+  display: none;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] {
+  flex: none;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container {
+  display: flex;
+  flex-direction: row;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-show {
+  flex-basis: 90px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-show .vzb-dialog-checkbox label a {
+  text-decoration: underline;
+  color: #4b98aa;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-topic {
+  font-family: inherit;
+  font-size: 1em;
+  color: #666;
+  padding-bottom: 1px;
+  position: relative;
+  height: 25px;
+  top: 5px;
+  flex-basis: 60px;
+  border-radius: 4px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-howmany {
+  flex-basis: 85px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-howmany .vzb-slider-holder {
+  top: 8px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-count {
+  padding-top: 9px;
+  flex-basis: 35px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-ds-availability {
+  margin-top: 10px;
+  font-style: italic;
+  color: #999;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=dollarstreet] .vzb-dialog-title {
+  display: none;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=dollarstreet] .vzb-ds-availability {
+  display: none;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=presets] {
+  flex: none;
+  overflow: visible;
+  margin: 5px 0 2px -5px;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=presets] .vzb-dialog-modal {
+  overflow: visible;
+}
+.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=presets] .vzb-dialog-title {
+  display: none;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] .vzb-hint {
+  opacity: 0;
+  color: #9fbbc1;
+  font-style: italic;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets]:hover .vzb-hint {
+  opacity: 1;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] .vzb-form {
+  height: 100px;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] .vzb-radio-svg-group {
+  border: none;
+  padding: 0;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] .vzb-radio-svg-item {
+  display: block;
+  position: absolute;
+  box-sizing: border-box;
+  background-color: #fff;
+  text-align: center;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label {
+  white-space: initial;
+  border: 1px solid #888;
+  box-sizing: border-box;
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 4px;
+  opacity: 0.6;
+  cursor: pointer;
+  background-color: #fdfdfd;
+  transition: all 0.5s ease-in-out;
+  margin-bottom: 0;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label:hover, .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label:focus, .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label:active {
+  border: 1px solid #000;
+  opacity: 1;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label path {
+  stroke: #000;
+  fill: #FFF;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] input[type=radio] {
+  display: none;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] input[type=radio]:active ~ label {
+  opacity: 1;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] input[type=radio]:checked ~ label {
+  opacity: 1;
+  border: 2px solid #000;
+  background-color: #ffca34;
+}
