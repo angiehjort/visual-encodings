@@ -13202,8 +13202,8 @@
 
       this.DOM.header.html("");
       this.DOM.header.append("p").html("Next level data graphics");
-      this.DOM.header.append("p").html("This chart is made with Vizabi, <br/> an open-source project originally <br/> built at " + url(author.name, author.url) + "<br/> Currently maintained and extended by <br/> Angie and team at "  + url("Visual Encodings AB", "https://visual-encodings.com"));
-      this.DOM.header.append("p").html("If you would like to use these graphs, we <br/> can help you set them up and customise <br/>"  + mailto("info@visual-encodings.com"));
+      this.DOM.header.append("p").html("This chart is made with Vizabi, <br/> an open-source project originally <br/> built at " + url(author.name, author.url) + "<br/> Currently maintained and extended by <br/> Angie and team at "  + url("Encharted Media AB", "https://vizabi.com"));
+      this.DOM.header.append("p").html("If you would like to use these graphs, we <br/> can help you set them up and customise <br/>"  + mailto("info@enchart.me"));
     }
 
 
