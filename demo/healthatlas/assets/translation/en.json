@@ -25,7 +25,7 @@
         "buttons/axesmc": "X and Y",
         "buttons/x": "X axis",
         "buttons/y": "Y axis",
-        "buttons/color_map": "Map areas",
+        "buttons/color_map": "Map color",
         "buttons/stack": "Stack",
         "buttons/presets": "Presets",
         "buttons/more_options": "Options",
