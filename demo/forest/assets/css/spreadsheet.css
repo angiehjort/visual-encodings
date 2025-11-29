@@ -86,9 +86,6 @@
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about {
   flex: none;
   padding: 10px 5px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 100%;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-conceptkey {
   font-style: italic;
@@ -96,6 +93,11 @@
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about .vzb-spreadsheet-conceptvalue {
   white-space: normal;
+}
+.vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about {
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
 }
 .vzb-tool .vzb-spreadsheet div#vzb-spreadsheet-about div {
   width: 100%;

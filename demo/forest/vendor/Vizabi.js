@@ -1,4 +1,4 @@
-// http://vizabi.org v1.37.1 Copyright 2025 Jasper Heeffer and others at Gapminder Foundation
+// http://vizabi.org v1.37.2 Copyright 2025 Jasper Heeffer and others at Gapminder Foundation
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('mobx'), require('d3')) :
   typeof define === 'function' && define.amd ? define(['mobx', 'd3'], factory) :
@@ -4029,7 +4029,7 @@
           }
       }
       
-      console.warn("Could not autoconfig to a space which also satisfies further results for " + dataConfig.parent.id + ".", { 
+      console.warn("Marker " + dataConfig.marker.id + ": Could not autoconfig to a space which also satisfies further results for " + dataConfig.parent.id + ".", { 
           dataConfig,
           spaceCfg: dataConfig.config.space || dataConfig.defaults.space, 
           availableSpaces, 
@@ -7271,7 +7271,7 @@
       return models;
 
   };
-  vizabi.versionInfo = { version: "1.37.1", build: 1760092702463, package: {"homepage":"http://vizabi.org","name":"@vizabi/core","description":"Vizabi core (data layer)"} };
+  vizabi.versionInfo = { version: "1.37.2", build: 1764340330649, package: {"homepage":"http://vizabi.org","name":"@vizabi/core","description":"Vizabi core (data layer)"} };
   vizabi.utils = utils;
   vizabi.stores = stores;
   vizabi.dataSource = (cfg, id) =>{

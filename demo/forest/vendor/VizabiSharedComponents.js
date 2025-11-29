@@ -1,4 +1,4 @@
-// https://github.com/vizabi/@vizabi/shared-components#readme v1.56.1 build 1762936001705 Copyright 2025 Gapminder Foundation and contributors
+// https://github.com/vizabi/@vizabi/shared-components#readme v1.56.6 build 1764367142174 Copyright 2025 Gapminder Foundation and contributors
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3'), require('mobx')) :
   typeof define === 'function' && define.amd ? define(['exports', 'd3', 'mobx'], factory) :
@@ -3342,7 +3342,7 @@
   d3.selection.prototype.onTap = onTap;
   d3.selection.prototype.onLongTap = onLongTap;
 
-  const versionInfo = {version: "1.56.1", build: 1762936001705, package: {"contributors":[{"name":"Jasper","url":"https://github.com/jheeffer"},{"name":"Angie","url":"https://github.com/angiehjort"},{"name":"Dima","url":"https://github.com/dab2000"},{"name":"Ola","url":"https://github.com/olarosling"}],"author":{"name":"Gapminder Foundation","url":"https://www.gapminder.org","email":"info@gapminder.org"},"homepage":"https://github.com/vizabi/@vizabi/shared-components#readme","name":"@vizabi/shared-components","description":"Vizabi shared components"}};
+  const versionInfo = {version: "1.56.6", build: 1764367142174, package: {"contributors":[{"name":"Jasper","url":"https://github.com/jheeffer"},{"name":"Angie","url":"https://github.com/angiehjort"},{"name":"Dima","url":"https://github.com/dab2000"},{"name":"Ola","url":"https://github.com/olarosling"}],"author":{"name":"Gapminder Foundation","url":"https://www.gapminder.org","email":"info@gapminder.org"},"homepage":"https://github.com/vizabi/@vizabi/shared-components#readme","name":"@vizabi/shared-components","description":"Vizabi shared components"}};
   const Icons = iconset;
   const Utils = _Utils;
   const LegacyUtils = _LegacyUtils;
@@ -4781,6 +4781,18 @@
       navigator.userAgent && !navigator.userAgent.match("CriOS"));
   }
 
+  const CollectionMixin$1 = superClass => class extends superClass {
+    //static _collection = {};
+    static add(name, addedClass) {
+      CollectionMixin$1._collection[name] = addedClass;
+    }
+    static get(name) { return CollectionMixin$1._collection[name];}
+  };
+
+  CollectionMixin$1._collection = {};
+
+  class Chart extends CollectionMixin$1(BaseComponent) {}
+
   /*!
    * VIZABI BUBBLE SIZE slider
    * Reusable bubble size slider
@@ -5086,18 +5098,6 @@
   const decorated$h = mobx.decorate(BrushSlider, {
     "MDL": mobx.computed
   });
-
-  const CollectionMixin$1 = superClass => class extends superClass {
-    //static _collection = {};
-    static add(name, addedClass) {
-      CollectionMixin$1._collection[name] = addedClass;
-    }
-    static get(name) { return CollectionMixin$1._collection[name];}
-  };
-
-  CollectionMixin$1._collection = {};
-
-  class Chart extends CollectionMixin$1(BaseComponent) {}
 
   const CIRCLE_RADIUS = 6;
 
@@ -7041,6 +7041,252 @@
     }
   }
 
+  let hidden$1 = true;
+  class _ErrorMessage extends BaseComponent {
+    constructor(config) {
+      config.template = `
+      <div class="vzb-errormessage-background"></div>
+      <div class="vzb-errormessage-box">
+        <div class="vzb-errormessage-hero">🙄</div>
+        <div class="vzb-errormessage-title"></div>
+        <div class="vzb-errormessage-body vzb-dialog-scrollable">
+          <div class="vzb-errormessage-message"></div>
+          <div class="vzb-errormessage-expand"></div>
+          <pre class="vzb-errormessage-details vzb-hidden"></pre>
+        </div>
+      </div>
+    `;
+
+      super(config);
+    }
+
+    setup() {
+      this.DOM = {
+        background: this.element.select(".vzb-errormessage-background"),
+        container: this.element.select(".vzb-errormessage-box"),
+        close: this.element.select(".vzb-errormessage-close"),
+        hero: this.element.select(".vzb-errormessage-hero"),
+        title: this.element.select(".vzb-errormessage-title"),
+        message: this.element.select(".vzb-errormessage-message"),
+        expand: this.element.select(".vzb-errormessage-expand"),
+        details: this.element.select(".vzb-errormessage-details")
+      };
+      
+      this.element.classed("vzb-hidden", true);
+      this.DOM.background.on("click", () => {
+        this.toggle(true);
+      });
+      this.DOM.expand.on("click", () => {
+        this.DOM.details.classed("vzb-hidden", !this.DOM.details.classed("vzb-hidden"));
+      });
+    }
+
+    get MDL(){
+      return {
+        frame: this.model.encoding.frame
+      };
+    }
+
+    //this is a hack because MobX autorun onError would eat the error rethrowing from there doesn't help
+    rethrow(err){
+      setTimeout(function(){
+        throw(err);
+      }, 1);
+      setTimeout(function(){
+        throw("ERROR REACHED USER");
+      }, 1);
+    }
+
+    toggle(arg) {
+      if (arg == null) arg = !hidden$1;
+      hidden$1 = arg;
+      this.element.classed("vzb-hidden", hidden$1);
+
+      this.root.children.forEach(c => {
+        c.element.classed("vzb-blur", c != this && !hidden$1);
+      });
+    }
+
+    error(err){
+      if(!hidden$1) return console.warn("errorMessage: skipping action because already in error");
+
+      const localise = this.services.locale.status == "fulfilled"?
+        this.services.locale.auto()
+        : nop => nop;
+
+      this.DOM.title.text(localise(err.name));
+      this.DOM.message.text(localise(err.message));
+
+      this.DOM.expand
+        .style("display", err.details ? "block" : "none")
+        .html(localise("crash/expand"));
+
+      this.DOM.details
+        .style("display", err.details ? "block" : "none")
+        .text(JSON.stringify(err.details, null, 2));
+
+      this.toggle(false);
+
+      this.rethrow(err);
+    }
+  }
+
+
+  _ErrorMessage.DEFAULT_UI = {
+  };
+
+  //export default BubbleChart;
+  const ErrorMessage = mobx.decorate(_ErrorMessage, {
+    "MDL": mobx.computed
+  });
+
+  /*!
+   * VIZABI INDICATOR PICKER
+   * Reusable indicator picker component
+   */
+
+  class IndicatorPicker extends BaseComponent {
+    constructor(config) {
+      config.template = `
+      <span class="vzb-ip-holder">
+        <span class="vzb-ip-select"></span>
+        <span class="vzb-ip-info"></span>
+      </span>
+    `;
+
+      super(config);
+    }
+
+    setup(options) {
+      this.targetProp = options.targetProp;
+      this.submodel = options.submodel;
+      this.submodelFunc = options.submodelFunc;
+      this.showHoverValues = options.showHoverValues || false;
+
+      this.DOM = {
+        select: this.element.select(".vzb-ip-select"),
+        info: this.element.select(".vzb-ip-info")
+      };
+
+      this.DOM.select.on("click", () => {
+        const rect = this.DOM.select.node().getBoundingClientRect();
+        const rootEl = this.root.element;
+        const rootRect = rootEl.node().getBoundingClientRect();
+        const treemenuComp = this.root.findChild({type: "TreeMenu"});
+        const treemenuColWidth = treemenuComp.profileConstants.col_width;
+        const treemenuWrapper = treemenuComp.element.select(".vzb-treemenu-wrap");
+        const treemenuPaddLeft = parseInt(treemenuWrapper.style("padding-left"), 10) || 0;
+        const treemenuPaddRight = parseInt(treemenuWrapper.style("padding-right"), 10) || 0;
+        const topPos = rect.bottom - rootRect.top;
+        const leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * 0.5;
+
+        if (this._isEncoding()) {
+          treemenuComp
+            .alignX("left")
+            .alignY("top")
+            .top(topPos)
+            .left(leftPos)
+            .encoding(this.targetProp)
+            //.updateView()
+            .toggle();
+        }
+      });
+
+      //TODO: continue with Info
+      this._initInfoElement(this.DOM.info);
+    }
+
+
+    _initInfoElement(element) {
+      const _this = this;
+      const dataNotesDialog = () => this.root.findChild({type: "DataNotes"});
+      const timeSlider = () => this.root.findChild({type: "TimeSlider"});
+
+      setIcon(element, ICON_QUESTION)
+        .on("click", () => {
+          dataNotesDialog().pin();
+        })
+        .on("mouseover", function() {
+          if (timeSlider().ui.dragging) return;
+          const coord = this.getBoundingClientRect();
+          const toolRect = _this.root.element.node().getBoundingClientRect();
+          dataNotesDialog()
+            .setEncoding(_this.MDL.model)
+            .show()
+            .setPos(coord.x - toolRect.left, coord.y - toolRect.top);
+        })
+        .on("mouseout", () => {
+          if (timeSlider().ui.dragging) return;
+          dataNotesDialog().hide();
+        });
+    }
+
+    draw() {
+      this.MDL = {
+        model: this._getModel()
+      };
+      if (this.showHoverValues) {
+        this.MDL.highlighted = this.model.encoding.highlighted;
+      }
+
+      this.localise = this.services.locale.auto();
+      this.addReaction(this._updateView);
+    }
+
+    _getModel() {
+      if (this.submodel === "encoding") {
+        return this.model.encoding[this.targetProp];
+      }
+      if (!this.submodel && !this.submodelFunc) return this.model;
+      return this.submodelFunc ? this.submodelFunc() : getProp(this, this.submodel.split("."));
+    }
+
+    _updateView() {
+      let selectText;
+
+      this.DOM.info.classed("vzb-hidden", this.MDL.model.data.isConstant);
+
+      if (this._isEncoding()) {
+        if (this.MDL.model.data.isConstant) {
+          const constant = this.MDL.model.data.constant;
+          const scaleModelType = this.MDL.model.scale.config.modelType;
+          selectText = this.localise("indicator/" + constant + (scaleModelType ? "/" + scaleModelType : ""));
+        } else if (this.showHoverValues && this.MDL.highlighted.data.filter.markers.size === 1 && !this.MDL.model.scale.isPattern) {
+          const highlightedMarkers = this.MDL.highlighted.data.filter.markers;
+          const [key, payload] = highlightedMarkers.entries().next().value;
+          const hoverKey = (this.model.dataMap.getByStr(key) || (payload !== true && JSON.parse(payload)) || {})[this.targetProp];
+
+          if (["entity_domain", "entity_set", "string"].includes(this.MDL.model.data.conceptProps.concept_type)){
+            // entity domain or set or string and may gave an extra model to resolve names from  
+            if (this.state.hoverKeyLabels && this.state.hoverKeyLabels[hoverKey] != null)
+              selectText = this.state.hoverKeyLabels[hoverKey];
+            else
+              selectText = this.localise(hoverKey);          
+          } else {        
+            const localiseValue = this.services.locale.auto({shareOrPercent: this.MDL.model.data?.conceptProps?.format});
+            selectText = localiseValue(hoverKey);
+          }
+            
+        } else {
+          selectText = getConceptShortName(this.MDL.model, this.localise);
+        }
+      }
+      this.treemenu = this.root.findChild({type: "TreeMenu"});
+      this.DOM.select
+        .classed("vzb-disabled", this.treemenu.state.ownReadiness !== STATUS.READY)
+        .text(selectText);
+    }
+
+    _isEncoding() {
+      return !!this.MDL.model.marker;
+    }
+
+    _setModel(value) {
+      this.MDL.model[this.checkbox] = value;
+    }
+
+  }
+
   function getFacetId(d) {
     return d;
   }
@@ -7332,19 +7578,19 @@
     "rangePartsHash": mobx.observable
   });
 
-  let hidden$1 = true;
-  class _ErrorMessage extends BaseComponent {
+  /*!
+   * VIZABI MIN MAX INPUT FIELDS
+   */
+  class MinMaxInputs extends BaseComponent {
     constructor(config) {
       config.template = `
-      <div class="vzb-errormessage-background"></div>
-      <div class="vzb-errormessage-box">
-        <div class="vzb-errormessage-hero">🙄</div>
-        <div class="vzb-errormessage-title"></div>
-        <div class="vzb-errormessage-body vzb-dialog-scrollable">
-          <div class="vzb-errormessage-message"></div>
-          <div class="vzb-errormessage-expand"></div>
-          <pre class="vzb-errormessage-details vzb-hidden"></pre>
-        </div>
+      <div class="vzb-mmi-holder">
+
+        <span class="vzb-mmi-zoomedmin-label"></span>
+        <input type="text" class="vzb-mmi-zoomedmin" name="min">
+        <span class="vzb-mmi-zoomedmax-label"></span>
+        <input type="text" class="vzb-mmi-zoomedmax" name="max">
+
       </div>
     `;
 
@@ -7353,230 +7599,185 @@
 
     setup() {
       this.DOM = {
-        background: this.element.select(".vzb-errormessage-background"),
-        container: this.element.select(".vzb-errormessage-box"),
-        close: this.element.select(".vzb-errormessage-close"),
-        hero: this.element.select(".vzb-errormessage-hero"),
-        title: this.element.select(".vzb-errormessage-title"),
-        message: this.element.select(".vzb-errormessage-message"),
-        expand: this.element.select(".vzb-errormessage-expand"),
-        details: this.element.select(".vzb-errormessage-details")
-      };
-      
-      this.element.classed("vzb-hidden", true);
-      this.DOM.background.on("click", () => {
-        this.toggle(true);
-      });
-      this.DOM.expand.on("click", () => {
-        this.DOM.details.classed("vzb-hidden", !this.DOM.details.classed("vzb-hidden"));
-      });
-    }
-
-    get MDL(){
-      return {
-        frame: this.model.encoding.frame
-      };
-    }
-
-    //this is a hack because MobX autorun onError would eat the error rethrowing from there doesn't help
-    rethrow(err){
-      setTimeout(function(){
-        throw(err);
-      }, 1);
-      setTimeout(function(){
-        throw("ERROR REACHED USER");
-      }, 1);
-    }
-
-    toggle(arg) {
-      if (arg == null) arg = !hidden$1;
-      hidden$1 = arg;
-      this.element.classed("vzb-hidden", hidden$1);
-
-      this.root.children.forEach(c => {
-        c.element.classed("vzb-blur", c != this && !hidden$1);
-      });
-    }
-
-    error(err){
-      if(!hidden$1) return console.warn("errorMessage: skipping action because already in error");
-
-      const localise = this.services.locale.status == "fulfilled"?
-        this.services.locale.auto()
-        : nop => nop;
-
-      this.DOM.title.text(localise(err.name));
-      this.DOM.message.text(localise(err.message));
-
-      this.DOM.expand
-        .style("display", err.details ? "block" : "none")
-        .html(localise("crash/expand"));
-
-      this.DOM.details
-        .style("display", err.details ? "block" : "none")
-        .text(JSON.stringify(err.details, null, 2));
-
-      this.toggle(false);
-
-      this.rethrow(err);
-    }
-  }
-
-
-  _ErrorMessage.DEFAULT_UI = {
-  };
-
-  //export default BubbleChart;
-  const ErrorMessage = mobx.decorate(_ErrorMessage, {
-    "MDL": mobx.computed
-  });
-
-  /*!
-   * VIZABI INDICATOR PICKER
-   * Reusable indicator picker component
-   */
-
-  class IndicatorPicker extends BaseComponent {
-    constructor(config) {
-      config.template = `
-      <span class="vzb-ip-holder">
-        <span class="vzb-ip-select"></span>
-        <span class="vzb-ip-info"></span>
-      </span>
-    `;
-
-      super(config);
-    }
-
-    setup(options) {
-      this.targetProp = options.targetProp;
-      this.submodel = options.submodel;
-      this.submodelFunc = options.submodelFunc;
-      this.showHoverValues = options.showHoverValues || false;
-
-      this.DOM = {
-        select: this.element.select(".vzb-ip-select"),
-        info: this.element.select(".vzb-ip-info")
+        zoomed_labelMin: this.element.select(".vzb-mmi-zoomedmin-label"),
+        zoomed_labelMax: this.element.select(".vzb-mmi-zoomedmax-label"),
+        zoomed_fieldMin: this.element.select(".vzb-mmi-zoomedmin"),
+        zoomed_fieldMax: this.element.select(".vzb-mmi-zoomedmax")
       };
 
-      this.DOM.select.on("click", () => {
-        const rect = this.DOM.select.node().getBoundingClientRect();
-        const rootEl = this.root.element;
-        const rootRect = rootEl.node().getBoundingClientRect();
-        const treemenuComp = this.root.findChild({type: "TreeMenu"});
-        const treemenuColWidth = treemenuComp.profileConstants.col_width;
-        const treemenuWrapper = treemenuComp.element.select(".vzb-treemenu-wrap");
-        const treemenuPaddLeft = parseInt(treemenuWrapper.style("padding-left"), 10) || 0;
-        const treemenuPaddRight = parseInt(treemenuWrapper.style("padding-right"), 10) || 0;
-        const topPos = rect.bottom - rootRect.top;
-        const leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * 0.5;
+      this.DOM.zoomed_fieldMin.on("change", this._setModel.bind(this));
+      this.DOM.zoomed_fieldMax.on("change", this._setModel.bind(this));
 
-        if (this._isEncoding()) {
-          treemenuComp
-            .alignX("left")
-            .alignY("top")
-            .top(topPos)
-            .left(leftPos)
-            .encoding(this.targetProp)
-            //.updateView()
-            .toggle();
-        }
-      });
-
-      //TODO: continue with Info
-      this._initInfoElement(this.DOM.info);
-    }
-
-
-    _initInfoElement(element) {
-      const _this = this;
-      const dataNotesDialog = () => this.root.findChild({type: "DataNotes"});
-      const timeSlider = () => this.root.findChild({type: "TimeSlider"});
-
-      setIcon(element, ICON_QUESTION)
-        .on("click", () => {
-          dataNotesDialog().pin();
-        })
-        .on("mouseover", function() {
-          if (timeSlider().ui.dragging) return;
-          const coord = this.getBoundingClientRect();
-          const toolRect = _this.root.element.node().getBoundingClientRect();
-          dataNotesDialog()
-            .setEncoding(_this.MDL.model)
-            .show()
-            .setPos(coord.x - toolRect.left, coord.y - toolRect.top);
-        })
-        .on("mouseout", () => {
-          if (timeSlider().ui.dragging) return;
-          dataNotesDialog().hide();
+      this.element.selectAll("input")
+        .on("keypress", (event) => {
+          if (event.which == 13) document.activeElement.blur();
         });
+
+    }
+
+    get MDL() {
+      return {
+        model: this._getModel()
+      };
     }
 
     draw() {
-      this.MDL = {
-        model: this._getModel()
-      };
-      if (this.showHoverValues) {
-        this.MDL.highlighted = this.model.encoding.highlighted;
-      }
-
       this.localise = this.services.locale.auto();
-      this.addReaction(this._updateView);
-    }
 
-    _getModel() {
-      if (this.submodel === "encoding") {
-        return this.model.encoding[this.targetProp];
-      }
-      if (!this.submodel && !this.submodelFunc) return this.model;
-      return this.submodelFunc ? this.submodelFunc() : getProp(this, this.submodel.split("."));
+      const _this = this;
+      this.formatter = function(n) {
+        if (!n && n !== 0) return n;
+        if (isDate(n)) return _this.localise(n);
+        if (this.MDL.model.type === "time") return n;
+        return d3.format(".2r")(n);
+      };
+
+      this.addReaction(this._updateView);
+
     }
 
     _updateView() {
-      let selectText;
+      this.DOM.zoomed_labelMin.text(this.localise("hints/min") + ":");
+      this.DOM.zoomed_labelMax.text(this.localise("hints/max") + ":");
 
-      this.DOM.info.classed("vzb-hidden", this.MDL.model.data.isConstant);
+      this.DOM.zoomed_fieldMin.property("value", this.formatter(this.MDL.model.zoomed[0]));
+      this.DOM.zoomed_fieldMax.property("value", this.formatter(this.MDL.model.zoomed[1]));
+    }
 
-      if (this._isEncoding()) {
-        if (this.MDL.model.data.isConstant) {
-          const constant = this.MDL.model.data.constant;
-          const scaleModelType = this.MDL.model.scale.config.modelType;
-          selectText = this.localise("indicator/" + constant + (scaleModelType ? "/" + scaleModelType : ""));
-        } else if (this.showHoverValues && this.MDL.highlighted.data.filter.markers.size === 1 && !this.MDL.model.scale.isPattern) {
-          const highlightedMarkers = this.MDL.highlighted.data.filter.markers;
-          const [key, payload] = highlightedMarkers.entries().next().value;
-          const hoverKey = (this.model.dataMap.getByStr(key) || (payload !== true && JSON.parse(payload)) || {})[this.targetProp];
-
-          if (["entity_domain", "entity_set", "string"].includes(this.MDL.model.data.conceptProps.concept_type)){
-            // entity domain or set or string and may gave an extra model to resolve names from  
-            if (this.state.hoverKeyLabels && this.state.hoverKeyLabels[hoverKey] != null)
-              selectText = this.state.hoverKeyLabels[hoverKey];
-            else
-              selectText = this.localise(hoverKey);          
-          } else {        
-            const localiseValue = this.services.locale.auto({shareOrPercent: this.MDL.model.data?.conceptProps?.format});
-            selectText = localiseValue(hoverKey);
-          }
-            
-        } else {
-          selectText = getConceptShortName(this.MDL.model, this.localise);
+    _getModel() {
+      if (this.state.submodel) {
+        const submodel = this.state.submodel.split(".");
+        if (submodel[0] === "encoding") {
+          return getProp(this.model.encoding[submodel[1]], submodel.slice(2));
         }
       }
-      this.treemenu = this.root.findChild({type: "TreeMenu"});
-      this.DOM.select
-        .classed("vzb-disabled", this.treemenu.state.ownReadiness !== STATUS.READY)
-        .text(selectText);
+      if (!this.state.submodel && !this.state.submodelFunc) return this.model;
+      return this.state.submodelFunc ? this.state.submodelFunc() : getProp(this, this.state.submodel.split("."));
     }
 
-    _isEncoding() {
-      return !!this.MDL.model.marker;
-    }
+    _setModel() {
+      const valueMin = this.DOM.zoomed_fieldMin.property("value");
+      const valueMax = this.DOM.zoomed_fieldMax.property("value");
+      let values = [valueMin, valueMax].map(m => m.replace("−", "-")); //replace the bourjois minus sign &#8722 to the proletarian &#45
+      if (!this.MDL.model.type === "time") 
+        values = values.map(m => parseFloat(m)); //replace the bourjois minus sign &#8722 to the proletarian &#45
 
-    _setModel(value) {
-      this.MDL.model[this.checkbox] = value;
+      if(values.some(f => !f && f!==0)) {
+        this._updateView();
+      } else {
+        this.MDL.model.config.zoomed = values;
+      }
     }
-
   }
+
+  MinMaxInputs.DEFAULT_UI = {
+  };
+
+  const decorated$d = mobx.decorate(MinMaxInputs, {
+    "MDL": mobx.computed
+  });
+
+  function firstLastOrMiddle(index, total){
+    return {first: index === 0, last: index + 1 === total};
+  }
+
+  class _Repeater extends BaseComponent {
+
+    get MDL(){
+      return {
+        repeat: this.model.encoding.repeat
+      };
+    }
+
+
+    loading(){
+      this.addReaction(this.addRemoveSubcomponents, {ignoreStatus: true});
+    }
+
+
+    addRemoveSubcomponents(){
+      const {repeatedComponentCssClass} = this.options;
+      const {rowcolumn, ncolumns, nrows} = this.MDL.repeat;
+      const repeat = this.MDL.repeat;
+
+      //The fr unit sets size of track as a fraction of the free space of grid container
+      //We need as many 1fr as rows and columns to have cells equally sized (grid-template-columns: 1fr 1fr 1fr;)
+      this.element
+        .style("grid-template-rows", "1fr ".repeat(nrows))
+        .style("grid-template-columns", "1fr ".repeat(ncolumns));
+
+      let sections = this.element.selectAll(".vzb-repeat-inner")
+        .data(rowcolumn, d => repeat.getName(d));
+
+      sections.exit()
+        .each(d => this.removeSubcomponent(d))
+        .remove();      
+
+      sections.enter().append("div")
+        .attr("class", "vzb-repeat-inner")
+        //add an intermediary div with null datum to prevent unwanted data inheritance to subcomponent
+        //https://stackoverflow.com/questions/17846806/preventing-unwanted-data-inheritance-with-selection-select
+        .each(function(d){
+          d3.select(this).append("div")
+            .datum(null)
+            .attr("class", () => `${repeatedComponentCssClass} vzb-${repeat.getName(d)}`);
+        })
+        .each((d,i) => this.addSubcomponent(d,i))
+        .merge(sections)      
+        .style("grid-row-start", (_, i) => repeat.getRowIndex(i) + 1)
+        .style("grid-column-start", (_, i) => repeat.getColumnIndex(i) + 1)
+        .each((d,i) => {
+          this.findChild({name: repeat.getName(d)}).state.positionInRepeat = this.getPosition(i);
+        });
+
+      this.services.layout._resizeHandler();
+    }
+
+    getPosition(i){
+      const repeat = this.MDL.repeat;
+      const {ncolumns, nrows} = repeat;
+
+      return {
+        row: firstLastOrMiddle(repeat.getRowIndex(i), nrows),
+        column: firstLastOrMiddle(repeat.getColumnIndex(i), ncolumns)
+      };
+    }
+
+    addSubcomponent(d, index){
+      const {repeatedComponent} = this.options;
+      const name = this.MDL.repeat.getName(d);
+
+      const subcomponent = new repeatedComponent({
+        id: this.id + "-" + index,
+        placeholder: ".vzb-" + name,
+        model: this.model,
+        name,
+        parent: this,
+        root: this.root,
+        state: {alias: d},
+        services: this.services,
+        options: this.options.repeatedComponentOptions,
+        ui: this.ui,
+        default_ui: this.DEFAULT_UI
+      });
+      this.children.push(subcomponent);
+    }
+
+
+    removeSubcomponent(d){
+      const subcomponent = this.findChild({name: this.MDL.repeat.getName(d)});
+      if(subcomponent) {
+        subcomponent.deconstruct();
+      }
+    }
+  }
+
+  _Repeater.DEFAULT_UI = {
+  };
+
+  const Repeater = mobx.decorate(_Repeater, {
+    "MDL": mobx.computed
+  });
 
   function key(d) {return d[Symbol.for("key")];}
 
@@ -8526,483 +8727,11 @@
     removeLabelBox: false
   };
 
-  const decorated$d = mobx.decorate(Labels, {
+  const decorated$c = mobx.decorate(Labels, {
     "MDL": mobx.computed
   });
-
-  const PROFILE_CONSTANTS$2 = {
-    SMALL: {
-      minLabelTextSize: 7,
-      maxLabelTextSize: 21,
-      defaultLabelTextSize: 12,
-      closeCrossSize: 16 * 1.2,
-      labelLeashCoeff: 0.4
-    },
-    MEDIUM: {
-      minLabelTextSize: 7,
-      maxLabelTextSize: 30,
-      defaultLabelTextSize: 15,
-      closeCrossSize: 20 * 1.2,
-      labelLeashCoeff: 0.3
-    },
-    LARGE: {
-      minLabelTextSize: 6,
-      maxLabelTextSize: 48,
-      defaultLabelTextSize: 20,
-      closeCrossSize: 22 * 1.2,
-      labelLeashCoeff: 0.2
-    }
-  };
-
-  const PROFILE_CONSTANTS_FOR_PROJECTOR$2 = {
-    MEDIUM: {
-      minLabelTextSize: 15,
-      maxLabelTextSize: 35,
-      defaultLabelTextSize: 15,
-      closeCrossSize: 26 * 1.2,
-      labelLeashCoeff: 0.3
-    },
-    LARGE: {
-      minLabelTextSize: 20,
-      maxLabelTextSize: 55,
-      defaultLabelTextSize: 20,
-      closeCrossSize: 32 * 1.2,
-      labelLeashCoeff: 0.2
-    }
-  };
 
   const OPTIONS$5 = {
-    SUPPRESS_HIGHLIGHT_DURING_PLAY: true
-  };
-
-  class LabelSizeHelper extends BaseComponent {
-
-    setup(options){
-      this.context = this.parent;
-
-      this.labelSizeTextScale = null;
-      
-      this.options = extend({}, OPTIONS$5);
-      if(options) this.setOptions(options);
-    }
-
-    setOptions(newOptions) {
-      extend(this.options, newOptions);
-    }
-
-    get MDL() {
-      return {
-        size_label: this.model.encoding.size_label,
-      };
-    }
-
-    draw() {
-      this.addReaction(this._updateLayoutProfile);
-      this.addReaction(this.updateSizeTextScale);
-      this.addReaction(this.updateLabelSizeLimits);
-    }
-
-    updateLabelSizeLimits() {
-      if (!this.MDL.size_label) return;
-
-      this.services.layout.size;
-
-      const extent = this.MDL.size_label.scale.extent || [0, 1];
-
-      const minLabelTextSize = this.profileConstants.minLabelTextSize;
-      const maxLabelTextSize = this.profileConstants.maxLabelTextSize;
-      const minMaxDelta = maxLabelTextSize - minLabelTextSize;
-
-      this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[0], minLabelTextSize);
-      this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[1], minLabelTextSize);
-
-      if (this.MDL.size_label.data.isConstant) {
-        // if(!this.MDL.size_label.which) {
-        //   this.maxLabelTextSize = this.profileConstants.defaultLabelTextSize;
-        //   this.MDL.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
-        //   return;
-        // }
-        if (extent[1] === null) {
-          this.minLabelTextSize = this.maxLabelTextSize = this.profileConstants.defaultLabelTextSize;
-        } else {
-          this.minLabelTextSize = this.maxLabelTextSize;
-        }
-      }
-
-      this.labelSizeTextScale.range([this.minLabelTextSize, this.maxLabelTextSize]);
-    }
-
-    updateSizeTextScale() {
-      //scales
-      if (this.MDL.size_label) {
-        this.labelSizeTextScale = this.MDL.size_label.scale.d3Scale;
-      }
-    }
-   
-    _updateLayoutProfile(){
-      this.services.layout.size;
-
-      this.profileConstants = this.services.layout.getProfileConstants(PROFILE_CONSTANTS$2, PROFILE_CONSTANTS_FOR_PROJECTOR$2);
-    }
-   
-    get closeCrossHeight() {
-      this.services.layout.size;
-      return this.profileConstants.closeCrossSize;
-    }
-
-    get defaultFontSize() {
-      this.services.layout.size;
-      return this.profileConstants.defaultLabelTextSize;
-    }
-
-    getFontSize(valueLST) {
-      if (this.labelSizeTextScale) {
-        if (valueLST || valueLST == 0) {
-          const range = this.labelSizeTextScale.range();
-          return range[0] + Math.sqrt((this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
-        }
-      }
-      return this.defaultFontSize;
-    }
-  }
-
-
-  LabelSizeHelper.DEFAULT_UI = {
-    offset: () => ({}),
-    enabled: true,
-    dragging: true,
-    removeLabelBox: false
-  };
-
-  const decorated$c = mobx.decorate(LabelSizeHelper, {
-    "MDL": mobx.computed,
-    "defaultFontSize": mobx.computed,
-    "closeCrossHeight": mobx.computed
-  });
-
-  const KEY$4 = Symbol.for("key");
-
-  class MarkerContextmenu extends BaseComponent {
-
-    constructor(config) {
-      config.subcomponents = [];
-
-      config.template = `
-      <div class="vzb-mkcm-container">
-        <div class="vzb-marker-contextmenu-title"></div>
-        <div class="vzb-marker-contextmenu-item vzb-marker-contextmenu-item-fold vzb-clickable"></div>
-        <div class="vzb-marker-contextmenu-item vzb-marker-contextmenu-item-explode vzb-clickable"></div>
-        <div class="vzb-marker-contextmenu-close"></div>
-      </div>
-    `;
-      super(config);
-    }
-
-
-    setup() {
-      this.DOM = {
-        container: this.element.select(".vzb-mkcm-container"),
-        title: this.element.select(".vzb-marker-contextmenu-title"),
-        closecross: this.element.select(".vzb-marker-contextmenu-close"),
-        fold: this.element.select(".vzb-marker-contextmenu-item-fold")
-      };
-
-
-      this.DOM.contextDialog;
-      this.element
-        .on("mouseleave", () => {
-          this.hide();
-        })
-        .on("contextmenu", (e) => {
-          e.preventDefault();
-        });
-      this.DOM.closecross
-        .html(ICON_CLOSE)
-        .on("click", () => this.hide());
-
-      this.hide();
-
-      //warm up drillcatalog
-      this.model.data.source.enableDrillup = true;
-    }
-
-    draw() {
-      this.localise = this.services.locale.auto();
-    }
-
-    hide(){
-      this.element.classed("vzb-hidden", true);
-    }
-
-    show(d, xy = {x: 0, y: 0}){
-      this._bindContextDialogItems(d);
-      this.element.classed("vzb-hidden", false)
-        .style("top", xy.y + "px")
-        .style("left", xy.x + "px");
-    }
-
-    _updateContextDialogUiStrings(name, nameFold) {
-      const t = this.localise;
-      this.DOM.title.text(name);
-      this.DOM.fold.text("❇️ " + t("dialogs/find/fold") + " " + nameFold);
-    }
-
-    _getPrimaryDim() {
-      return this.ui.primaryDim || this.model.data.space[0];
-    }
-
-    _getDrilldownProps() {
-      return this.ui.drilldown?.split?.(".") || [];
-    }
-
-    _findDrillProps(d) {
-      const dim = this._getPrimaryDim();
-      return Promise.all([
-        this.model.data.source.drillup({ dim, entity: d[KEY$4] }),
-        this.model.data.source.drilldown({ dim, entity: d[KEY$4] }).then( drillDown => {
-          return Object.keys(drillDown).find(prop => {
-            return drillDown[prop].includes(d[KEY$4]);
-          });
-        })
-      ]);
-    }
-
-    _bindContextDialogItems(_d) {
-
-      // ADD FOLD AND EXPLODE 
-      
-      //const _this = this;
-      this._findDrillProps(_d).then(props => {
-        const d = Object.assign({}, _d, props[0]);
-        d.prop = props[1];
-        const drilldownProps = this._getDrilldownProps();
-        const index = drilldownProps.indexOf(d.prop);
-        const foldPropName = [drilldownProps[index - 1]].map(prop => prop ? this.model.data.source.getConcept(prop)?.name : null)[0];
-        
-        this._updateContextDialogUiStrings(d.name, foldPropName);
-
-        this.DOM.fold
-          .classed("vzb-hidden", () => this._interact().disableFold(d))
-          .on("click", () => {
-            this._interact().clickToFold(d);
-            this.hide();
-          });
-
-        this.DOM.container.selectAll(".vzb-marker-contextmenu-item-explode").remove();
-        this.DOM.container.selectAll(".vzb-marker-contextmenu-item-explode").data(this._getExplodeProps(d))
-          .join("div")
-          .classed("vzb-marker-contextmenu-item vzb-marker-contextmenu-item-explode vzb-clickable", true)
-          .text(d => "✳️ " + this.localise("dialogs/find/explode") + " " + d.explodePropName)
-          .on("click", (event, d) => {
-            this._interact().clickToExplode(d);
-            this.hide();
-          });
-      });
-    }
-
-    _getExplodeProps(d) {
-      const drilldownProps = this._getDrilldownProps();
-      const index = drilldownProps.indexOf(d.prop);
-      return index == -1 ? [] : drilldownProps.slice(index + 1).map(prop => {
-        return ({
-          [KEY$4]: d[KEY$4],
-          prop: d.prop,
-          explodeProp: prop,
-          explodePropName: this.model.data.source.getConcept(prop)?.name || prop
-        });
-      } 
-      );
-    }
-
-    _interact() {
-      const _this = this;
-
-      return {
-        disableFold(d) {
-          const drilldownProps = _this._getDrilldownProps();
-          const index = drilldownProps.indexOf(d.prop);
-          return drilldownProps[index - 1] ? false : true;
-        },
-        clickToExplode(d) {
-          const dim = _this._getPrimaryDim();
-          const prop = d.prop;
-          const drilldownProps = _this._getDrilldownProps();
-          const explodeProp = d.explodeProp;
-
-          const prevProp = drilldownProps[drilldownProps.indexOf(prop) - 1];
-          const nextProp = drilldownProps[drilldownProps.indexOf(prop) + 1];
-          const explodeNextProp = drilldownProps[drilldownProps.indexOf(explodeProp) + 1];
-          if (!prevProp) {
-            _this.model.data.source.drilldown({dim, entity: d[KEY$4]}).then(drilldown => {
-              mobx.runInAction(() => {
-                if (nextProp == explodeProp) {
-                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + explodeNextProp, prop: nextProp, key: drilldown[nextProp]});
-                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + explodeNextProp, prop: nextProp, key: drilldown[nextProp]});
-                } else {
-                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: nextProp, key: drilldown[nextProp]});
-                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: nextProp, key: drilldown[nextProp]});
-                }
-
-                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop: nextProp, key: drilldown[nextProp]});
-                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop: nextProp, key: drilldown[nextProp]});
-
-                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
-                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
-              });
-            });
-          } else {
-            mobx.runInAction(() => {
-              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop, key: d[KEY$4]});
-              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop, key: d[KEY$4]});
-
-              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
-              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
-            });
-          }
-        },
-        clickToFold(d) {
-          const dim = _this._getPrimaryDim();
-          const prop = d.prop;
-          const drilldownProps = _this._getDrilldownProps();
-          const foldProp = drilldownProps[drilldownProps.indexOf(prop) - 1];
-          const foldValue = d[foldProp];
-          const nextProp = drilldownProps[drilldownProps.indexOf(prop) + 1];
-
-          if (nextProp) {
-            _this.model.data.source.drilldown({dim, entity: foldValue}).then(drilldown => {
-              mobx.runInAction(() => {
-                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: prop, key: drilldown[prop]});
-                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: prop, key: drilldown[prop]});
-
-                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: prop, key: drilldown[prop]});
-                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: prop, key: drilldown[prop]});
-
-                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
-                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
-              });
-            });
-          } else {
-            mobx.runInAction(() => {
-              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: foldProp, key: foldValue});
-              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: foldProp, key: foldValue});
-
-              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
-              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
-            });
-          }
-        }
-      };
-    }
-  }
-
-  MarkerContextmenu.DEFAULT_UI = {
-    "primaryDim": "",
-    "drilldown": ""
-  };
-
-  const decorated$b = mobx.decorate(MarkerContextmenu, {
-  });
-
-  /*!
-   * VIZABI MIN MAX INPUT FIELDS
-   */
-  class MinMaxInputs extends BaseComponent {
-    constructor(config) {
-      config.template = `
-      <div class="vzb-mmi-holder">
-
-        <span class="vzb-mmi-zoomedmin-label"></span>
-        <input type="text" class="vzb-mmi-zoomedmin" name="min">
-        <span class="vzb-mmi-zoomedmax-label"></span>
-        <input type="text" class="vzb-mmi-zoomedmax" name="max">
-
-      </div>
-    `;
-
-      super(config);
-    }
-
-    setup() {
-      this.DOM = {
-        zoomed_labelMin: this.element.select(".vzb-mmi-zoomedmin-label"),
-        zoomed_labelMax: this.element.select(".vzb-mmi-zoomedmax-label"),
-        zoomed_fieldMin: this.element.select(".vzb-mmi-zoomedmin"),
-        zoomed_fieldMax: this.element.select(".vzb-mmi-zoomedmax")
-      };
-
-      this.DOM.zoomed_fieldMin.on("change", this._setModel.bind(this));
-      this.DOM.zoomed_fieldMax.on("change", this._setModel.bind(this));
-
-      this.element.selectAll("input")
-        .on("keypress", (event) => {
-          if (event.which == 13) document.activeElement.blur();
-        });
-
-    }
-
-    get MDL() {
-      return {
-        model: this._getModel()
-      };
-    }
-
-    draw() {
-      this.localise = this.services.locale.auto();
-
-      const _this = this;
-      this.formatter = function(n) {
-        if (!n && n !== 0) return n;
-        if (isDate(n)) return _this.localise(n);
-        if (this.MDL.model.type === "time") return n;
-        return d3.format(".2r")(n);
-      };
-
-      this.addReaction(this._updateView);
-
-    }
-
-    _updateView() {
-      this.DOM.zoomed_labelMin.text(this.localise("hints/min") + ":");
-      this.DOM.zoomed_labelMax.text(this.localise("hints/max") + ":");
-
-      this.DOM.zoomed_fieldMin.property("value", this.formatter(this.MDL.model.zoomed[0]));
-      this.DOM.zoomed_fieldMax.property("value", this.formatter(this.MDL.model.zoomed[1]));
-    }
-
-    _getModel() {
-      if (this.state.submodel) {
-        const submodel = this.state.submodel.split(".");
-        if (submodel[0] === "encoding") {
-          return getProp(this.model.encoding[submodel[1]], submodel.slice(2));
-        }
-      }
-      if (!this.state.submodel && !this.state.submodelFunc) return this.model;
-      return this.state.submodelFunc ? this.state.submodelFunc() : getProp(this, this.state.submodel.split("."));
-    }
-
-    _setModel() {
-      const valueMin = this.DOM.zoomed_fieldMin.property("value");
-      const valueMax = this.DOM.zoomed_fieldMax.property("value");
-      let values = [valueMin, valueMax].map(m => m.replace("−", "-")); //replace the bourjois minus sign &#8722 to the proletarian &#45
-      if (!this.MDL.model.type === "time") 
-        values = values.map(m => parseFloat(m)); //replace the bourjois minus sign &#8722 to the proletarian &#45
-
-      if(values.some(f => !f && f!==0)) {
-        this._updateView();
-      } else {
-        this.MDL.model.config.zoomed = values;
-      }
-    }
-  }
-
-  MinMaxInputs.DEFAULT_UI = {
-  };
-
-  const decorated$a = mobx.decorate(MinMaxInputs, {
-    "MDL": mobx.computed
-  });
-
-  const OPTIONS$4 = {
     checkbox: null,
     setCheckboxFunc: null,
     submodel: null,
@@ -9024,7 +8753,7 @@
         label: this.element.select("label")
       };
       
-      this.options = deepExtend(deepExtend({}, OPTIONS$4), _options || {});
+      this.options = deepExtend(deepExtend({}, OPTIONS$5), _options || {});
 
       const _this = this;
 
@@ -9537,108 +9266,6 @@
     "MDL": mobx.computed
   });
 
-  function firstLastOrMiddle(index, total){
-    return {first: index === 0, last: index + 1 === total};
-  }
-
-  class _Repeater extends BaseComponent {
-
-    get MDL(){
-      return {
-        repeat: this.model.encoding.repeat
-      };
-    }
-
-
-    loading(){
-      this.addReaction(this.addRemoveSubcomponents, {ignoreStatus: true});
-    }
-
-
-    addRemoveSubcomponents(){
-      const {repeatedComponentCssClass} = this.options;
-      const {rowcolumn, ncolumns, nrows} = this.MDL.repeat;
-      const repeat = this.MDL.repeat;
-
-      //The fr unit sets size of track as a fraction of the free space of grid container
-      //We need as many 1fr as rows and columns to have cells equally sized (grid-template-columns: 1fr 1fr 1fr;)
-      this.element
-        .style("grid-template-rows", "1fr ".repeat(nrows))
-        .style("grid-template-columns", "1fr ".repeat(ncolumns));
-
-      let sections = this.element.selectAll(".vzb-repeat-inner")
-        .data(rowcolumn, d => repeat.getName(d));
-
-      sections.exit()
-        .each(d => this.removeSubcomponent(d))
-        .remove();      
-
-      sections.enter().append("div")
-        .attr("class", "vzb-repeat-inner")
-        //add an intermediary div with null datum to prevent unwanted data inheritance to subcomponent
-        //https://stackoverflow.com/questions/17846806/preventing-unwanted-data-inheritance-with-selection-select
-        .each(function(d){
-          d3.select(this).append("div")
-            .datum(null)
-            .attr("class", () => `${repeatedComponentCssClass} vzb-${repeat.getName(d)}`);
-        })
-        .each((d,i) => this.addSubcomponent(d,i))
-        .merge(sections)      
-        .style("grid-row-start", (_, i) => repeat.getRowIndex(i) + 1)
-        .style("grid-column-start", (_, i) => repeat.getColumnIndex(i) + 1)
-        .each((d,i) => {
-          this.findChild({name: repeat.getName(d)}).state.positionInRepeat = this.getPosition(i);
-        });
-
-      this.services.layout._resizeHandler();
-    }
-
-    getPosition(i){
-      const repeat = this.MDL.repeat;
-      const {ncolumns, nrows} = repeat;
-
-      return {
-        row: firstLastOrMiddle(repeat.getRowIndex(i), nrows),
-        column: firstLastOrMiddle(repeat.getColumnIndex(i), ncolumns)
-      };
-    }
-
-    addSubcomponent(d, index){
-      const {repeatedComponent} = this.options;
-      const name = this.MDL.repeat.getName(d);
-
-      const subcomponent = new repeatedComponent({
-        id: this.id + "-" + index,
-        placeholder: ".vzb-" + name,
-        model: this.model,
-        name,
-        parent: this,
-        root: this.root,
-        state: {alias: d},
-        services: this.services,
-        options: this.options.repeatedComponentOptions,
-        ui: this.ui,
-        default_ui: this.DEFAULT_UI
-      });
-      this.children.push(subcomponent);
-    }
-
-
-    removeSubcomponent(d){
-      const subcomponent = this.findChild({name: this.MDL.repeat.getName(d)});
-      if(subcomponent) {
-        subcomponent.deconstruct();
-      }
-    }
-  }
-
-  _Repeater.DEFAULT_UI = {
-  };
-
-  const Repeater = mobx.decorate(_Repeater, {
-    "MDL": mobx.computed
-  });
-
   const CONFIG = {
     triangleWidth: 10,
     triangleHeight: 10,
@@ -9769,577 +9396,7 @@
 
   }
 
-  const decorated$9 = mobx.decorate(SteppedSlider, {
-    "MDL": mobx.computed
-  });
-
-  const HTML_ICON_PLAY = 
-    `<svg class="vzb-icon vzb-icon-play" viewBox="3 3 42 42"
-  xmlns="http://www.w3.org/2000/svg">
-  <path xmlns="http://www.w3.org/2000/svg" d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-4 29V15l12 9-12 9z"/>
-  </svg>`;
-  const HTML_ICON_PAUSE =
-    `<svg class="vzb-icon vzb-icon-pause" viewBox="3 3 42 42"
-  xmlns="http://www.w3.org/2000/svg">
-  <path xmlns="http://www.w3.org/2000/svg" d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-2 28h-4V16h4v16zm8 0h-4V16h4v16z"/>
-  </svg>`;
-  const HTML_ICON_LOADING =
-    `<div class='vzb-loader'></div>`;
-
-  class PlayButton extends BaseComponent {
-
-    constructor(config) {
-      config.template = 
-        `<button class="vzb-ts-btn">
-        <div class='vzb-loader'></div>
-      </button>`;
-      super(config);
-    }
-
-    setup() {
-      this.buttonEl = this.element.select(".vzb-ts-btn")
-        .on("click", () => {this.model.encoding.frame.togglePlaying();});
-    }
-
-    draw() {
-      this.buttonEl.html(this.model.encoding.frame.playing ? HTML_ICON_PAUSE : HTML_ICON_PLAY);
-    }
-
-    loading() {
-      this.buttonEl.html(HTML_ICON_LOADING);
-    }
-  }
-
-  const PROFILE_CONSTANTS$1 = {
-    SMALL: {
-      margin: {
-        top: 7,
-        right: 25,
-        bottom: 10,
-        left: 60
-      },
-      radius: 8,
-      label_spacing: 5
-    },
-    MEDIUM: {
-      margin: {
-        top: 0,
-        right: 25,
-        bottom: 10,
-        left: 55
-      },
-      radius: 9,
-      label_spacing: 5
-    },
-    LARGE: {
-      margin: {
-        top: -5,
-        right: 25,
-        bottom: 10,
-        left: 80
-      },
-      radius: 11,
-      label_spacing: 8
-    }
-  };
-
-
-  const PROFILE_CONSTANTS_FOR_PROJECTOR$1 = {
-    MEDIUM: {
-      margin: {
-        top: 9,
-        right: 25,
-        bottom: 10,
-        left: 55
-      }
-    },
-    LARGE: {
-      margin: {
-        top: -5,
-        right: 25,
-        bottom: 10,
-        left: 80
-      }
-    }
-  };
-
-  //constants
-  const class_playing = "vzb-playing";
-  const class_loading = "vzb-ts-loading";
-  const class_hide_play = "vzb-ts-hide-play-button";
-  const class_dragging = "vzb-ts-dragging";
-  const class_axis_aligned = "vzb-ts-axis-aligned";
-  const class_show_value = "vzb-ts-show-value";
-  const class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
-
-  class TimeSlider extends BaseComponent {
-
-    constructor(config){
-      config.subcomponents = [{
-        type: PlayButton,
-        placeholder: ".vzb-ts-btns",
-        //model: this.model
-      }];
-
-      config.template = `
-      <div class="vzb-ts-slider">
-        <svg class="vzb-ts-slider-svg">
-          <g>
-            <g class="vzb-ts-slider-axis"></g>
-            <g class="vzb-ts-slider-progress"></g>
-            <g class="vzb-ts-slider-select"></g>
-            <line class="vzb-ts-slider-forecastboundary"></line>
-            <circle class="vzb-ts-slider-handle"></circle>
-            <text class="vzb-ts-slider-value"></text>
-            <line class="vzb-ts-slider-slide"></line>
-          </g>
-        </svg>      
-      </div>
-      <div class="vzb-ts-btns"></div>
-    `;
-      super(config);
-    }
-
-    setup() {
-      this.DOM = {
-        //slider: this.element.select(".vzb-ts-slider")
-        slider_outer: this.element.select(".vzb-ts-slider-svg"),
-        axis: this.element.select(".vzb-ts-slider-axis"),
-        select: this.element.select(".vzb-ts-slider-select"),
-        progressBar: this.element.select(".vzb-ts-slider-progress"),
-        slide: this.element.select(".vzb-ts-slider-slide"),
-        forecastBoundary: this.element.select(".vzb-ts-slider-forecastboundary"),
-        handle: this.element.select(".vzb-ts-slider-handle"),
-        valueText: this.element.select(".vzb-ts-slider-value")
-      };
-
-      this.DOM.slider = this.DOM.slider_outer.select("g");
-
-      //Axis
-      this.xAxis = axisSmart$1("bottom");
-
-      this.sliderWidth = 0;
-      this.sliderHeight = 0;
-
-      const { valueText, slider, slide, slider_outer } = this.DOM;
-      //Value
-      valueText.classed("stroke", true);
-      if (!slider.style("paint-order").length) {
-        slider.insert("text", ".vzb-ts-slider-value")
-          .attr("class", "vzb-ts-slider-value stroke");
-
-        valueText.classed("stroke", false);
-      }
-      this.DOM.valueText = this.element.selectAll(".vzb-ts-slider-value")
-        .attr("text-anchor", "middle")
-        .attr("dy", "-0.7em");
-
-      //Slide
-      slide.call(d3.drag()
-        //.on("start.interrupt", function() { _this.slide.interrupt(); })
-        .on("start drag", event => this._brushed(event))
-        .on("end", event => this._brushedEnd(event))
-      );
-
-      slider_outer.on("mousewheel", (event) => {
-        //do nothing and dont pass the event on if we are currently dragging the slider
-        if (this.ui.dragging) {
-          event.stopPropagation();
-          event.preventDefault();
-          event.returnValue = false;
-          return false;
-        }
-      });
-
-      this.DOM.forecastBoundary.on("click", () => {
-        this.MDL.frame.setValueAndStop(this.root.ui.chart.endBeforeForecast);
-      });
-    }
-
-    get MDL() {
-      return {
-        frame: this.model.encoding.frame
-      };
-    }
-
-    draw() {
-      this.localise = this.services.locale.auto({interval: this.MDL.frame.interval});
-      
-      this.element.classed(class_loading, false);
-
-      if (this._updateLayoutProfile()) return; //return if exists with error
-
-      this.addReaction(this._configEndBeforeForecast);
-      this.addReaction(this._adjustFrameScaleDomainConfig);
-      this.addReaction(this.updateSize, {throttle_ms: 100});
-      this.addReaction(this._redrawForecast);
-      this.addReaction(this._optionClasses);
-      this.addReaction(this._processForecast);
-      this.addReaction(this._setHandle);
-
-    }
-
-    // _changeLimits() {
-    //   const minValue = this.model.time.start;
-    //   const maxValue = this.model.time.end;
-    //   //scale
-    //   this.xScale.domain([minValue, maxValue]);
-    //   //axis
-    //   this.xAxis.tickValues([minValue, maxValue])
-    //     .tickFormat(this.model.time.getFormatter());
-    // }
-
-    _updateLayoutProfile() {
-      this.services.layout.size;
-
-      this.profileConstants = this.services.layout.getProfileConstants(PROFILE_CONSTANTS$1, PROFILE_CONSTANTS_FOR_PROJECTOR$1);
-      this.height = this.element.node().clientHeight || 0;
-      this.width = this.element.node().clientWidth || 0;
-      if (!this.height || !this.width) return warn("Timeslider _updateProfile() abort: container is too little or has display:none");
-    }
-
-    get xScale() {
-      return this.MDL.frame.scale.d3Scale;
-    }
-
-    _configEndBeforeForecast() {
-      const frame = this.MDL.frame;
-      const { offset, floor } = this.services.Vizabi.Vizabi.utils.interval(frame.interval);
-      if (!this.root.ui.chart.endBeforeForecast) {
-        const stepBack = floor(offset(new Date(), -1));
-        this.root.ui.chart.endBeforeForecast = frame.formatValue(stepBack);
-      }
-      this.firstForecastFrame = offset(frame.parseValue(this.root.ui.chart.endBeforeForecast), +1);
-    }
-
-    _adjustFrameScaleDomainConfig() {
-      const frame = this.MDL.frame;
-      if (this.root.ui.chart.showForecast) {
-        delete frame.scale.config.domain;
-      } else {
-        const lastNonForecast = frame.parseValue(this.root.ui.chart.endBeforeForecast);
-        if (lastNonForecast && frame.data.domain[1] > lastNonForecast)
-          frame.scale.config.domain = [ frame.data.domain[0], lastNonForecast ]
-            .map(v => frame.formatValue(v));
-        else 
-          delete frame.scale.config.domain;
-      }
-    }
-
-    _processForecast() {
-      const frame = this.MDL.frame;
-      const lastNonForecast = frame.parseValue(this.root.ui.chart.endBeforeForecast);
-      const forecastPauseSetting = this.root.ui.chart.pauseBeforeForecast;
-      const equals = this.services.Vizabi.Vizabi.utils.equals;
-
-      // stop when 
-      // - first forecast value is reached, then set to previous year. This way animation finishes.
-      // - previous frame was reached while playing (= allowed)
-      if (frame.playing
-          && forecastPauseSetting 
-          && equals(frame.value, this.firstForecastFrame) 
-          && this.allowForecastPause
-      ) {
-        frame.setValueAndStop(lastNonForecast);
-      }
-
-      // set up pause if we're playing and we're on the last frame before pause (i.e. the frame we actually want to pause on)
-      this.allowForecastPause = frame.playing && equals(frame.value, lastNonForecast);
-    }
-
-    _redrawForecast() {
-      this.services.layout.size;
-
-      const endBeforeForecast = this.MDL.frame.parseValue(this.root.ui.chart.endBeforeForecast);
-      const forecastIsOn = this.root.ui.chart.showForecast && (this.MDL.frame.scale.domain[1] > endBeforeForecast);
-      this.DOM.forecastBoundary
-        .classed("vzb-hidden", !forecastIsOn);
-
-      if (forecastIsOn) {
-        const radius = this.profileConstants.radius;
-
-        this.DOM.forecastBoundary
-          .attr("transform", "translate(0," + this.height / 2 + ")")
-          .attr("x1", this.xScale(endBeforeForecast) - radius / 2)
-          .attr("x2", this.xScale(endBeforeForecast) + radius / 2)
-          .attr("y1", radius)
-          .attr("y2", radius);
-      }
-
-    }
-
-    /**
-     * Executes everytime the container or vizabi is resized
-     * Ideally,it contains only operations related to size
-     */
-    updateSize() {
-      this.services.layout.size;
-
-      const {
-        margin,
-        radius,
-        label_spacing
-      } = this.profileConstants;
-
-      const {
-        slider,
-        slide,
-        axis,
-        handle,
-        select,
-        progressBar
-      } = this.DOM;
-
-      // const slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
-      // const slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
-
-      // if (!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
-      const marginRight = this.services.layout.hGrid.length ? 
-        this.width - this.services.layout.hGrid[0]
-        : margin.right;
-      this.sliderWidth = this.width - margin.left - marginRight;
-      this.sliderHeight = this.height - margin.bottom - margin.top;
-
-      //translate according to margins
-      slider.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      this.MDL.frame.scale.config.range = [0, this.sliderWidth];
-
-      slide
-        .attr("transform", "translate(0," + this.sliderHeight / 2 + ")")
-        .attr("x1", this.xScale.range()[0])
-        .attr("x2", this.xScale.range()[1])
-        .style("stroke-width", radius * 2 + "px");
-
-      //adjust axis with scale
-      this.xAxis.scale(this.xScale)
-        .tickSizeInner(0)
-        .tickSizeOuter(0)
-        .tickPadding(label_spacing)
-        .tickSizeMinor(0, 0);
-
-      axis.attr("transform", "translate(0," + this.sliderHeight / 2 + ")")
-        .call(this.xAxis);
-
-      select.attr("transform", "translate(0," + this.sliderHeight / 2 + ")");
-      progressBar.attr("transform", "translate(0," + this.sliderHeight / 2 + ")");
-
-      //size of handle
-      handle.attr("transform", "translate(0," + this.sliderHeight / 2 + ")")
-        .attr("r", radius);
-
-      //this.sliderWidth = slider.node().getBoundingClientRect().width;
-
-      // this.resizeSelectedLimiters();
-      // this._resizeProgressBar();
-      // this._setHandle();
-
-    }
-
-    /**
-     * Returns width of slider text value.
-     * Parameters in this function needed for memoize function, so they are not redundant.
-     */
-    _getValueWidth() {
-      return this.valueText.node().getBoundingClientRect().width;
-    }
-
-    _brushed(event) {
-      const { frame } = this.MDL;
-      const { handle, valueText } = this.DOM;
-
-      if (frame.playing) {
-        frame.stopPlaying();
-      }
-
-      this.ui.dragging = true;
-      this.element.classed(class_dragging, this.ui.dragging);
-
-      let value;// = _this.brush.extent()[0];
-      //var value = d3.brushSelection(_this.slide.node());
-
-      //if(!value) return;
-
-      //set brushed properties
-
-      if (event.sourceEvent) {
-        // Prevent window scrolling on cursor drag in Chrome/Chromium.
-        event.sourceEvent.preventDefault();
-
-        //_this.model.time.dragStart();
-        let posX = event.x;
-        const maxPosX = this.sliderWidth;
-
-        const endBeforeForecast = frame.parseValue(this.root.ui.chart.endBeforeForecast);
-        const forecastBoundaryIsOn = this.root.ui.chart.showForecast && (frame.data.domain.at(-1) > endBeforeForecast);
-        const forecastBoundaryPos = this.xScale(endBeforeForecast);
-        const snappyMargin = 0.5 * handle.attr("r");
-
-        if (posX > maxPosX) {
-          posX = maxPosX;
-        } else if (posX < 0) {
-          posX = 0;
-        } else if ((Math.abs(posX - forecastBoundaryPos) < snappyMargin) && event.sourceEvent.shiftKey && forecastBoundaryIsOn) {
-          posX = forecastBoundaryPos;
-        }
-
-        value = this.xScale.invert(posX);
-        //set handle position
-        handle.attr("cx", posX);
-        valueText.attr("transform", "translate(" + posX + "," + (this.sliderHeight / 2) + ")");
-        valueText.text(this.localise(value));
-      }
-
-      //set time according to dragged position
-      if (value - this.MDL.frame.value !== 0) {
-        this._setTime(value);
-      }
-    }
-
-    /**
-     * Gets brushedEnd function to be executed when dragging ends
-     * @returns {Function} brushedEnd function
-     */
-    _brushedEnd() {
-      this.MDL.frame.snap();
-      this.ui.dragging = false;
-      this.element.classed(class_dragging, this.ui.dragging);
-    }
-
-    _setHandle() {
-      this.services.layout.size;
-      this.services.layout.hGrid;
-
-      const { value, speed, playing } = this.MDL.frame;
-
-      if (this.ui.dragging || this._isDomainNotVeryGood()) return;
-      const { handle, valueText } = this.DOM; 
-    
-      //this.slide.call(this.brush.extent([value, value]));
-      const newPos = this.xScale(value);
-      //this.brush.move(this.slide, [newPos, newPos])
-
-      //    this.valueText.text(this.model.time.formatDate(value));
-
-      //    var old_pos = this.handle.attr("cx");
-      //var newPos = this.xScale(value);
-      //if (_this.prevPosition == null) _this.prevPosition = newPos;
-      //const delayAnimations = newPos > _this.prevPosition ? this.model.time.delayAnimations : 0;
-      const delayAnimations = speed;
-      if (playing) {
-        handle//.attr("cx", _this.prevPosition)
-          .transition()
-          .duration(delayAnimations)
-          .ease(d3.easeLinear)
-          .attr("cx", newPos);
-
-        valueText//.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
-          .transition("text")
-          .delay(delayAnimations)
-          .text(this.localise(value));
-        valueText
-          .transition()
-          .duration(delayAnimations)
-          .ease(d3.easeLinear)
-          .attr("transform", "translate(" + newPos + "," + (this.sliderHeight / 2) + ")");
-      } else {
-        handle
-          //cancel active transition
-          .interrupt()
-          .attr("cx", newPos);
-
-        valueText
-          //cancel active transition
-          .interrupt()
-          .interrupt("text")
-          .transition("text");
-        valueText
-          .attr("transform", "translate(" + newPos + "," + (this.sliderHeight / 2) + ")")
-          .text(this.localise(value));
-      }
-      //_this.prevPosition = newPos;
-
-    }
-
-    /**
-     * Sets the current time model to time
-     * @param {number} time The time
-     */
-    _setTime(time) {
-      //update state
-      const _this = this;
-      const frameRate = 50;
-
-      //avoid updating more than once in "frameRate"
-      var now = new Date();
-      if (this._updTime != null && now - this._updTime < frameRate) return;
-      this._updTime = now;
-      //const persistent = !this.model.time.dragging && !this.model.time.playing;
-      //_this.model.time.getModelObject("value").set(time, false, persistent); // non persistent
-      _this.MDL.frame.setValue(time);
-
-    }
-
-    /**
-     * Applies some classes to the element according to options
-     */
-    _optionClasses() {
-      //show/hide classes
-      const { frame } = this.MDL;
-
-      const show_ticks = this.ui.show_ticks;
-      const show_value = this.ui.show_value;
-      const show_value_when_drag_play = this.ui.show_value_when_drag_play;
-      const axis_aligned = this.ui.axis_aligned;
-      const show_play = (this.ui.show_button) && (frame.playable);
-
-      this.xAxis.labelerOptions({
-        scaleType: "time",
-        removeAllLabels: !show_ticks,
-        limitMaxTickNumber: 3,
-        showOuter: false,
-        toolMargin: {
-          left: 10,
-          right: 10,
-          top: 0,
-          bottom: 30
-        },
-        fitIntoScale: "optimistic"
-      });
-      this.DOM.axis
-        .call(this.xAxis);
-
-      this.element.classed("vzb-ts-disabled", this._isDomainNotVeryGood());
-      this.element.classed(class_hide_play, !show_play);
-      this.element.classed(class_playing, frame.playing);
-      this.element.classed(class_show_value, show_value);
-      this.element.classed(class_show_value_when_drag_play, show_value_when_drag_play);
-      this.element.classed(class_axis_aligned, axis_aligned);
-    }
-
-    _isDomainNotVeryGood(){
-      const domain = this.xScale.domain();
-      //domain not available
-      if(!domain || domain.length !== 2) return true;
-      //domain inverted or shrunk to one point
-      if(domain[1] - domain[0] <= 0) return true;
-      //domain sucks in some other way
-      if(domain.some(s => s == null || isNaN(s))) return true;
-      return false;
-    }
-  }
-
-  TimeSlider.DEFAULT_UI = {
-    show_ticks: false,
-    show_value: false,
-    show_value_when_drag_play: true,
-    axis_aligned: false,
-    show_button: true,
-    dragging: false
-  };
-
-  const decorated$8 = mobx.decorate(TimeSlider, {
-    "xScale": mobx.computed,
+  const decorated$b = mobx.decorate(SteppedSlider, {
     "MDL": mobx.computed
   });
 
@@ -10390,7 +9447,7 @@
   };
 
   //options and globals
-  const OPTIONS$3 = {
+  const OPTIONS$4 = {
     MOUSE_LOCS: [], //contains last locations of mouse
     MOUSE_LOCS_TRACKED: 3, //max number of locations of mouse
     DELAY: 200, //amazons multilevel delay
@@ -11187,7 +10244,7 @@
     }
   }
 
-  const PROFILE_CONSTANTS = {
+  const PROFILE_CONSTANTS$2 = {
     SMALL: {
       col_width: 200
     },
@@ -11199,7 +10256,7 @@
     }
   };
 
-  const PROFILE_CONSTANTS_FOR_PROJECTOR = {
+  const PROFILE_CONSTANTS_FOR_PROJECTOR$2 = {
     MEDIUM: {
       col_width: 200
     },
@@ -12151,7 +11208,7 @@
       this._alignY = "center";
 
       //options
-      this.OPTIONS = deepClone(OPTIONS$3);
+      this.OPTIONS = deepClone(OPTIONS$4);
 
       //general markup
       this.DOM = {
@@ -12255,7 +11312,7 @@
     _updateLayoutProfile(){
       this.services.layout.size;
 
-      this.profileConstants = this.services.layout.getProfileConstants(PROFILE_CONSTANTS, PROFILE_CONSTANTS_FOR_PROJECTOR);
+      this.profileConstants = this.services.layout.getProfileConstants(PROFILE_CONSTANTS$2, PROFILE_CONSTANTS_FOR_PROJECTOR$2);
       this.height = this.element.node().clientHeight || 0;
       this.width = this.element.node().clientWidth || 0;
       if (!this.height || !this.width) return "TreeMenu _updateProfile() abort: container is too little or has display:none";
@@ -12379,6 +11436,576 @@
     }
 
   }
+
+  const HTML_ICON_PLAY = 
+    `<svg class="vzb-icon vzb-icon-play" viewBox="3 3 42 42"
+  xmlns="http://www.w3.org/2000/svg">
+  <path xmlns="http://www.w3.org/2000/svg" d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-4 29V15l12 9-12 9z"/>
+  </svg>`;
+  const HTML_ICON_PAUSE =
+    `<svg class="vzb-icon vzb-icon-pause" viewBox="3 3 42 42"
+  xmlns="http://www.w3.org/2000/svg">
+  <path xmlns="http://www.w3.org/2000/svg" d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-2 28h-4V16h4v16zm8 0h-4V16h4v16z"/>
+  </svg>`;
+  const HTML_ICON_LOADING =
+    `<div class='vzb-loader'></div>`;
+
+  class PlayButton extends BaseComponent {
+
+    constructor(config) {
+      config.template = 
+        `<button class="vzb-ts-btn">
+        <div class='vzb-loader'></div>
+      </button>`;
+      super(config);
+    }
+
+    setup() {
+      this.buttonEl = this.element.select(".vzb-ts-btn")
+        .on("click", () => {this.model.encoding.frame.togglePlaying();});
+    }
+
+    draw() {
+      this.buttonEl.html(this.model.encoding.frame.playing ? HTML_ICON_PAUSE : HTML_ICON_PLAY);
+    }
+
+    loading() {
+      this.buttonEl.html(HTML_ICON_LOADING);
+    }
+  }
+
+  const PROFILE_CONSTANTS$1 = {
+    SMALL: {
+      margin: {
+        top: 7,
+        right: 25,
+        bottom: 10,
+        left: 60
+      },
+      radius: 8,
+      label_spacing: 5
+    },
+    MEDIUM: {
+      margin: {
+        top: 0,
+        right: 25,
+        bottom: 10,
+        left: 55
+      },
+      radius: 9,
+      label_spacing: 5
+    },
+    LARGE: {
+      margin: {
+        top: -5,
+        right: 25,
+        bottom: 10,
+        left: 80
+      },
+      radius: 11,
+      label_spacing: 8
+    }
+  };
+
+
+  const PROFILE_CONSTANTS_FOR_PROJECTOR$1 = {
+    MEDIUM: {
+      margin: {
+        top: 9,
+        right: 25,
+        bottom: 10,
+        left: 55
+      }
+    },
+    LARGE: {
+      margin: {
+        top: -5,
+        right: 25,
+        bottom: 10,
+        left: 80
+      }
+    }
+  };
+
+  //constants
+  const class_playing = "vzb-playing";
+  const class_loading = "vzb-ts-loading";
+  const class_hide_play = "vzb-ts-hide-play-button";
+  const class_dragging = "vzb-ts-dragging";
+  const class_axis_aligned = "vzb-ts-axis-aligned";
+  const class_show_value = "vzb-ts-show-value";
+  const class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
+
+  class TimeSlider extends BaseComponent {
+
+    constructor(config){
+      config.subcomponents = [{
+        type: PlayButton,
+        placeholder: ".vzb-ts-btns",
+        //model: this.model
+      }];
+
+      config.template = `
+      <div class="vzb-ts-slider">
+        <svg class="vzb-ts-slider-svg">
+          <g>
+            <g class="vzb-ts-slider-axis"></g>
+            <g class="vzb-ts-slider-progress"></g>
+            <g class="vzb-ts-slider-select"></g>
+            <line class="vzb-ts-slider-forecastboundary"></line>
+            <circle class="vzb-ts-slider-handle"></circle>
+            <text class="vzb-ts-slider-value"></text>
+            <line class="vzb-ts-slider-slide"></line>
+          </g>
+        </svg>      
+      </div>
+      <div class="vzb-ts-btns"></div>
+    `;
+      super(config);
+    }
+
+    setup() {
+      this.DOM = {
+        //slider: this.element.select(".vzb-ts-slider")
+        slider_outer: this.element.select(".vzb-ts-slider-svg"),
+        axis: this.element.select(".vzb-ts-slider-axis"),
+        select: this.element.select(".vzb-ts-slider-select"),
+        progressBar: this.element.select(".vzb-ts-slider-progress"),
+        slide: this.element.select(".vzb-ts-slider-slide"),
+        forecastBoundary: this.element.select(".vzb-ts-slider-forecastboundary"),
+        handle: this.element.select(".vzb-ts-slider-handle"),
+        valueText: this.element.select(".vzb-ts-slider-value")
+      };
+
+      this.DOM.slider = this.DOM.slider_outer.select("g");
+
+      //Axis
+      this.xAxis = axisSmart$1("bottom");
+
+      this.sliderWidth = 0;
+      this.sliderHeight = 0;
+
+      const { valueText, slider, slide, slider_outer } = this.DOM;
+      //Value
+      valueText.classed("stroke", true);
+      if (!slider.style("paint-order").length) {
+        slider.insert("text", ".vzb-ts-slider-value")
+          .attr("class", "vzb-ts-slider-value stroke");
+
+        valueText.classed("stroke", false);
+      }
+      this.DOM.valueText = this.element.selectAll(".vzb-ts-slider-value")
+        .attr("text-anchor", "middle")
+        .attr("dy", "-0.7em");
+
+      //Slide
+      slide.call(d3.drag()
+        //.on("start.interrupt", function() { _this.slide.interrupt(); })
+        .on("start drag", event => this._brushed(event))
+        .on("end", event => this._brushedEnd(event))
+      );
+
+      slider_outer.on("mousewheel", (event) => {
+        //do nothing and dont pass the event on if we are currently dragging the slider
+        if (this.ui.dragging) {
+          event.stopPropagation();
+          event.preventDefault();
+          event.returnValue = false;
+          return false;
+        }
+      });
+
+      this.DOM.forecastBoundary.on("click", () => {
+        this.MDL.frame.setValueAndStop(this.root.ui.chart.endBeforeForecast);
+      });
+    }
+
+    get MDL() {
+      return {
+        frame: this.model.encoding.frame
+      };
+    }
+
+    draw() {
+      this.localise = this.services.locale.auto({interval: this.MDL.frame.interval});
+      
+      this.element.classed(class_loading, false);
+
+      if (this._updateLayoutProfile()) return; //return if exists with error
+
+      this.addReaction(this._configEndBeforeForecast);
+      this.addReaction(this._adjustFrameScaleDomainConfig);
+      this.addReaction(this.updateSize, {throttle_ms: 100});
+      this.addReaction(this._redrawForecast);
+      this.addReaction(this._optionClasses);
+      this.addReaction(this._processForecast);
+      this.addReaction(this._setHandle);
+
+    }
+
+    // _changeLimits() {
+    //   const minValue = this.model.time.start;
+    //   const maxValue = this.model.time.end;
+    //   //scale
+    //   this.xScale.domain([minValue, maxValue]);
+    //   //axis
+    //   this.xAxis.tickValues([minValue, maxValue])
+    //     .tickFormat(this.model.time.getFormatter());
+    // }
+
+    _updateLayoutProfile() {
+      this.services.layout.size;
+
+      this.profileConstants = this.services.layout.getProfileConstants(PROFILE_CONSTANTS$1, PROFILE_CONSTANTS_FOR_PROJECTOR$1);
+      this.height = this.element.node().clientHeight || 0;
+      this.width = this.element.node().clientWidth || 0;
+      if (!this.height || !this.width) return warn("Timeslider _updateProfile() abort: container is too little or has display:none");
+    }
+
+    get xScale() {
+      return this.MDL.frame.scale.d3Scale;
+    }
+
+    _configEndBeforeForecast() {
+      const frame = this.MDL.frame;
+      const { offset, floor } = this.services.Vizabi.Vizabi.utils.interval(frame.interval);
+      if (!this.root.ui.chart.endBeforeForecast) {
+        const stepBack = floor(offset(new Date(), -1));
+        this.root.ui.chart.endBeforeForecast = frame.formatValue(stepBack);
+      }
+      this.firstForecastFrame = offset(frame.parseValue(this.root.ui.chart.endBeforeForecast), +1);
+    }
+
+    _adjustFrameScaleDomainConfig() {
+      const frame = this.MDL.frame;
+      if (this.root.ui.chart.showForecast) {
+        delete frame.scale.config.domain;
+      } else {
+        const lastNonForecast = frame.parseValue(this.root.ui.chart.endBeforeForecast);
+        if (lastNonForecast && frame.data.domain[1] > lastNonForecast)
+          frame.scale.config.domain = [ frame.data.domain[0], lastNonForecast ]
+            .map(v => frame.formatValue(v));
+        else 
+          delete frame.scale.config.domain;
+      }
+    }
+
+    _processForecast() {
+      const frame = this.MDL.frame;
+      const lastNonForecast = frame.parseValue(this.root.ui.chart.endBeforeForecast);
+      const forecastPauseSetting = this.root.ui.chart.pauseBeforeForecast;
+      const equals = this.services.Vizabi.Vizabi.utils.equals;
+
+      // stop when 
+      // - first forecast value is reached, then set to previous year. This way animation finishes.
+      // - previous frame was reached while playing (= allowed)
+      if (frame.playing
+          && forecastPauseSetting 
+          && equals(frame.value, this.firstForecastFrame) 
+          && this.allowForecastPause
+      ) {
+        frame.setValueAndStop(lastNonForecast);
+      }
+
+      // set up pause if we're playing and we're on the last frame before pause (i.e. the frame we actually want to pause on)
+      this.allowForecastPause = frame.playing && equals(frame.value, lastNonForecast);
+    }
+
+    _redrawForecast() {
+      this.services.layout.size;
+
+      const endBeforeForecast = this.MDL.frame.parseValue(this.root.ui.chart.endBeforeForecast);
+      const forecastIsOn = this.root.ui.chart.showForecast && (this.MDL.frame.scale.domain[1] > endBeforeForecast);
+      this.DOM.forecastBoundary
+        .classed("vzb-hidden", !forecastIsOn);
+
+      if (forecastIsOn) {
+        const radius = this.profileConstants.radius;
+
+        this.DOM.forecastBoundary
+          .attr("transform", "translate(0," + this.height / 2 + ")")
+          .attr("x1", this.xScale(endBeforeForecast) - radius / 2)
+          .attr("x2", this.xScale(endBeforeForecast) + radius / 2)
+          .attr("y1", radius)
+          .attr("y2", radius);
+      }
+
+    }
+
+    /**
+     * Executes everytime the container or vizabi is resized
+     * Ideally,it contains only operations related to size
+     */
+    updateSize() {
+      this.services.layout.size;
+
+      const {
+        margin,
+        radius,
+        label_spacing
+      } = this.profileConstants;
+
+      const {
+        slider,
+        slide,
+        axis,
+        handle,
+        select,
+        progressBar
+      } = this.DOM;
+
+      // const slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
+      // const slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
+
+      // if (!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
+      const marginRight = this.services.layout.hGrid.length ? 
+        this.width - this.services.layout.hGrid[0]
+        : margin.right;
+      this.sliderWidth = this.width - margin.left - marginRight;
+      this.sliderHeight = this.height - margin.bottom - margin.top;
+
+      //translate according to margins
+      slider.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      this.MDL.frame.scale.config.range = [0, this.sliderWidth];
+
+      slide
+        .attr("transform", "translate(0," + this.sliderHeight / 2 + ")")
+        .attr("x1", this.xScale.range()[0])
+        .attr("x2", this.xScale.range()[1])
+        .style("stroke-width", radius * 2 + "px");
+
+      //adjust axis with scale
+      this.xAxis.scale(this.xScale)
+        .tickSizeInner(0)
+        .tickSizeOuter(0)
+        .tickPadding(label_spacing)
+        .tickSizeMinor(0, 0);
+
+      axis.attr("transform", "translate(0," + this.sliderHeight / 2 + ")")
+        .call(this.xAxis);
+
+      select.attr("transform", "translate(0," + this.sliderHeight / 2 + ")");
+      progressBar.attr("transform", "translate(0," + this.sliderHeight / 2 + ")");
+
+      //size of handle
+      handle.attr("transform", "translate(0," + this.sliderHeight / 2 + ")")
+        .attr("r", radius);
+
+      //this.sliderWidth = slider.node().getBoundingClientRect().width;
+
+      // this.resizeSelectedLimiters();
+      // this._resizeProgressBar();
+      // this._setHandle();
+
+    }
+
+    /**
+     * Returns width of slider text value.
+     * Parameters in this function needed for memoize function, so they are not redundant.
+     */
+    _getValueWidth() {
+      return this.valueText.node().getBoundingClientRect().width;
+    }
+
+    _brushed(event) {
+      const { frame } = this.MDL;
+      const { handle, valueText } = this.DOM;
+
+      if (frame.playing) {
+        frame.stopPlaying();
+      }
+
+      this.ui.dragging = true;
+      this.element.classed(class_dragging, this.ui.dragging);
+
+      let value;// = _this.brush.extent()[0];
+      //var value = d3.brushSelection(_this.slide.node());
+
+      //if(!value) return;
+
+      //set brushed properties
+
+      if (event.sourceEvent) {
+        // Prevent window scrolling on cursor drag in Chrome/Chromium.
+        event.sourceEvent.preventDefault();
+
+        //_this.model.time.dragStart();
+        let posX = event.x;
+        const maxPosX = this.sliderWidth;
+
+        const endBeforeForecast = frame.parseValue(this.root.ui.chart.endBeforeForecast);
+        const forecastBoundaryIsOn = this.root.ui.chart.showForecast && (frame.data.domain.at(-1) > endBeforeForecast);
+        const forecastBoundaryPos = this.xScale(endBeforeForecast);
+        const snappyMargin = 0.5 * handle.attr("r");
+
+        if (posX > maxPosX) {
+          posX = maxPosX;
+        } else if (posX < 0) {
+          posX = 0;
+        } else if ((Math.abs(posX - forecastBoundaryPos) < snappyMargin) && event.sourceEvent.shiftKey && forecastBoundaryIsOn) {
+          posX = forecastBoundaryPos;
+        }
+
+        value = this.xScale.invert(posX);
+        //set handle position
+        handle.attr("cx", posX);
+        valueText.attr("transform", "translate(" + posX + "," + (this.sliderHeight / 2) + ")");
+        valueText.text(this.localise(value));
+      }
+
+      //set time according to dragged position
+      if (value - this.MDL.frame.value !== 0) {
+        this._setTime(value);
+      }
+    }
+
+    /**
+     * Gets brushedEnd function to be executed when dragging ends
+     * @returns {Function} brushedEnd function
+     */
+    _brushedEnd() {
+      this.MDL.frame.snap();
+      this.ui.dragging = false;
+      this.element.classed(class_dragging, this.ui.dragging);
+    }
+
+    _setHandle() {
+      this.services.layout.size;
+      this.services.layout.hGrid;
+
+      const { value, speed, playing } = this.MDL.frame;
+
+      if (this.ui.dragging || this._isDomainNotVeryGood()) return;
+      const { handle, valueText } = this.DOM; 
+    
+      //this.slide.call(this.brush.extent([value, value]));
+      const newPos = this.xScale(value);
+      //this.brush.move(this.slide, [newPos, newPos])
+
+      //    this.valueText.text(this.model.time.formatDate(value));
+
+      //    var old_pos = this.handle.attr("cx");
+      //var newPos = this.xScale(value);
+      //if (_this.prevPosition == null) _this.prevPosition = newPos;
+      //const delayAnimations = newPos > _this.prevPosition ? this.model.time.delayAnimations : 0;
+      const delayAnimations = speed;
+      if (playing) {
+        handle//.attr("cx", _this.prevPosition)
+          .transition()
+          .duration(delayAnimations)
+          .ease(d3.easeLinear)
+          .attr("cx", newPos);
+
+        valueText//.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
+          .transition("text")
+          .delay(delayAnimations)
+          .text(this.localise(value));
+        valueText
+          .transition()
+          .duration(delayAnimations)
+          .ease(d3.easeLinear)
+          .attr("transform", "translate(" + newPos + "," + (this.sliderHeight / 2) + ")");
+      } else {
+        handle
+          //cancel active transition
+          .interrupt()
+          .attr("cx", newPos);
+
+        valueText
+          //cancel active transition
+          .interrupt()
+          .interrupt("text")
+          .transition("text");
+        valueText
+          .attr("transform", "translate(" + newPos + "," + (this.sliderHeight / 2) + ")")
+          .text(this.localise(value));
+      }
+      //_this.prevPosition = newPos;
+
+    }
+
+    /**
+     * Sets the current time model to time
+     * @param {number} time The time
+     */
+    _setTime(time) {
+      //update state
+      const _this = this;
+      const frameRate = 50;
+
+      //avoid updating more than once in "frameRate"
+      var now = new Date();
+      if (this._updTime != null && now - this._updTime < frameRate) return;
+      this._updTime = now;
+      //const persistent = !this.model.time.dragging && !this.model.time.playing;
+      //_this.model.time.getModelObject("value").set(time, false, persistent); // non persistent
+      _this.MDL.frame.setValue(time);
+
+    }
+
+    /**
+     * Applies some classes to the element according to options
+     */
+    _optionClasses() {
+      //show/hide classes
+      const { frame } = this.MDL;
+
+      const show_ticks = this.ui.show_ticks;
+      const show_value = this.ui.show_value;
+      const show_value_when_drag_play = this.ui.show_value_when_drag_play;
+      const axis_aligned = this.ui.axis_aligned;
+      const show_play = (this.ui.show_button) && (frame.playable);
+
+      this.xAxis.labelerOptions({
+        scaleType: "time",
+        removeAllLabels: !show_ticks,
+        limitMaxTickNumber: 3,
+        showOuter: false,
+        toolMargin: {
+          left: 10,
+          right: 10,
+          top: 0,
+          bottom: 30
+        },
+        fitIntoScale: "optimistic"
+      });
+      this.DOM.axis
+        .call(this.xAxis);
+
+      this.element.classed("vzb-ts-disabled", this._isDomainNotVeryGood());
+      this.element.classed(class_hide_play, !show_play);
+      this.element.classed(class_playing, frame.playing);
+      this.element.classed(class_show_value, show_value);
+      this.element.classed(class_show_value_when_drag_play, show_value_when_drag_play);
+      this.element.classed(class_axis_aligned, axis_aligned);
+    }
+
+    _isDomainNotVeryGood(){
+      const domain = this.xScale.domain();
+      //domain not available
+      if(!domain || domain.length !== 2) return true;
+      //domain inverted or shrunk to one point
+      if(domain[1] - domain[0] <= 0) return true;
+      //domain sucks in some other way
+      if(domain.some(s => s == null || isNaN(s))) return true;
+      return false;
+    }
+  }
+
+  TimeSlider.DEFAULT_UI = {
+    show_ticks: false,
+    show_value: false,
+    show_value_when_drag_play: true,
+    axis_aligned: false,
+    show_button: true,
+    dragging: false
+  };
+
+  const decorated$a = mobx.decorate(TimeSlider, {
+    "xScale": mobx.computed,
+    "MDL": mobx.computed
+  });
 
   /*!
    * VIZABI ZOOMBUTTONLIST
@@ -12569,6 +12196,410 @@
 
   }
 
+  const PROFILE_CONSTANTS = {
+    SMALL: {
+      minLabelTextSize: 7,
+      maxLabelTextSize: 21,
+      defaultLabelTextSize: 12,
+      closeCrossSize: 16 * 1.2,
+      labelLeashCoeff: 0.4
+    },
+    MEDIUM: {
+      minLabelTextSize: 7,
+      maxLabelTextSize: 30,
+      defaultLabelTextSize: 15,
+      closeCrossSize: 20 * 1.2,
+      labelLeashCoeff: 0.3
+    },
+    LARGE: {
+      minLabelTextSize: 6,
+      maxLabelTextSize: 48,
+      defaultLabelTextSize: 20,
+      closeCrossSize: 22 * 1.2,
+      labelLeashCoeff: 0.2
+    }
+  };
+
+  const PROFILE_CONSTANTS_FOR_PROJECTOR = {
+    MEDIUM: {
+      minLabelTextSize: 15,
+      maxLabelTextSize: 35,
+      defaultLabelTextSize: 15,
+      closeCrossSize: 26 * 1.2,
+      labelLeashCoeff: 0.3
+    },
+    LARGE: {
+      minLabelTextSize: 20,
+      maxLabelTextSize: 55,
+      defaultLabelTextSize: 20,
+      closeCrossSize: 32 * 1.2,
+      labelLeashCoeff: 0.2
+    }
+  };
+
+  const OPTIONS$3 = {
+    SUPPRESS_HIGHLIGHT_DURING_PLAY: true
+  };
+
+  class LabelSizeHelper extends BaseComponent {
+
+    setup(options){
+      this.context = this.parent;
+
+      this.labelSizeTextScale = null;
+      
+      this.options = extend({}, OPTIONS$3);
+      if(options) this.setOptions(options);
+    }
+
+    setOptions(newOptions) {
+      extend(this.options, newOptions);
+    }
+
+    get MDL() {
+      return {
+        size_label: this.model.encoding.size_label,
+      };
+    }
+
+    draw() {
+      this.addReaction(this._updateLayoutProfile);
+      this.addReaction(this.updateSizeTextScale);
+      this.addReaction(this.updateLabelSizeLimits);
+    }
+
+    updateLabelSizeLimits() {
+      if (!this.MDL.size_label) return;
+
+      this.services.layout.size;
+
+      const extent = this.MDL.size_label.scale.extent || [0, 1];
+
+      const minLabelTextSize = this.profileConstants.minLabelTextSize;
+      const maxLabelTextSize = this.profileConstants.maxLabelTextSize;
+      const minMaxDelta = maxLabelTextSize - minLabelTextSize;
+
+      this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[0], minLabelTextSize);
+      this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[1], minLabelTextSize);
+
+      if (this.MDL.size_label.data.isConstant) {
+        // if(!this.MDL.size_label.which) {
+        //   this.maxLabelTextSize = this.profileConstants.defaultLabelTextSize;
+        //   this.MDL.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
+        //   return;
+        // }
+        if (extent[1] === null) {
+          this.minLabelTextSize = this.maxLabelTextSize = this.profileConstants.defaultLabelTextSize;
+        } else {
+          this.minLabelTextSize = this.maxLabelTextSize;
+        }
+      }
+
+      this.labelSizeTextScale.range([this.minLabelTextSize, this.maxLabelTextSize]);
+    }
+
+    updateSizeTextScale() {
+      //scales
+      if (this.MDL.size_label) {
+        this.labelSizeTextScale = this.MDL.size_label.scale.d3Scale;
+      }
+    }
+   
+    _updateLayoutProfile(){
+      this.services.layout.size;
+
+      this.profileConstants = this.services.layout.getProfileConstants(PROFILE_CONSTANTS, PROFILE_CONSTANTS_FOR_PROJECTOR);
+    }
+   
+    get closeCrossHeight() {
+      this.services.layout.size;
+      return this.profileConstants.closeCrossSize;
+    }
+
+    get defaultFontSize() {
+      this.services.layout.size;
+      return this.profileConstants.defaultLabelTextSize;
+    }
+
+    getFontSize(valueLST) {
+      if (this.labelSizeTextScale) {
+        if (valueLST || valueLST == 0) {
+          const range = this.labelSizeTextScale.range();
+          return range[0] + Math.sqrt((this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
+        }
+      }
+      return this.defaultFontSize;
+    }
+  }
+
+
+  LabelSizeHelper.DEFAULT_UI = {
+    offset: () => ({}),
+    enabled: true,
+    dragging: true,
+    removeLabelBox: false
+  };
+
+  const decorated$9 = mobx.decorate(LabelSizeHelper, {
+    "MDL": mobx.computed,
+    "defaultFontSize": mobx.computed,
+    "closeCrossHeight": mobx.computed
+  });
+
+  const KEY$4 = Symbol.for("key");
+
+  class MarkerContextmenu extends BaseComponent {
+
+    constructor(config) {
+      config.subcomponents = [];
+
+      config.template = `
+      <div class="vzb-mkcm-container">
+        <div class="vzb-marker-contextmenu-title"></div>
+        <div class="vzb-marker-contextmenu-item vzb-marker-contextmenu-item-fold vzb-clickable"></div>
+        <div class="vzb-marker-contextmenu-item vzb-marker-contextmenu-item-explode vzb-clickable"></div>
+        <div class="vzb-marker-contextmenu-close"></div>
+      </div>
+    `;
+      super(config);
+    }
+
+
+    setup() {
+      this.DOM = {
+        container: this.element.select(".vzb-mkcm-container"),
+        title: this.element.select(".vzb-marker-contextmenu-title"),
+        closecross: this.element.select(".vzb-marker-contextmenu-close"),
+        fold: this.element.select(".vzb-marker-contextmenu-item-fold")
+      };
+
+
+      this.DOM.contextDialog;
+      this.element
+        .on("mouseleave", () => {
+          this.hide();
+        })
+        .on("contextmenu", (e) => {
+          e.preventDefault();
+        });
+      this.DOM.closecross
+        .html(ICON_CLOSE)
+        .on("click", () => this.hide());
+
+      this.hide();
+
+      //warm up drillcatalog
+      this.model.data.source.enableDrillup = true;
+    }
+
+    draw() {
+      this.localise = this.services.locale.auto();
+    }
+
+    hide(){
+      this.element.classed("vzb-hidden", true);
+    }
+
+    show(d, xy = {x: 0, y: 0}){
+      this._bindContextDialogItems(d);
+      this.element.classed("vzb-hidden", false)
+        .style("top", xy.y + "px")
+        .style("left", xy.x + "px");
+    }
+
+    _updateContextDialogUiStrings(name, nameFold) {
+      const t = this.localise;
+      this.DOM.title.text(name);
+      this.DOM.fold.text("❇️ " + t("dialogs/find/fold") + " " + nameFold);
+    }
+
+    _getPrimaryDim() {
+      return this.ui.primaryDim || this.model.data.space[0];
+    }
+
+    _getDrilldownProps() {
+      return this.ui.drilldown?.split?.(".") || [];
+    }
+
+    _findDrillProps(d) {
+      const dim = this._getPrimaryDim();
+      return Promise.all([
+        this.model.data.source.drillup({ dim, entity: d[KEY$4] }),
+        this.model.data.source.drilldown({ dim, entity: d[KEY$4] }).then( drillDown => {
+          return Object.keys(drillDown).find(prop => {
+            return drillDown[prop].includes(d[KEY$4]);
+          });
+        })
+      ]);
+    }
+
+    _bindContextDialogItems(_d) {
+
+      // ADD FOLD AND EXPLODE 
+      
+      //const _this = this;
+      this._findDrillProps(_d).then(props => {
+        const d = Object.assign({}, _d, props[0]);
+        d.prop = props[1];
+        const drilldownProps = this._getDrilldownProps();
+        const index = drilldownProps.indexOf(d.prop);
+        const foldPropName = [drilldownProps[index - 1]].map(prop => prop ? this.model.data.source.getConcept(prop)?.name : null)[0];
+        
+        this._updateContextDialogUiStrings(d.name, foldPropName);
+
+        this.DOM.fold
+          .classed("vzb-hidden", () => this._interact().disableFold(d))
+          .on("click", () => {
+            this._interact().clickToFold(d);
+            this.hide();
+          });
+
+        this.DOM.container.selectAll(".vzb-marker-contextmenu-item-explode").remove();
+        this.DOM.container.selectAll(".vzb-marker-contextmenu-item-explode").data(this._getExplodeProps(d))
+          .join("div")
+          .classed("vzb-marker-contextmenu-item vzb-marker-contextmenu-item-explode vzb-clickable", true)
+          .text(d => "✳️ " + this.localise("dialogs/find/explode") + " " + d.explodePropName)
+          .on("click", (event, d) => {
+            this._interact().clickToExplode(d);
+            this.hide();
+          });
+      });
+    }
+
+    _getExplodeProps(d) {
+      const drilldownProps = this._getDrilldownProps();
+      const index = drilldownProps.indexOf(d.prop);
+      return index == -1 ? [] : drilldownProps.slice(index + 1).map(prop => {
+        return ({
+          [KEY$4]: d[KEY$4],
+          prop: d.prop,
+          explodeProp: prop,
+          explodePropName: this.model.data.source.getConcept(prop)?.name || prop
+        });
+      } 
+      );
+    }
+
+    _interact() {
+      const _this = this;
+
+      return {
+        disableFold(d) {
+          const drilldownProps = _this._getDrilldownProps();
+          const index = drilldownProps.indexOf(d.prop);
+          return drilldownProps[index - 1] ? false : true;
+        },
+        clickToExplode(d) {
+          const dim = _this._getPrimaryDim();
+          const prop = d.prop;
+          const drilldownProps = _this._getDrilldownProps();
+          const explodeProp = d.explodeProp;
+
+          const prevProp = drilldownProps[drilldownProps.indexOf(prop) - 1];
+          const nextProp = drilldownProps[drilldownProps.indexOf(prop) + 1];
+          const explodeNextProp = drilldownProps[drilldownProps.indexOf(explodeProp) + 1];
+          if (!prevProp) {
+            _this.model.data.source.drilldown({dim, entity: d[KEY$4]}).then(drilldown => {
+              mobx.runInAction(() => {
+                if (nextProp == explodeProp) {
+                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + explodeNextProp, prop: nextProp, key: drilldown[nextProp]});
+                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + explodeNextProp, prop: nextProp, key: drilldown[nextProp]});
+                } else {
+                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: nextProp, key: drilldown[nextProp]});
+                  _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: nextProp, key: drilldown[nextProp]});
+                }
+
+                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop: nextProp, key: drilldown[nextProp]});
+                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop: nextProp, key: drilldown[nextProp]});
+
+                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
+                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
+              });
+            });
+          } else {
+            mobx.runInAction(() => {
+              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop, key: d[KEY$4]});
+              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + explodeProp, prop, key: d[KEY$4]});
+
+              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
+              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop, key: d[KEY$4]});
+            });
+          }
+        },
+        clickToFold(d) {
+          const dim = _this._getPrimaryDim();
+          const prop = d.prop;
+          const drilldownProps = _this._getDrilldownProps();
+          const foldProp = drilldownProps[drilldownProps.indexOf(prop) - 1];
+          const foldValue = d[foldProp];
+          const nextProp = drilldownProps[drilldownProps.indexOf(prop) + 1];
+
+          if (nextProp) {
+            _this.model.data.source.drilldown({dim, entity: foldValue}).then(drilldown => {
+              mobx.runInAction(() => {
+                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: prop, key: drilldown[prop]});
+                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + nextProp, prop: prop, key: drilldown[prop]});
+
+                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: prop, key: drilldown[prop]});
+                _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: prop, key: drilldown[prop]});
+
+                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
+                _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
+              });
+            });
+          } else {
+            mobx.runInAction(() => {
+              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: foldProp, key: foldValue});
+              _this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + prop, prop: foldProp, key: foldValue});
+
+              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
+              _this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + foldProp, prop: foldProp, key: foldValue});
+            });
+          }
+        }
+      };
+    }
+  }
+
+  MarkerContextmenu.DEFAULT_UI = {
+    "primaryDim": "",
+    "drilldown": ""
+  };
+
+  const decorated$8 = mobx.decorate(MarkerContextmenu, {
+  });
+
+  /*!
+   * VIZABI OPTIONSBUTTONLIST
+   * Reusable optionsbuttonlist component
+   */
+
+  class OptionsButtonList extends ButtonList {
+    setup() {
+      super.setup();
+      Object.keys(this._available_buttons).forEach(buttonId => {
+        const button = this._available_buttons[buttonId];
+        button.required = !button.required;
+      });
+
+    }
+
+    draw() {
+      super.draw();
+
+      const buttonList = this.root.findChild({ name: "buttons" });
+      buttonList.element.on("custom-togglebuttons", (event) => {
+        const { hiddenButtons } = event.detail;
+        this.element.selectAll(".vzb-buttonlist-btn")
+          .style("display", d => hiddenButtons.indexOf(d.id) == -1 ? "none" : "");
+      });
+    }
+
+    _toggleButtons() {
+
+    }
+  }
+
   /*!
    * VIZABI BUBBLE SIZE slider
    * Reusable bubble size slider
@@ -12708,6 +12739,131 @@
    */
 
   const OPTIONS$1 = {
+    propertyName: "LabelTextSize",
+
+    PROFILE_CONSTANTS: {
+      SMALL: {
+        minLabelTextSize: 7,
+        maxLabelTextSize: 21,
+        defaultLabelTextSize: 12
+      },
+      MEDIUM: {
+        minLabelTextSize: 7,
+        maxLabelTextSize: 30,
+        defaultLabelTextSize: 15
+      },
+      LARGE: {
+        minLabelTextSize: 6,
+        maxLabelTextSize: 48,
+        defaultLabelTextSize: 20
+      }
+    }
+  };
+
+  class SizeSlider extends decorated$h {
+    setup(_options) {
+      const options = deepExtend(deepExtend({}, OPTIONS$1), _options || {});
+
+      super.setup(options);
+
+      const barWidth = this.options.BAR_WIDTH;
+
+      this.DOM.sliderLabelsWrapper = this.DOM.slider.append("g");
+      this.DOM.sliderLabelsWrapper.selectAll("text").data([0, 0]).enter()
+        .append("text")
+        .attr("class", (d, i) => "vzb-szs-slider-thumb-label " + (i ? "e" : "w"))
+        .attr("dy", (-barWidth * 1.25) + "px");
+
+      this.DOM.sliderLabels = this.DOM.slider.selectAll("text.vzb-szs-slider-thumb-label");
+
+      this.propertyScale = d3.scaleLinear()
+        .domain([this.options.EXTENT_MIN, this.options.EXTENT_MAX])
+        .clamp(true);
+
+    }
+
+    _updateView() { 
+      super._updateView();
+
+      if (this.MDL.model.data.isConstant) {
+        this.DOM.slider.selectAll(".w").classed("vzb-hidden", true);
+        this.DOM.slider.select(".selection").classed("vzb-hidden", true);
+        this.DOM.slider.select(".overlay").classed("vzb-pointerevents-none", true);
+      } else {
+        this.DOM.slider.selectAll(".w").classed("vzb-hidden", false);
+        this.DOM.slider.select(".selection").classed("vzb-hidden", false);
+        this.DOM.slider.select(".overlay").classed("vzb-pointerevents-none", false);
+      }
+
+      this._setLabelsText();
+    }
+
+    _updateThumbs(extent) {
+      this._updateLabels(extent);
+    }
+
+    _updateLabels(s) {
+      if (s) { this.DOM.sliderLabels.data(s); }
+      this.DOM.sliderLabels
+        .attr("transform", (d, i) => {
+          const dX = this.rescaler(i);
+          const dY = 0;
+          return "translate(" + ((this.services.locale.isRTL() ? -1 : 1) * dX) + "," + (dY) + ")";
+        })
+        .attr("font-size", (d) => this.propertyScale(d));
+      if (this.MDL.model.data.isConstant)
+        this.DOM.sliderLabels.text(d => ~~(this.propertyScale(d)) + (this.localise(this.options.constantUnit) || ""));
+    }
+
+    _setLabelsText() {
+      const domain = this.MDL.model.domain;
+      const texts = [domain[0], domain[domain.length - 1]].map(this.localise);
+
+      if (this.MDL.model.data.isConstant) return;
+
+      this.DOM.sliderLabels.text((d, i) => texts[i]);
+    }
+
+    _getMinMaxDefaultPropertyValues() {
+      const propertyName = this.options.propertyName;
+
+      return {
+        min: this.profileConstants["min" + propertyName],
+        max: this.profileConstants["max" + propertyName],
+        default: this.profileConstants["default" + propertyName],
+      };
+    }
+
+    updateSize() {
+      const propertyValues = this._getMinMaxDefaultPropertyValues();
+
+      this.padding.top = propertyValues.max + this.options.BAR_WIDTH * 1.25;
+      this.propertyScale.range([propertyValues.min, propertyValues.max]);
+
+      super.updateSize();
+
+      const isRTL = this.services.locale.isRTL();
+      this.DOM.sliderLabelsWrapper
+        .attr("transform", isRTL ? "scale(-1,1)" : null);
+      this.DOM.sliderLabels
+        .attr("text-anchor", (d, i) => (isRTL ? i : !i) ? "start" : "end");
+    }
+
+    _valueToExtent(value) {
+      if (this.MDL.model.data.isConstant && value[1] === null) {
+        return super._valueToExtent([value[0], this.propertyScale.invert(this._getMinMaxDefaultPropertyValues().default)]);
+      }
+      return super._valueToExtent(value);
+    }
+
+  }
+
+  /*!
+   * VIZABI BUBBLE SIZE slider
+   * Reusable bubble size slider
+   */
+
+  const OPTIONS = {
     THUMB_HEIGHT: 17,
     THUMB_STROKE_WIDTH: 3,
     domain: null,
@@ -12721,7 +12877,7 @@
     setup(_options) {
       this.type = this.type || "singlehandleslider";
       
-      const options = extend(extend({}, OPTIONS$1), _options || {});
+      const options = extend(extend({}, OPTIONS), _options || {});
 
       super.setup(options);
 
@@ -12839,161 +12995,180 @@
 
   }
 
-  /*!
-   * VIZABI BUBBLE SIZE slider
-   * Reusable bubble size slider
+  /*
+   * Axes dialog
    */
 
-  const OPTIONS = {
-    propertyName: "LabelTextSize",
+  class Axes extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="axes" data-click="pinDialog"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="axes" data-click="dragDialog"></span>
+        <div class="vzb-dialog-title">
+          <span data-localise="buttons/axes"></span>
+        </div>
+        <div class="vzb-dialog-content">
+          <p class="vzb-dialog-sublabel">
+            <span data-localise="buttons/x"></span>
+            <span class="vzb-xaxis-selector"></span>
+          </p>
+          <div class="vzb-xaxis-minmax vzb-dialog-paragraph"></div>
+          <p class="vzb-dialog-sublabel">
+            <span data-localise="buttons/y"></span>
+            <span class="vzb-yaxis-selector"></span>
+          </p>
+          <div class="vzb-yaxis-minmax vzb-dialog-paragraph"></div>
+        </div>
+        <div class="vzb-dialog-buttons">
+          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+            <span data-localise="buttons/ok"></span>
+          </div>
+        </div>
+      </div>    
+    `;
 
-    PROFILE_CONSTANTS: {
-      SMALL: {
-        minLabelTextSize: 7,
-        maxLabelTextSize: 21,
-        defaultLabelTextSize: 12
-      },
-      MEDIUM: {
-        minLabelTextSize: 7,
-        maxLabelTextSize: 30,
-        defaultLabelTextSize: 15
-      },
-      LARGE: {
-        minLabelTextSize: 6,
-        maxLabelTextSize: 48,
-        defaultLabelTextSize: 20
-      }
-    }
-  };
+      config.subcomponents = [{
+        type: IndicatorPicker,
+        placeholder: ".vzb-xaxis-selector",
+        options: {
+          submodel: "encoding",
+          targetProp: "x"
+        }
+      },{
+        type: decorated$d,
+        placeholder: ".vzb-xaxis-minmax",
+        state: {
+          submodel: "encoding.x.scale"
+        }
+      },{
+        type: IndicatorPicker,
+        placeholder: ".vzb-yaxis-selector",
+        options: {
+          submodel: "encoding",
+          targetProp: "y"
+        }
+      },{
+        type: decorated$d,
+        placeholder: ".vzb-yaxis-minmax",
+        state: {
+          submodel: "encoding.y.scale"
+        }
+      }];
 
-  class SizeSlider extends decorated$h {
-    setup(_options) {
-      const options = deepExtend(deepExtend({}, OPTIONS), _options || {});
-
-      super.setup(options);
-
-      const barWidth = this.options.BAR_WIDTH;
-
-      this.DOM.sliderLabelsWrapper = this.DOM.slider.append("g");
-      this.DOM.sliderLabelsWrapper.selectAll("text").data([0, 0]).enter()
-        .append("text")
-        .attr("class", (d, i) => "vzb-szs-slider-thumb-label " + (i ? "e" : "w"))
-        .attr("dy", (-barWidth * 1.25) + "px");
-
-      this.DOM.sliderLabels = this.DOM.slider.selectAll("text.vzb-szs-slider-thumb-label");
-
-      this.propertyScale = d3.scaleLinear()
-        .domain([this.options.EXTENT_MIN, this.options.EXTENT_MAX])
-        .clamp(true);
-
-    }
-
-    _updateView() { 
-      super._updateView();
-
-      if (this.MDL.model.data.isConstant) {
-        this.DOM.slider.selectAll(".w").classed("vzb-hidden", true);
-        this.DOM.slider.select(".selection").classed("vzb-hidden", true);
-        this.DOM.slider.select(".overlay").classed("vzb-pointerevents-none", true);
-      } else {
-        this.DOM.slider.selectAll(".w").classed("vzb-hidden", false);
-        this.DOM.slider.select(".selection").classed("vzb-hidden", false);
-        this.DOM.slider.select(".overlay").classed("vzb-pointerevents-none", false);
-      }
-
-      this._setLabelsText();
-    }
-
-    _updateThumbs(extent) {
-      this._updateLabels(extent);
-    }
-
-    _updateLabels(s) {
-      if (s) { this.DOM.sliderLabels.data(s); }
-      this.DOM.sliderLabels
-        .attr("transform", (d, i) => {
-          const dX = this.rescaler(i);
-          const dY = 0;
-          return "translate(" + ((this.services.locale.isRTL() ? -1 : 1) * dX) + "," + (dY) + ")";
-        })
-        .attr("font-size", (d) => this.propertyScale(d));
-      if (this.MDL.model.data.isConstant)
-        this.DOM.sliderLabels.text(d => ~~(this.propertyScale(d)) + (this.localise(this.options.constantUnit) || ""));
-    }
-
-    _setLabelsText() {
-      const domain = this.MDL.model.domain;
-      const texts = [domain[0], domain[domain.length - 1]].map(this.localise);
-
-      if (this.MDL.model.data.isConstant) return;
-
-      this.DOM.sliderLabels.text((d, i) => texts[i]);
-    }
-
-    _getMinMaxDefaultPropertyValues() {
-      const propertyName = this.options.propertyName;
-
-      return {
-        min: this.profileConstants["min" + propertyName],
-        max: this.profileConstants["max" + propertyName],
-        default: this.profileConstants["default" + propertyName],
-      };
-    }
-
-    updateSize() {
-      const propertyValues = this._getMinMaxDefaultPropertyValues();
-
-      this.padding.top = propertyValues.max + this.options.BAR_WIDTH * 1.25;
-      this.propertyScale.range([propertyValues.min, propertyValues.max]);
-
-      super.updateSize();
-
-      const isRTL = this.services.locale.isRTL();
-      this.DOM.sliderLabelsWrapper
-        .attr("transform", isRTL ? "scale(-1,1)" : null);
-      this.DOM.sliderLabels
-        .attr("text-anchor", (d, i) => (isRTL ? i : !i) ? "start" : "end");
-    }
-
-    _valueToExtent(value) {
-      if (this.MDL.model.data.isConstant && value[1] === null) {
-        return super._valueToExtent([value[0], this.propertyScale.invert(this._getMinMaxDefaultPropertyValues().default)]);
-      }
-      return super._valueToExtent(value);
+      super(config);
     }
 
   }
 
-  /*!
-   * VIZABI OPTIONSBUTTONLIST
-   * Reusable optionsbuttonlist component
-   */
+  decorated$e.add("axes", Axes);
 
-  class OptionsButtonList extends ButtonList {
-    setup() {
-      super.setup();
-      Object.keys(this._available_buttons).forEach(buttonId => {
-        const button = this._available_buttons[buttonId];
-        button.required = !button.required;
-      });
+  const VIZABI_CHARTS_LOGO = `
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
 
-    }
-
-    draw() {
-      super.draw();
-
-      const buttonList = this.root.findChild({ name: "buttons" });
-      buttonList.element.on("custom-togglebuttons", (event) => {
-        const { hiddenButtons } = event.detail;
-        this.element.selectAll(".vzb-buttonlist-btn")
-          .style("display", d => hiddenButtons.indexOf(d.id) == -1 ? "none" : "");
-      });
-    }
-
-    _toggleButtons() {
-
-    }
-  }
+<svg
+   version="1.1"
+   id="svg1"
+   width="800"
+   height="420"
+   viewBox="0 0 800 420"
+   sodipodi:docname="vizabi-charts-timeslider-2x1.svg"
+   inkscape:export-filename="vizabi-charts-plainsvg.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.3 (0e150ed, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.87593497"
+     inkscape:cx="268.28476"
+     inkscape:cy="257.4392"
+     inkscape:window-width="2176"
+     inkscape:window-height="1098"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <g
+     id="g5">
+    <path
+       id="path13"
+       d="m 327.18349,153.0913 c 0,31.088 -25.20133,56.28933 -56.28933,56.28933 -31.088,0 -56.29067,-25.20133 -56.29067,-56.28933 0,-31.088 25.20267,-56.289332 56.29067,-56.289332 31.088,0 56.28933,25.201332 56.28933,56.289332"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333;stroke-opacity:1"
+       clip-path="url(#clipPath14)" />
+    <path
+       id="path15"
+       d="m 156.49989,109.0861 c 0,22.77733 -18.464,41.24133 -41.24,41.24133 -22.777332,0 -41.241331,-18.464 -41.241331,-41.24133 0,-22.777333 18.463999,-41.239999 41.241331,-41.239999 22.776,0 41.24,18.462666 41.24,41.239999"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333;stroke-opacity:1"
+       clip-path="url(#clipPath16)" />
+    <path
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333;stroke-opacity:1"
+       d="m 197.42912,94.212891 c -11.47663,0 -22.48304,1.999647 -32.70899,5.642577 0.55734,2.993332 0.86133,6.076522 0.86133,9.228512 0,27.75064 -22.57501,50.32227 -50.32031,50.32227 -3.24667,0 -6.41876,-0.32144 -9.4961,-0.91211 -3.75148,10.35949 -5.804688,21.53311 -5.804688,33.1875 0,53.82923 43.638198,97.46875 97.468758,97.46875 45.81894,0 84.2337,-31.62553 94.6582,-74.23242 -6.65065,2.28666 -13.77604,3.54492 -21.19336,3.54492 -36.04659,0 -65.36914,-29.3205 -65.36914,-65.37109 0,-21.50608 10.43788,-40.61183 26.50781,-52.53321 -10.75626,-4.0872 -22.41363,-6.345699 -34.60351,-6.345699 z m -91.66407,64.281249 c 0.12814,-0.35385 0.26422,-0.70279 0.39648,-1.05469 -0.132,0.35178 -0.2684,0.701 -0.39648,1.05469 z m 58.95508,-58.638672 c -0.63998,0.227992 -1.27446,0.466122 -1.9082,0.707032 0.63329,-0.24124 1.26845,-0.47909 1.9082,-0.707032 z"
+       id="path1" />
+    <path
+       id="path5"
+       d="m 83.468029,226.24823 c 0,9.03867 -7.326666,16.36533 -16.365333,16.36533 -9.038666,0 -16.366666,-7.32666 -16.366666,-16.36533 0,-9.03733 7.328,-16.36533 16.366666,-16.36533 9.038667,0 16.365333,7.328 16.365333,16.36533"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333;stroke-opacity:1"
+       clip-path="url(#clipPath6)" />
+    <path
+       id="path7"
+       d="m 255.98562,41.551039 c 0,17.293333 -14.01867,31.313333 -31.31333,31.313333 -17.29334,0 -31.31334,-14.02 -31.31334,-31.313333 0,-17.294666 14.02,-31.313333 31.31334,-31.313333 17.29466,0 31.31333,14.018667 31.31333,31.313333"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333;stroke-opacity:1"
+       clip-path="url(#clipPath8)" />
+    <path
+       id="path9"
+       d="m 367.72256,184.09717 c 0,8.244 -6.684,14.92667 -14.92667,14.92667 -8.244,0 -14.92666,-6.68267 -14.92666,-14.92667 0,-8.244 6.68266,-14.92533 14.92666,-14.92533 8.24267,0 14.92667,6.68133 14.92667,14.92533"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333;stroke-opacity:1"
+       clip-path="url(#clipPath10)" />
+  </g>
+  <path
+     style="fill:#00926d;fill-opacity:1;stroke:none"
+     d="m 414.40061,116.67828 12.80537,35.92458 13.79041,-37.48903 q 1.6224,-4.51955 3.18685,-6.37372 1.56446,-1.91211 4.75132,-1.91211 3.01303,0 5.09897,2.028 2.14389,2.028 2.14389,4.69337 0,1.04297 -0.4056,2.4336 -0.34766,1.39063 -0.86915,2.60743 -0.46354,1.2168 -1.10091,2.78126 l -15.18103,37.66286 q -0.63737,1.6224 -1.68035,4.11395 -0.98502,2.49154 -2.25977,4.28777 -1.2168,1.73828 -3.07097,2.72331 -1.79623,0.98503 -4.40366,0.98503 -3.36068,0 -5.38869,-1.50651 -1.97005,-1.56446 -2.95508,-3.36069 -0.92709,-1.85417 -3.18686,-7.24286 L 400.6102,121.77726 q -0.52148,-1.39063 -1.10091,-2.78126 -0.52149,-1.39063 -0.92709,-2.8392 -0.34765,-1.44857 -0.34765,-2.49155 0,-1.6224 0.98503,-3.18685 0.98502,-1.6224 2.72331,-2.60743 1.73829,-1.04297 3.76629,-1.04297 3.94011,0 5.38868,2.25977 1.50652,2.25977 3.30275,7.59051 z m 68.95202,-0.86914 v 45.71693 q 0,4.75131 -2.25977,7.18491 -2.25977,2.4336 -5.73635,2.4336 -3.47657,0 -5.6784,-2.49154 -2.14388,-2.49155 -2.14388,-7.12697 v -45.25339 q 0,-4.69337 2.14388,-7.06903 2.20183,-2.37565 5.6784,-2.37565 3.47658,0 5.73635,2.37565 2.25977,2.37566 2.25977,6.60549 z m -7.82229,-16.339894 q -3.30274,0 -5.6784,-2.028 -2.31771,-2.028 -2.31771,-5.73634 0,-3.36069 2.37565,-5.504585 2.4336,-2.20183 5.62046,-2.20183 3.07097,0 5.44663,1.97006 2.37566,1.970065 2.37566,5.736355 0,3.6504 -2.31772,5.73634 -2.31771,2.028 -5.50457,2.028 z m 67.15579,25.494864 -28.97144,32.39007 h 30.99944 q 3.76629,0 5.6784,1.79623 1.91212,1.73828 1.91212,4.51954 0,2.66537 -1.91212,4.34572 -1.85417,1.68034 -5.6784,1.68034 h -42.87772 q -4.51955,0 -6.77932,-1.97006 -2.20183,-1.97006 -2.20183,-5.38868 0,-2.028 1.56446,-4.05601 1.56446,-2.08594 6.4896,-7.59051 5.21486,-5.79429 9.44469,-10.48766 4.28777,-4.69337 7.93817,-8.74937 3.6504,-4.11395 6.02606,-6.95315 2.4336,-2.8392 3.88217,-4.8672 h -23.5248 q -4.8672,0 -7.35875,-0.86914 -2.49154,-0.86915 -2.49154,-4.57749 0,-2.72332 1.85417,-4.34572 1.91212,-1.6224 5.38869,-1.6224 h 36.33018 q 5.04103,0 7.7064,1.50652 2.72331,1.44857 2.72331,5.2728 0,1.27474 -0.52148,2.66537 -0.52149,1.33269 -1.15886,2.20183 -0.63737,0.86914 -1.73828,2.14389 -1.10092,1.2168 -2.72332,2.95508 z m 58.81201,37.25727 q -5.73634,4.4616 -11.12503,6.72137 -5.33074,2.20183 -11.99417,2.20183 -6.084,0 -10.71943,-2.37566 -4.57749,-2.4336 -7.06903,-6.54754 -2.49155,-4.11394 -2.49155,-8.9232 0,-6.4896 4.11395,-11.06709 4.11394,-4.57749 11.29886,-6.14195 1.50651,-0.34765 7.47463,-1.56445 5.96811,-1.2168 10.19794,-2.20183 4.28777,-1.04297 9.27086,-2.49155 -0.28971,-6.25783 -2.54948,-9.15497 -2.20183,-2.95509 -9.21292,-2.95509 -6.02606,0 -9.09703,1.68035 -3.01303,1.68034 -5.21486,5.04103 -2.14389,3.36068 -3.07097,4.4616 -0.86915,1.04297 -3.82423,1.04297 -2.66537,0 -4.63543,-1.68034 -1.91212,-1.73829 -1.91212,-4.40366 0,-4.17189 2.95509,-8.112 2.95509,-3.94012 9.21292,-6.4896 6.25783,-2.54949 15.58663,-2.54949 10.42972,0 16.39783,2.49154 5.96812,2.4336 8.40172,7.76435 2.49154,5.33074 2.49154,14.13806 0,5.56251 -0.0579,9.44469 0,3.88217 -0.0579,8.63348 0,4.4616 1.44857,9.32881 1.50651,4.80925 1.50651,6.19988 0,2.4336 -2.31771,4.4616 -2.25977,1.97006 -5.15692,1.97006 -2.4336,0 -4.80926,-2.25977 -2.37565,-2.31771 -5.04103,-6.66343 z m -1.04297,-22.88743 q -3.47657,1.27474 -10.14,2.72331 -6.60549,1.39063 -9.15497,2.08594 -2.54949,0.63738 -4.86721,2.60743 -2.31771,1.91212 -2.31771,5.38869 0,3.59246 2.72331,6.14194 2.72332,2.49155 7.12698,2.49155 4.69337,0 8.63349,-2.028 3.99805,-2.08595 5.85223,-5.33075 2.14388,-3.59245 2.14388,-11.82034 z m 44.61602,-46.991674 v 24.162174 q 4.4616,-4.63543 9.09703,-7.06903 4.63543,-2.49154 11.47269,-2.49154 7.88023,0 13.7904,3.76629 5.96812,3.70834 9.21292,10.83531 3.30275,7.06903 3.30275,16.80344 0,7.18491 -1.85418,13.21097 -1.79623,5.96812 -5.2728,10.37178 -3.47657,4.40365 -8.45966,6.83725 -4.92514,2.37566 -10.89326,2.37566 -3.6504,0 -6.8952,-0.86914 -3.18686,-0.86914 -5.44663,-2.25977 -2.25977,-1.44857 -3.88217,-2.95509 -1.56446,-1.50651 -4.17189,-4.51954 v 1.56445 q 0,4.46161 -2.14388,6.77932 -2.14389,2.25977 -5.44663,2.25977 -3.36069,0 -5.38869,-2.25977 -1.97006,-2.31771 -1.97006,-6.77932 V 93.037586 q 0,-4.80926 1.91212,-7.242865 1.97005,-2.49154 5.44663,-2.49154 3.6504,0 5.62045,2.37566 1.97006,2.317715 1.97006,6.663435 z m 0.75326,46.991674 q 0,9.44468 4.28777,14.54366 4.34572,5.04103 11.3568,5.04103 5.96812,0 10.25589,-5.15692 4.34572,-5.21486 4.34572,-14.89132 0,-6.25783 -1.79623,-10.77737 -1.79623,-4.51955 -5.09897,-6.95315 -3.30275,-2.49154 -7.70641,-2.49154 -4.51954,0 -8.05405,2.49154 -3.53452,2.4336 -5.56252,7.12698 -2.028,4.63543 -2.028,11.06709 z m 74.63041,-23.52481 v 45.71693 q 0,4.75131 -2.25977,7.18491 -2.25977,2.4336 -5.73634,2.4336 -3.47658,0 -5.6784,-2.49154 -2.14389,-2.49155 -2.14389,-7.12697 v -45.25339 q 0,-4.69337 2.14389,-7.06903 2.20182,-2.37565 5.6784,-2.37565 3.47657,0 5.73634,2.37565 2.25977,2.37566 2.25977,6.60549 z m -7.82228,-16.339894 q -3.30275,0 -5.67841,-2.028 -2.31771,-2.028 -2.31771,-5.73634 0,-3.36069 2.37566,-5.504585 2.4336,-2.20183 5.62046,-2.20183 3.07097,0 5.44663,1.97006 2.37565,1.970065 2.37565,5.736355 0,3.6504 -2.31771,5.73634 -2.31772,2.028 -5.50457,2.028 z"
+     id="path2" />
+  <path
+     style="fill:#00926d;fill-opacity:1;stroke:none"
+     d="m 458.0316,252.76121 c 0,1.97006 -0.59875,4.07532 -1.79623,6.31577 -1.15886,2.24046 -2.95509,4.38435 -5.38869,6.43166 -2.39497,2.00869 -5.42732,3.63109 -9.09703,4.8672 -3.66972,1.23612 -7.80297,1.85418 -12.39978,1.85418 -9.77303,0 -17.40217,-2.8392 -22.88743,-8.51761 -5.48526,-5.71703 -8.22789,-13.36548 -8.22789,-22.94537 0,-6.48961 1.25543,-12.22595 3.76629,-17.20904 2.51086,-4.98309 6.14194,-8.82663 10.89326,-11.53063 4.75131,-2.74263 10.42972,-4.11394 17.0352,-4.11394 4.09463,0 7.84161,0.59874 11.24092,1.79623 3.43794,1.19749 6.33509,2.74263 8.69143,4.63543 2.39497,1.8928 4.21052,3.9208 5.44663,6.084 1.27474,2.12457 1.91212,4.11394 1.91212,5.96811 0,1.8928 -0.71463,3.49589 -2.14389,4.80926 -1.39063,1.31337 -3.09029,1.97006 -5.09897,1.97006 -1.31338,0 -2.41429,-0.32834 -3.30275,-0.98503 -0.84983,-0.69531 -1.81554,-1.79623 -2.89714,-3.30274 -1.93143,-2.93577 -3.95943,-5.1376 -6.084,-6.60549 -2.08595,-1.46789 -4.75132,-2.20183 -7.99612,-2.20183 -4.67406,0 -8.44034,1.83486 -11.29886,5.50457 -2.85851,3.63109 -4.28777,8.61417 -4.28777,14.94926 0,2.97441 0.36697,5.71704 1.10091,8.22789 0.73395,2.47223 1.79623,4.59681 3.18686,6.37372 1.39063,1.73829 3.07097,3.07097 5.04103,3.99806 1.97006,0.88845 4.13326,1.33268 6.4896,1.33268 3.16755,0 5.87155,-0.73394 8.11201,-2.20183 2.27908,-1.46789 4.28777,-3.70834 6.02605,-6.72137 0.96572,-1.77691 2.00869,-3.16754 3.12892,-4.17189 1.12023,-1.00434 2.49154,-1.50651 4.11394,-1.50651 1.93143,0 3.53452,0.73394 4.80926,2.20183 1.27474,1.46789 1.91212,3.03234 1.91212,4.69337 z m 26.30605,-58.63818 v 23.46686 c 2.00869,-2.31771 3.95943,-4.15257 5.85223,-5.50457 1.93143,-1.35201 4.056,-2.35635 6.37372,-3.01303 2.31771,-0.69532 4.80926,-1.04298 7.47463,-1.04298 4.01737,0 7.57119,0.84983 10.66148,2.54949 3.12892,1.69966 5.58184,4.17189 7.35875,7.41669 1.12023,1.8928 1.87348,4.01737 2.25977,6.37371 0.38629,2.31772 0.57943,5.00241 0.57943,8.05406 v 30.30412 c 0,3.16755 -0.73394,5.56252 -2.20183,7.18492 -1.42926,1.6224 -3.34137,2.4336 -5.73634,2.4336 -5.21486,0 -7.82229,-3.20617 -7.82229,-9.61852 v -26.71166 c 0,-5.06035 -0.75326,-8.94252 -2.25977,-11.64652 -1.50652,-2.74263 -4.36504,-4.11394 -8.57555,-4.11394 -2.81989,0 -5.36937,0.8112 -7.64846,2.4336 -2.24045,1.58377 -3.9208,3.76629 -5.04103,6.54754 -0.84983,2.35635 -1.27474,6.54755 -1.27474,12.57361 v 20.91737 c 0,3.12892 -0.71463,5.52389 -2.14389,7.18492 -1.39063,1.6224 -3.34136,2.4336 -5.85222,2.4336 -5.21486,0 -7.82229,-3.20617 -7.82229,-9.61852 v -68.60435 c 0,-3.20617 0.676,-5.60115 2.028,-7.18492 1.39063,-1.6224 3.32206,-2.4336 5.79429,-2.4336 2.51086,0 4.46159,0.8112 5.85222,2.4336 1.42926,1.6224 2.14389,4.01737 2.14389,7.18492 z m 96.18517,69.29967 c -3.82423,2.9744 -7.53257,5.21486 -11.12503,6.72137 -3.55383,1.46789 -7.55188,2.20183 -11.99417,2.20183 -4.056,0 -7.62914,-0.79189 -10.71943,-2.37566 -3.05166,-1.6224 -5.408,-3.80491 -7.06903,-6.54754 -1.66103,-2.74263 -2.49155,-5.71703 -2.49155,-8.9232 0,-4.3264 1.37132,-8.01543 4.11395,-11.06709 2.74263,-3.05166 6.50891,-5.09898 11.29886,-6.14195 1.00434,-0.23177 3.49588,-0.75325 7.47463,-1.56445 3.97874,-0.8112 7.37805,-1.54514 10.19794,-2.20183 2.85851,-0.69531 5.9488,-1.52583 9.27086,-2.49155 -0.19314,-4.17189 -1.04297,-7.22354 -2.54948,-9.15497 -1.46789,-1.97006 -4.53886,-2.95509 -9.21292,-2.95509 -4.01737,0 -7.04972,0.56012 -9.09703,1.68035 -2.00869,1.12023 -3.74697,2.80057 -5.21486,5.04103 -1.42926,2.24045 -2.45292,3.72765 -3.07097,4.4616 -0.57943,0.69531 -1.85418,1.04297 -3.82423,1.04297 -1.77691,0 -3.32206,-0.56011 -4.63543,-1.68034 -1.27475,-1.15886 -1.91212,-2.62675 -1.91212,-4.40366 0,-2.78126 0.98503,-5.48526 2.95509,-8.112 1.97006,-2.62675 5.04103,-4.78995 9.21292,-6.48961 4.17189,-1.69965 9.36743,-2.54948 15.58663,-2.54948 6.95315,0 12.41909,0.83051 16.39783,2.49154 3.97875,1.6224 6.77932,4.21052 8.40172,7.76435 1.66103,3.55383 2.49154,8.26651 2.49154,14.13806 0,3.70834 -0.0193,6.85657 -0.0579,9.44468 0,2.58812 -0.0193,5.46595 -0.0579,8.63349 0,2.9744 0.48286,6.084 1.44857,9.32881 1.00434,3.20617 1.50651,5.27279 1.50651,6.19988 0,1.6224 -0.77257,3.1096 -2.31771,4.4616 -1.50652,1.31337 -3.22549,1.97006 -5.15692,1.97006 -1.6224,0 -3.22549,-0.75326 -4.80926,-2.25977 -1.58377,-1.54515 -3.26411,-3.76629 -5.04103,-6.66343 z m -1.04297,-22.88744 c -2.31771,0.84983 -5.69771,1.75761 -10.14,2.72332 -4.40366,0.92709 -7.45532,1.6224 -9.15497,2.08594 -1.69966,0.42491 -3.32206,1.29406 -4.86721,2.60743 -1.54514,1.27475 -2.31771,3.07098 -2.31771,5.38869 0,2.39497 0.90777,4.44229 2.72331,6.14194 1.81555,1.66103 4.19121,2.49155 7.12698,2.49155 3.12891,0 6.00674,-0.676 8.63349,-2.028 2.66537,-1.39063 4.61611,-3.16755 5.85223,-5.33075 1.42925,-2.39497 2.14388,-6.33509 2.14388,-11.82034 z m 47.28137,8.98115 v 13.21097 c 0,3.20617 -0.75326,5.62046 -2.25977,7.24286 -1.50651,1.58377 -3.41863,2.37566 -5.73634,2.37566 -2.27909,0 -4.15257,-0.8112 -5.62046,-2.4336 -1.46789,-1.6224 -2.20183,-4.01737 -2.20183,-7.18492 V 218.6908 c 0,-7.10766 2.5688,-10.66149 7.7064,-10.66149 2.62675,0 4.51955,0.83052 5.6784,2.49155 1.15886,1.66103 1.79623,4.11394 1.91212,7.35874 1.8928,-3.2448 3.82423,-5.69771 5.79429,-7.35874 2.00869,-1.66103 4.67406,-2.49155 7.99611,-2.49155 3.32206,0 6.54755,0.83052 9.67646,2.49155 3.12891,1.66103 4.69337,3.86285 4.69337,6.60548 0,1.93143 -0.676,3.53452 -2.028,4.80926 -1.31337,1.23611 -2.74262,1.85417 -4.28777,1.85417 -0.57943,0 -1.98937,-0.34766 -4.22983,-1.04297 -2.20183,-0.73394 -4.15257,-1.10091 -5.85223,-1.10091 -2.31771,0 -4.21051,0.61806 -5.6784,1.85417 -1.46789,1.19749 -2.60743,2.99372 -3.41863,5.38869 -0.8112,2.39497 -1.37131,5.25349 -1.68034,8.57554 -0.30903,3.28343 -0.46355,7.30081 -0.46355,12.05212 z m 38.58995,-40.09647 h 1.73829 v -9.50263 c 0,-2.54949 0.0579,-4.53886 0.17383,-5.96811 0.15451,-1.46789 0.5408,-2.72332 1.15886,-3.76629 0.61805,-1.0816 1.50651,-1.95074 2.66537,-2.60743 1.15885,-0.69531 2.45291,-1.04297 3.88217,-1.04297 2.00869,0 3.82423,0.75326 5.44663,2.25977 1.0816,1.00435 1.7576,2.24046 2.028,3.70834 0.30903,1.42926 0.46354,3.47658 0.46354,6.14195 v 10.77737 h 5.79429 c 2.24046,0 3.94012,0.5408 5.09897,1.6224 1.19749,1.04297 1.79623,2.39497 1.79623,4.056 0,2.12457 -0.84983,3.61178 -2.54948,4.46161 -1.66103,0.84983 -4.05601,1.27474 -7.18492,1.27474 h -2.95509 v 29.08732 c 0,2.47223 0.0773,4.38434 0.23178,5.73634 0.19314,1.31337 0.65668,2.39497 1.39062,3.2448 0.77257,0.81121 2.00869,1.21681 3.70835,1.21681 0.92709,0 2.18251,-0.15452 3.76628,-0.46355 1.58377,-0.34765 2.81989,-0.52148 3.70835,-0.52148 1.27474,0 2.41428,0.52148 3.41863,1.56445 1.04297,1.00435 1.56446,2.25978 1.56446,3.76629 0,2.54949 -1.39063,4.50023 -4.17189,5.85223 -2.78126,1.352 -6.77932,2.028 -11.99418,2.028 -4.94445,0 -8.69142,-0.83051 -11.24091,-2.49154 -2.54949,-1.66103 -4.22983,-3.95943 -5.04103,-6.8952 -0.77257,-2.93577 -1.15886,-6.85658 -1.15886,-11.76241 v -30.36206 h -2.08594 c -2.27909,0 -4.01737,-0.5408 -5.21486,-1.6224 -1.19749,-1.0816 -1.79623,-2.45292 -1.79623,-4.11395 0,-1.66103 0.61806,-3.01303 1.85417,-4.056 1.27475,-1.0816 3.1096,-1.6224 5.50457,-1.6224 z m 96.07122,42.24036 c 0,4.36503 -1.06229,8.112 -3.18686,11.24091 -2.12457,3.09029 -5.2728,5.44663 -9.44469,7.06903 -4.13325,1.58377 -9.17428,2.37566 -15.12309,2.37566 -5.6784,0 -10.5456,-0.86914 -14.6016,-2.60743 -4.056,-1.73829 -7.04971,-3.90149 -8.98114,-6.4896 -1.93143,-2.62675 -2.89715,-5.25349 -2.89715,-7.88023 0,-1.73829 0.61806,-3.22549 1.85417,-4.4616 1.23612,-1.23611 2.80058,-1.85417 4.69338,-1.85417 1.66103,0 2.93577,0.4056 3.82423,1.2168 0.88845,0.8112 1.73828,1.95074 2.54948,3.41863 1.6224,2.81989 3.55383,4.92514 5.79429,6.31577 2.27909,1.39063 5.36937,2.08594 9.27086,2.08594 3.16754,0 5.75565,-0.69531 7.76434,-2.08594 2.04732,-1.42926 3.07098,-3.05166 3.07098,-4.8672 0,-2.78126 -1.06229,-4.80926 -3.18686,-6.084 -2.08595,-1.27475 -5.54321,-2.49155 -10.37178,-3.6504 -5.44663,-1.352 -9.88891,-2.76194 -13.32686,-4.22983 -3.39931,-1.50652 -6.12263,-3.47658 -8.16994,-5.91018 -2.04731,-2.4336 -3.07097,-5.42731 -3.07097,-8.98114 0,-3.16755 0.9464,-6.16126 2.8392,-8.98115 1.8928,-2.81989 4.67406,-5.06034 8.34377,-6.72137 3.70835,-1.69966 8.16995,-2.54949 13.3848,-2.54949 4.09463,0 7.76435,0.42492 11.00915,1.27475 3.28343,0.84983 6.00674,1.98937 8.16994,3.41863 2.20183,1.42925 3.86286,3.01302 4.98309,4.75131 1.15886,1.73829 1.73829,3.43794 1.73829,5.09897 0,1.81555 -0.61806,3.30275 -1.85417,4.46161 -1.19749,1.15885 -2.91646,1.73828 -5.15692,1.73828 -1.6224,0 -3.01303,-0.46354 -4.17189,-1.39063 -1.12023,-0.92709 -2.41428,-2.31771 -3.88217,-4.17188 -1.19749,-1.54515 -2.60743,-2.78126 -4.22983,-3.70835 -1.6224,-0.92709 -3.82423,-1.39063 -6.60549,-1.39063 -2.85851,0 -5.23417,0.61806 -7.12697,1.85418 -1.8928,1.19748 -2.8392,2.70399 -2.8392,4.51954 0,1.66103 0.69531,3.03234 2.08594,4.11394 1.39063,1.04297 3.26412,1.91212 5.62046,2.60743 2.35635,0.69531 5.60115,1.54514 9.7344,2.54949 4.90583,1.19749 8.90389,2.62674 11.99418,4.28777 3.12891,1.66103 5.48526,3.63108 7.06903,5.91017 1.6224,2.24046 2.4336,4.80926 2.4336,7.70641 z"
+     id="path3" />
+  <g
+     id="g1">
+    <path
+       id="path15-5"
+       clip-path="url(#clipPath16)"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.830692;stroke-opacity:1"
+       d="m 47.495768,298.01483 c -14.190716,0 -25.693353,11.50263 -25.693353,25.69336 0,14.19072 11.502637,25.69336 25.693353,25.69336 14.1899,0 25.69336,-11.50264 25.69336,-25.69336 0,-14.19073 -11.50346,-25.69336 -25.69336,-25.69336 z m -9.177728,10.48437 26.230468,16.18164 -26.230468,14.25 z" />
+    <rect
+       style="fill:#00926d;fill-opacity:1;stroke:#ffffff;stroke-width:0.60731;paint-order:stroke markers fill"
+       id="rect1"
+       width="672.30164"
+       height="10.589285"
+       x="85.427467"
+       y="318.41336" />
+    <path
+       id="path9-3"
+       d="m 787.2843,323.70748 c 0,6.68274 -5.41818,12.09983 -12.09984,12.09983 -6.68274,0 -12.09983,-5.41709 -12.09983,-12.09983 0,-6.68274 5.41709,-12.09875 12.09983,-12.09875 6.68166,0 12.09984,5.41601 12.09984,12.09875"
+       style="fill:#00926d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.08082;stroke-opacity:1"
+       clip-path="url(#clipPath10)" />
+  </g>
+  <path
+     style="font-size:47.7402px;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, Normal';text-align:center;letter-spacing:1.37712px;text-anchor:middle;fill:#00926d;stroke:#ffffff;stroke-width:1.14576;paint-order:stroke markers fill"
+     d="m 28.716833,376.52369 h 0.699319 v -3.82294 q 0,-1.53851 0.06993,-2.401 0.09324,-0.8858 0.466213,-1.51519 0.37297,-0.6527 1.072289,-1.04898 0.69932,-0.41959 1.561814,-0.41959 1.212153,0 2.1912,0.90911 0.652698,0.60608 0.815873,1.49188 0.186485,0.8625 0.186485,2.47093 v 4.33578 h 2.331064 q 1.352018,0 2.051337,0.6527 0.72263,0.62939 0.72263,1.63175 0,1.28208 -1.025668,1.79492 -1.002358,0.51283 -2.89052,0.51283 h -1.188843 v 11.70194 q 0,1.49188 0.09324,2.30776 0.116553,0.79256 0.559455,1.30539 0.466213,0.48953 1.491881,0.48953 0.559456,0 1.515192,-0.18649 0.955737,-0.20979 1.491881,-0.20979 0.769252,0 1.375328,0.62938 0.629388,0.60608 0.629388,1.5152 0,1.5385 -1.678367,2.35437 -1.678366,0.81587 -4.825303,0.81587 -2.983762,0 -4.522265,-1.00235 -1.538503,-1.00236 -2.028026,-2.77397 -0.466213,-1.77161 -0.466213,-4.73206 v -12.21478 h -0.839183 q -1.375328,0 -2.097958,-0.6527 -0.72263,-0.6527 -0.72263,-1.65505 0,-1.00236 0.74594,-1.63175 0.769252,-0.6527 2.214512,-0.6527 z m 24.151618,-6.15401 v 9.44081 q 1.212154,-1.39864 2.354375,-2.21451 1.165533,-0.81587 2.564171,-1.21215 1.398639,-0.41959 3.007073,-0.41959 2.424307,0 4.289159,1.02567 1.888162,1.02566 2.960452,2.98376 0.676009,1.14222 0.909115,2.56417 0.233106,1.39864 0.233106,3.24018 v 12.19147 q 0,1.91147 -0.885804,2.89052 -0.862494,0.97904 -2.307754,0.97904 -3.146937,0 -3.146937,-3.86956 v -10.74621 q 0,-3.0537 -0.909115,-4.68544 -0.909115,-1.65506 -3.449975,-1.65506 -1.701677,0 -3.077006,0.97905 -1.352017,0.95574 -2.028026,2.6341 -0.512834,1.42195 -0.512834,5.05841 v 8.41515 q 0,1.88816 -0.862494,2.89052 -0.839183,0.97904 -2.354375,0.97904 -3.146937,0 -3.146937,-3.86956 v -27.59981 q 0,-1.93478 0.815873,-2.89052 0.839183,-0.97904 2.331064,-0.97904 1.515192,0 2.354375,0.97904 0.862494,0.97905 0.862494,2.89052 z m 41.751156,20.09378 H 82.171723 q 0.02331,2.16789 0.862494,3.82294 0.862494,1.65506 2.261133,2.49424 1.421949,0.83919 3.123626,0.83919 1.142221,0 2.074647,-0.25642 0.955737,-0.27973 1.841541,-0.83918 0.885805,-0.58277 1.631745,-1.23547 0.745941,-0.6527 1.934784,-1.77161 0.489523,-0.41959 1.398638,-0.41959 0.979048,0 1.585124,0.53615 0.606077,0.53614 0.606077,1.51519 0,0.86249 -0.676009,2.02802 -0.676008,1.14223 -2.051336,2.21452 -1.352018,1.04897 -3.426665,1.74829 -2.051337,0.69932 -4.732061,0.69932 -6.130699,0 -9.534054,-3.49659 -3.403354,-3.4966 -3.403354,-9.48744 0,-2.82058 0.839184,-5.22158 0.839183,-2.42431 2.447617,-4.1493 1.608435,-1.72498 3.96281,-2.6341 2.354375,-0.93242 5.221584,-0.93242 3.729703,0 6.387117,1.58512 2.680724,1.56181 4.009431,4.05605 1.328706,2.49424 1.328706,5.08172 0,2.401 -1.375328,3.12363 -1.375328,0.69932 -3.869567,0.69932 z m -12.447884,-3.61315 h 11.538769 q -0.233106,-3.26349 -1.771609,-4.87193 -1.515192,-1.63174 -4.009431,-1.63174 -2.377685,0 -3.916188,1.65505 -1.515192,1.63175 -1.841541,4.84862 z m 47.114397,-4.54558 -4.21922,6.73678 4.45233,7.06312 q 0.62939,0.88581 0.62939,1.65506 0,0.83918 -0.62939,1.44526 -0.62939,0.58277 -1.5385,0.58277 -0.69932,0 -1.3054,-0.46622 -0.58276,-0.46621 -1.44526,-1.7483 l -4.1726,-6.24725 q -1.00236,-1.5385 -1.00236,-2.23782 0,-0.83918 1.00236,-2.401 l 4.31247,-6.43373 q 1.25877,-1.91148 2.56417,-1.91148 0.8858,0 1.51519,0.58277 0.6527,0.55945 0.6527,1.37533 0,0.62938 -0.27973,1.0956 -0.25642,0.46621 -0.53615,0.90911 z m 10.67628,0 -4.19592,6.73678 4.45234,7.06312 q 0.6527,1.04898 0.6527,1.65506 0,0.83918 -0.62939,1.44526 -0.62939,0.58277 -1.56182,0.58277 -0.72263,0 -1.3287,-0.46622 -0.58277,-0.46621 -1.44526,-1.7483 l -4.10268,-6.24725 q -1.04897,-1.67836 -1.04897,-2.23782 0,-0.76925 1.04897,-2.401 l 4.26585,-6.43373 q 1.21216,-1.91148 2.61079,-1.91148 0.8625,0 1.49189,0.58277 0.65269,0.58277 0.65269,1.37533 0,0.4429 -0.11655,0.76925 -0.11655,0.30304 -0.25642,0.51283 -0.13986,0.18649 -0.48952,0.72263 z m 15.5733,-2.77396 v 0.76925 q 1.79492,-2.21451 3.7297,-3.24018 1.93478,-1.04898 4.3824,-1.04898 2.93714,0 5.40807,1.51519 2.47093,1.51519 3.89288,4.42902 1.44526,2.91383 1.44526,6.89995 0,2.93714 -0.83918,5.40807 -0.81588,2.44762 -2.26114,4.12599 -1.44526,1.65505 -3.42666,2.56417 -1.95809,0.8858 -4.21923,0.8858 -2.72734,0 -4.59219,-1.0956 -1.84155,-1.0956 -3.51991,-3.21687 v 9.55737 q 0,4.19591 -3.0537,4.19591 -1.79492,0 -2.37768,-1.0956 -0.58277,-1.07229 -0.58277,-3.14693 v -27.45994 q 0,-1.81823 0.79256,-2.70404 0.79257,-0.90911 2.16789,-0.90911 1.35202,0 2.1912,0.93242 0.8625,0.90912 0.8625,2.63411 z m 12.47119,9.25432 q 0,-2.51755 -0.76925,-4.31247 -0.76925,-1.81823 -2.14458,-2.77396 -1.35201,-0.97905 -3.00707,-0.97905 -2.6341,0 -4.45233,2.07465 -1.79492,2.07464 -1.79492,6.10739 0,3.79963 1.79492,5.9209 1.79492,2.09796 4.45233,2.09796 1.58512,0 2.93714,-0.90912 1.35202,-0.93242 2.16789,-2.77397 0.81587,-1.84154 0.81587,-4.45233 z m 12.86927,9.1844 v -27.59981 q 0,-1.91147 0.83918,-2.89052 0.8625,-0.97904 2.30776,-0.97904 1.44526,0 2.33106,0.97904 0.88581,0.95574 0.88581,2.89052 v 27.59981 q 0,1.93478 -0.90912,2.91383 -0.8858,0.95573 -2.30775,0.95573 -1.39864,0 -2.28445,-1.00235 -0.86249,-1.00236 -0.86249,-2.86721 z m 30.39887,0.27972 q -2.30775,1.79492 -4.47564,2.70404 -2.14458,0.8858 -4.8253,0.8858 -2.44762,0 -4.31247,-0.95573 -1.84154,-0.97905 -2.8439,-2.63411 -1.00236,-1.65505 -1.00236,-3.58984 0,-2.61079 1.65506,-4.45233 1.65505,-1.84154 4.54557,-2.47093 0.60608,-0.13986 3.00708,-0.62938 2.40099,-0.48953 4.10267,-0.88581 1.72499,-0.41959 3.7297,-1.00236 -0.11655,-2.51755 -1.02567,-3.68308 -0.8858,-1.18884 -3.70639,-1.18884 -2.4243,0 -3.65977,0.67601 -1.21215,0.67601 -2.09796,2.02802 -0.86249,1.35202 -1.23546,1.79492 -0.34966,0.41959 -1.5385,0.41959 -1.07229,0 -1.86486,-0.676 -0.76925,-0.69932 -0.76925,-1.77161 0,-1.67837 1.18885,-3.26349 1.18884,-1.58513 3.70639,-2.6108 2.51755,-1.02566 6.27056,-1.02566 4.19592,0 6.59691,1.00235 2.401,0.97905 3.38005,3.12363 1.00236,2.14458 1.00236,5.6878 0,2.23782 -0.0233,3.79963 0,1.56182 -0.0233,3.47329 0,1.79492 0.58277,3.75301 0.60608,1.93479 0.60608,2.49424 0,0.97905 -0.93243,1.79492 -0.90911,0.79256 -2.07465,0.79256 -0.97904,0 -1.93478,-0.90911 -0.95574,-0.93243 -2.02803,-2.68073 z m -0.41959,-9.2077 q -1.39864,0.51283 -4.07936,1.0956 -2.65741,0.55945 -3.68308,0.83918 -1.02567,0.25642 -1.9581,1.04898 -0.93242,0.76925 -0.93242,2.16789 0,1.44526 1.0956,2.47093 1.0956,1.00236 2.86721,1.00236 1.88816,0 3.47328,-0.81588 1.60844,-0.83918 2.35438,-2.14457 0.86249,-1.44526 0.86249,-4.75538 z m 19.32632,13.5901 0.58277,-1.42194 -7.83238,-19.72081 q -0.72263,-1.70168 -0.72263,-2.47093 0,-0.81587 0.41959,-1.51519 0.4196,-0.69932 1.14223,-1.11891 0.74594,-0.41959 1.5385,-0.41959 1.37533,0 2.07465,0.8858 0.69932,0.8625 1.23546,2.49424 l 5.38476,15.66475 5.10503,-14.56915 q 0.60608,-1.77161 1.0956,-2.77397 0.48952,-1.00235 1.02567,-1.35201 0.55945,-0.34966 1.56181,-0.34966 0.72263,0 1.37533,0.39628 0.67601,0.37297 1.02567,1.02567 0.37297,0.65269 0.37297,1.37532 -0.0932,0.44291 -0.30304,1.25878 -0.2098,0.81587 -0.51283,1.65506 l -8.29859,21.72552 q -1.07229,2.86721 -2.09796,4.49895 -1.02567,1.63175 -2.72735,2.49424 -1.67836,0.8858 -4.54557,0.8858 -2.79728,0 -4.19592,-0.60607 -1.39864,-0.60608 -1.39864,-2.21451 0,-1.0956 0.6527,-1.70168 0.67601,-0.58277 1.98141,-0.58277 0.51283,0 1.00235,0.13987 0.60608,0.13986 1.04898,0.13986 1.0956,0 1.72499,-0.32635 0.62939,-0.32635 1.11891,-1.14222 0.51283,-0.79256 1.16553,-2.35438 z m 33.56913,-6.52698 4.42902,-7.06312 -4.19592,-6.73678 q -0.27973,-0.37297 -0.4429,-0.62938 -0.16317,-0.25642 -0.30304,-0.58277 -0.11655,-0.34966 -0.11655,-0.79256 0,-0.79256 0.6527,-1.37533 0.65269,-0.58277 1.49188,-0.58277 1.37533,0 2.6341,1.91148 l 4.24254,6.43373 q 0.53614,0.81588 0.79256,1.32871 0.25642,0.48952 0.25642,1.07229 0,0.67601 -1.04898,2.23782 l -4.10268,6.24725 q -0.83918,1.28209 -1.46857,1.7483 -0.60607,0.46622 -1.30539,0.46622 -0.90912,0 -1.56182,-0.58277 -0.62938,-0.58277 -0.62938,-1.44526 0,-0.79256 0.67601,-1.65506 z m -10.69959,0 4.42902,-7.06312 -4.19591,-6.73678 q -0.23311,-0.37297 -0.44291,-0.6527 -0.18648,-0.30303 -0.30303,-0.65269 -0.11656,-0.34966 -0.11656,-0.69932 0,-0.79256 0.6527,-1.37533 0.6527,-0.58277 1.49188,-0.58277 1.32871,0 2.58748,1.91148 l 4.28916,6.43373 q 1.00236,1.46857 1.00236,2.401 0,0.72263 -1.00236,2.23782 l -4.10267,6.24725 q -0.83918,1.28209 -1.46857,1.7483 -0.60608,0.46622 -1.3054,0.46622 -0.93242,0 -1.56181,-0.58277 -0.62939,-0.60608 -0.62939,-1.44526 0,-0.69932 0.67601,-1.65506 z m 47.44074,-25.96805 v 9.72053 q 1.79491,-1.86485 3.65977,-2.84389 1.86485,-1.00236 4.6155,-1.00236 3.17025,0 5.54794,1.51519 2.40099,1.49188 3.70639,4.35909 1.32871,2.8439 1.32871,6.76009 0,2.89052 -0.74594,5.31482 -0.72263,2.401 -2.12127,4.17261 -1.39864,1.77161 -3.40336,2.75066 -1.9814,0.95573 -4.3824,0.95573 -1.46857,0 -2.77396,-0.34966 -1.28209,-0.34966 -2.19121,-0.90911 -0.90911,-0.58277 -1.56181,-1.18884 -0.62939,-0.60608 -1.67836,-1.81824 v 0.62939 q 0,1.79492 -0.8625,2.72735 -0.86249,0.90911 -2.1912,0.90911 -1.35202,0 -2.16789,-0.90911 -0.79256,-0.93243 -0.79256,-2.72735 V 370.4163 q 0,-1.93478 0.76925,-2.91383 0.79256,-1.00235 2.1912,-1.00235 1.46857,0 2.26113,0.95573 0.79257,0.93243 0.79257,2.68073 z m 0.30303,18.90493 q 0,3.79963 1.72499,5.85097 1.7483,2.02803 4.56889,2.02803 2.40099,0 4.12598,-2.07465 1.7483,-2.09796 1.7483,-5.99084 0,-2.51755 -0.72263,-4.33578 -0.72263,-1.81823 -2.05134,-2.79727 -1.3287,-1.00236 -3.10031,-1.00236 -1.81823,0 -3.24018,1.00236 -1.42195,0.97904 -2.23782,2.86721 -0.81588,1.86485 -0.81588,4.45233 z m 40.93529,9.2077 v -0.81587 q -1.14222,1.44526 -2.401,2.42431 -1.25877,0.97905 -2.75065,1.44526 -1.49189,0.48952 -3.40336,0.48952 -2.30775,0 -4.14929,-0.95573 -1.81823,-0.95574 -2.82059,-2.63411 -1.18884,-2.02802 -1.18884,-5.82766 v -12.61106 q 0,-1.91147 0.86249,-2.8439 0.86249,-0.95573 2.28444,-0.95573 1.44526,0 2.33107,0.95573 0.8858,0.95574 0.8858,2.8439 v 10.18675 q 0,2.21452 0.37297,3.72971 0.37297,1.49188 1.32871,2.35437 0.97905,0.83919 2.6341,0.83919 1.60844,0 3.03038,-0.95574 1.42195,-0.95574 2.07465,-2.49424 0.53615,-1.35202 0.53615,-5.9209 v -7.73914 q 0,-1.88816 0.8858,-2.8439 0.88581,-0.95573 2.30776,-0.95573 1.42194,0 2.28444,0.95573 0.86249,0.93243 0.86249,2.8439 v 18.43872 q 0,1.81823 -0.83918,2.72735 -0.81587,0.90911 -2.12127,0.90911 -1.3054,0 -2.16789,-0.93242 -0.83918,-0.95574 -0.83918,-2.65742 z m 14.03481,-21.72552 h 0.69932 v -3.82294 q 0,-1.53851 0.0699,-2.401 0.0933,-0.8858 0.46622,-1.51519 0.37297,-0.6527 1.07229,-1.04898 0.69932,-0.41959 1.56181,-0.41959 1.21215,0 2.1912,0.90911 0.6527,0.60608 0.81587,1.49188 0.18649,0.8625 0.18649,2.47093 v 4.33578 h 2.33106 q 1.35202,0 2.05134,0.6527 0.72263,0.62939 0.72263,1.63175 0,1.28208 -1.02567,1.79492 -1.00236,0.51283 -2.89052,0.51283 h -1.18884 v 11.70194 q 0,1.49188 0.0932,2.30776 0.11655,0.79256 0.55946,1.30539 0.46621,0.48953 1.49188,0.48953 0.55945,0 1.51519,-0.18649 0.95574,-0.20979 1.49188,-0.20979 0.76925,0 1.37533,0.62938 0.62939,0.60608 0.62939,1.5152 0,1.5385 -1.67837,2.35437 -1.67837,0.81587 -4.8253,0.81587 -2.98377,0 -4.52227,-1.00235 -1.5385,-1.00236 -2.02803,-2.77397 -0.46621,-1.77161 -0.46621,-4.73206 v -12.21478 h -0.83918 q -1.37533,0 -2.09796,-0.6527 -0.72263,-0.6527 -0.72263,-1.65505 0,-1.00236 0.74594,-1.63175 0.76925,-0.6527 2.21451,-0.6527 z m 18.27732,0 h 0.69932 v -3.82294 q 0,-1.53851 0.0699,-2.401 0.0932,-0.8858 0.46621,-1.51519 0.37297,-0.6527 1.07229,-1.04898 0.69932,-0.41959 1.56181,-0.41959 1.21216,0 2.1912,0.90911 0.6527,0.60608 0.81588,1.49188 0.18648,0.8625 0.18648,2.47093 v 4.33578 h 2.33107 q 1.35201,0 2.05133,0.6527 0.72263,0.62939 0.72263,1.63175 0,1.28208 -1.02567,1.79492 -1.00235,0.51283 -2.89052,0.51283 h -1.18884 v 11.70194 q 0,1.49188 0.0932,2.30776 0.11656,0.79256 0.55946,1.30539 0.46621,0.48953 1.49188,0.48953 0.55946,0 1.51519,-0.18649 0.95574,-0.20979 1.49188,-0.20979 0.76925,0 1.37533,0.62938 0.62939,0.60608 0.62939,1.5152 0,1.5385 -1.67837,2.35437 -1.67836,0.81587 -4.8253,0.81587 -2.98376,0 -4.52227,-1.00235 -1.5385,-1.00236 -2.02802,-2.77397 -0.46621,-1.77161 -0.46621,-4.73206 v -12.21478 h -0.83919 q -1.37533,0 -2.09796,-0.6527 -0.72263,-0.6527 -0.72263,-1.65505 0,-1.00236 0.74594,-1.63175 0.76926,-0.6527 2.21452,-0.6527 z m 41.75116,12.37796 q 0,2.84389 -0.88581,5.24489 -0.8858,2.401 -2.56417,4.12598 -1.67836,1.72499 -4.00943,2.65742 -2.33106,0.90911 -5.24489,0.90911 -2.89052,0 -5.19828,-0.93242 -2.30775,-0.93243 -4.00943,-2.65742 -1.67836,-1.74829 -2.56417,-4.10267 -0.86249,-2.37769 -0.86249,-5.24489 0,-2.89052 0.8858,-5.29152 0.88581,-2.401 2.54086,-4.10267 1.65506,-1.70168 4.00943,-2.6108 2.35438,-0.93242 5.19828,-0.93242 2.89052,0 5.24489,0.93242 2.35438,0.93243 4.03274,2.65742 1.67837,1.72498 2.54086,4.10267 0.88581,2.37769 0.88581,5.2449 z m -6.38712,0 q 0,-3.89288 -1.72499,-6.06077 -1.70167,-2.16789 -4.59219,-2.16789 -1.86485,0 -3.2868,0.97904 -1.42195,0.95574 -2.1912,2.8439 -0.76926,1.88817 -0.76926,4.40572 0,2.49423 0.74595,4.35909 0.76925,1.86485 2.16789,2.8672 1.42194,0.97905 3.33342,0.97905 2.89052,0 4.59219,-2.16789 1.72499,-2.1912 1.72499,-6.03745 z m 18.55708,-9.41751 v 0.76926 q 1.67837,-2.21452 3.65977,-3.24018 2.00472,-1.04898 4.5922,-1.04898 2.51755,0 4.49895,1.0956 1.98141,1.0956 2.96046,3.10031 0.62938,1.16554 0.81587,2.51755 0.18648,1.35202 0.18648,3.44998 v 11.84181 q 0,1.91147 -0.8858,2.89052 -0.86249,0.97904 -2.26113,0.97904 -1.42195,0 -2.30776,-1.00235 -0.8858,-1.00236 -0.8858,-2.86721 v -10.60635 q 0,-3.14693 -0.88581,-4.80199 -0.86249,-1.67837 -3.47328,-1.67837 -1.70168,0 -3.10032,1.02567 -1.39864,1.00236 -2.05133,2.77397 -0.46622,1.42195 -0.46622,5.31483 v 7.97224 q 0,1.93478 -0.90911,2.91383 -0.88581,0.95573 -2.30776,0.95573 -1.37532,0 -2.26113,-1.00235 -0.8858,-1.00236 -0.8858,-2.86721 v -18.3921 q 0,-1.81823 0.79256,-2.70404 0.79256,-0.90911 2.16789,-0.90911 0.83918,0 1.51519,0.39628 0.67601,0.39628 1.07229,1.18884 0.41959,0.79256 0.41959,1.93478 z m 37.23069,-2.96045 h 1.5152 v -1.91147 q 0,-2.98376 0.74594,-4.73206 0.76925,-1.77161 2.56417,-2.56417 1.81823,-0.81587 4.96517,-0.81587 5.57124,0 5.57124,2.72734 0,0.88581 -0.58277,1.51519 -0.58276,0.62939 -1.37532,0.62939 -0.37298,0 -1.28209,-0.13986 -0.90912,-0.13987 -1.5385,-0.13987 -1.72499,0 -2.21451,1.02567 -0.48953,1.00236 -0.48953,2.89052 v 1.51519 h 1.56182 q 3.63646,0 3.63646,2.1912 0,1.56182 -0.97905,1.98141 -0.95574,0.41959 -2.65741,0.41959 h -1.56182 v 16.8536 q 0,1.88816 -0.90911,2.89052 -0.88581,0.97904 -2.30776,0.97904 -1.35201,0 -2.26113,-0.97904 -0.8858,-1.00236 -0.8858,-2.89052 v -16.8536 h -1.7483 q -1.42195,0 -2.1912,-0.62939 -0.76925,-0.6527 -0.76925,-1.67836 0,-2.28445 3.19355,-2.28445 z m 40.98189,12.37796 q 0,2.84389 -0.88581,5.24489 -0.8858,2.401 -2.56417,4.12598 -1.67837,1.72499 -4.00943,2.65742 -2.33106,0.90911 -5.24489,0.90911 -2.89052,0 -5.19828,-0.93242 -2.30775,-0.93243 -4.00943,-2.65742 -1.67837,-1.74829 -2.56417,-4.10267 -0.86249,-2.37769 -0.86249,-5.24489 0,-2.89052 0.8858,-5.29152 0.8858,-2.401 2.54086,-4.10267 1.65506,-1.70168 4.00943,-2.6108 2.35438,-0.93242 5.19828,-0.93242 2.89052,0 5.24489,0.93242 2.35438,0.93243 4.03274,2.65742 1.67837,1.72498 2.54086,4.10267 0.88581,2.37769 0.88581,5.2449 z m -6.38712,0 q 0,-3.89288 -1.72499,-6.06077 -1.70167,-2.16789 -4.59219,-2.16789 -1.86486,0 -3.28681,0.97904 -1.42195,0.95574 -2.1912,2.8439 -0.76925,1.88817 -0.76925,4.40572 0,2.49423 0.74594,4.35909 0.76925,1.86485 2.16789,2.8672 1.42195,0.97905 3.33343,0.97905 2.89052,0 4.59219,-2.16789 1.72499,-2.1912 1.72499,-6.03745 z m 19.09322,3.75301 v 5.31483 q 0,1.93478 -0.90911,2.91383 -0.90912,0.95573 -2.30775,0.95573 -1.37533,0 -2.26114,-0.97904 -0.8858,-0.97905 -0.8858,-2.89052 V 380.2534 q 0,-4.28916 3.10031,-4.28916 1.58513,0 2.28445,1.00235 0.69932,1.00236 0.76925,2.96046 1.14222,-1.9581 2.33106,-2.96046 1.21216,-1.00235 3.21687,-1.00235 2.00472,0 3.89288,1.00235 1.88816,1.00236 1.88816,2.65742 0,1.16553 -0.81587,1.93478 -0.79256,0.74594 -1.72499,0.74594 -0.34966,0 -1.70168,-0.41959 -1.3287,-0.4429 -2.35437,-0.4429 -1.39864,0 -2.28444,0.74594 -0.88581,0.72263 -1.37533,2.16789 -0.48953,1.44526 -0.67601,3.44997 -0.18649,1.98141 -0.18649,4.84862 z m 35.15604,9.97695 0.58277,-1.42194 -7.83238,-19.72081 q -0.72263,-1.70168 -0.72263,-2.47093 0,-0.81587 0.41959,-1.51519 0.41959,-0.69932 1.14222,-1.11891 0.74594,-0.41959 1.53851,-0.41959 1.37532,0 2.07464,0.8858 0.69932,0.8625 1.23547,2.49424 l 5.38476,15.66475 5.10503,-14.56915 q 0.60607,-1.77161 1.0956,-2.77397 0.48952,-1.00235 1.02567,-1.35201 0.55945,-0.34966 1.56181,-0.34966 0.72263,0 1.37533,0.39628 0.67601,0.37297 1.02567,1.02567 0.37297,0.65269 0.37297,1.37532 -0.0933,0.44291 -0.30304,1.25878 -0.2098,0.81587 -0.51284,1.65506 l -8.29859,21.72552 q -1.07229,2.86721 -2.09795,4.49895 -1.02567,1.63175 -2.72735,2.49424 -1.67837,0.8858 -4.54558,0.8858 -2.79727,0 -4.19591,-0.60607 -1.39864,-0.60608 -1.39864,-2.21451 0,-1.0956 0.6527,-1.70168 0.67601,-0.58277 1.9814,-0.58277 0.51284,0 1.00236,0.13987 0.60608,0.13986 1.04898,0.13986 1.0956,0 1.72499,-0.32635 0.62938,-0.32635 1.11891,-1.14222 0.51283,-0.79256 1.16553,-2.35438 z m 44.57176,-13.72996 q 0,2.84389 -0.88581,5.24489 -0.8858,2.401 -2.56417,4.12598 -1.67837,1.72499 -4.00943,2.65742 -2.33107,0.90911 -5.2449,0.90911 -2.89052,0 -5.19827,-0.93242 -2.30775,-0.93243 -4.00943,-2.65742 -1.67837,-1.74829 -2.56417,-4.10267 -0.8625,-2.37769 -0.8625,-5.24489 0,-2.89052 0.88581,-5.29152 0.8858,-2.401 2.54086,-4.10267 1.65506,-1.70168 4.00943,-2.6108 2.35438,-0.93242 5.19827,-0.93242 2.89052,0 5.2449,0.93242 2.35437,0.93243 4.03274,2.65742 1.67837,1.72498 2.54086,4.10267 0.88581,2.37769 0.88581,5.2449 z m -6.38712,0 q 0,-3.89288 -1.72499,-6.06077 -1.70168,-2.16789 -4.5922,-2.16789 -1.86485,0 -3.2868,0.97904 -1.42195,0.95574 -2.1912,2.8439 -0.76925,1.88817 -0.76925,4.40572 0,2.49423 0.74594,4.35909 0.76925,1.86485 2.16789,2.8672 1.42195,0.97905 3.33342,0.97905 2.89052,0 4.5922,-2.16789 1.72499,-2.1912 1.72499,-6.03745 z m 29.30322,9.34756 v -0.81587 q -1.14222,1.44526 -2.40099,2.42431 -1.25878,0.97905 -2.75066,1.44526 -1.49188,0.48952 -3.40335,0.48952 -2.30776,0 -4.1493,-0.95573 -1.81823,-0.95574 -2.82058,-2.63411 -1.18885,-2.02802 -1.18885,-5.82766 v -12.61106 q 0,-1.91147 0.8625,-2.8439 0.86249,-0.95573 2.28444,-0.95573 1.44526,0 2.33106,0.95573 0.88581,0.95574 0.88581,2.8439 v 10.18675 q 0,2.21452 0.37297,3.72971 0.37297,1.49188 1.32871,2.35437 0.97904,0.83919 2.6341,0.83919 1.60843,0 3.03038,-0.95574 1.42195,-0.95574 2.07465,-2.49424 0.53614,-1.35202 0.53614,-5.9209 v -7.73914 q 0,-1.88816 0.88581,-2.8439 0.8858,-0.95573 2.30775,-0.95573 1.42195,0 2.28445,0.95573 0.86249,0.93243 0.86249,2.8439 v 18.43872 q 0,1.81823 -0.83918,2.72735 -0.81588,0.90911 -2.12127,0.90911 -1.3054,0 -2.16789,-0.93242 -0.83919,-0.95574 -0.83919,-2.65742 z m 20.00234,-5.59455 v 5.31483 q 0,1.93478 -0.90911,2.91383 -0.90912,0.95573 -2.30775,0.95573 -1.37533,0 -2.26114,-0.97904 -0.8858,-0.97905 -0.8858,-2.89052 V 380.2534 q 0,-4.28916 3.10031,-4.28916 1.58513,0 2.28445,1.00235 0.69932,1.00236 0.76925,2.96046 1.14222,-1.9581 2.33106,-2.96046 1.21216,-1.00235 3.21687,-1.00235 2.00472,0 3.89288,1.00235 1.88816,1.00236 1.88816,2.65742 0,1.16553 -0.81587,1.93478 -0.79256,0.74594 -1.72499,0.74594 -0.34966,0 -1.70167,-0.41959 -1.32871,-0.4429 -2.35438,-0.4429 -1.39864,0 -2.28444,0.74594 -0.88581,0.72263 -1.37533,2.16789 -0.48952,1.44526 -0.67601,3.44997 -0.18649,1.98141 -0.18649,4.84862 z m 46.71812,5.54793 v -0.62939 q -1.28209,1.46858 -2.54086,2.401 -1.23546,0.90912 -2.70403,1.37533 -1.44526,0.48952 -3.17025,0.48952 -2.28445,0 -4.24254,-0.95573 -1.93478,-0.97905 -3.35673,-2.77397 -1.42195,-1.79492 -2.16789,-4.21923 -0.72263,-2.4243 -0.72263,-5.24489 0,-5.96753 2.91383,-9.30095 2.91383,-3.33342 7.6692,-3.33342 2.75066,0 4.63882,0.95573 1.88816,0.93243 3.68308,2.89052 v -9.39418 q 0,-1.9581 0.76925,-2.96046 0.79256,-1.00235 2.23782,-1.00235 1.44526,0 2.21451,0.93242 0.79257,0.90912 0.79257,2.70404 v 28.06601 q 0,1.81823 -0.83919,2.72735 -0.83918,0.90911 -2.16789,0.90911 -1.30539,0 -2.16789,-0.93242 -0.83918,-0.95574 -0.83918,-2.70404 z m -12.51782,-9.34757 q 0,2.58749 0.79257,4.40572 0.81587,1.81823 2.21451,2.75065 1.39864,0.90912 3.05369,0.90912 1.67837,0 3.0537,-0.8625 1.39863,-0.8858 2.21451,-2.68072 0.83918,-1.81823 0.83918,-4.52227 0,-2.54086 -0.83918,-4.35909 -0.81588,-1.84154 -2.23782,-2.79727 -1.39864,-0.97905 -3.07701,-0.97905 -1.7483,0 -3.12363,1.00236 -1.37532,0.97904 -2.14458,2.8439 -0.74594,1.84154 -0.74594,4.28915 z m 42.38059,9.39419 q -2.30776,1.79492 -4.47565,2.70404 -2.14458,0.8858 -4.8253,0.8858 -2.44762,0 -4.31247,-0.95573 -1.84154,-0.97905 -2.8439,-2.63411 -1.00236,-1.65505 -1.00236,-3.58984 0,-2.61079 1.65506,-4.45233 1.65505,-1.84154 4.54557,-2.47093 0.60608,-0.13986 3.00708,-0.62938 2.40099,-0.48953 4.10267,-0.88581 1.72499,-0.41959 3.7297,-1.00236 -0.11655,-2.51755 -1.02566,-3.68308 -0.88581,-1.18884 -3.7064,-1.18884 -2.4243,0 -3.65977,0.67601 -1.21215,0.67601 -2.09796,2.02802 -0.86249,1.35202 -1.23546,1.79492 -0.34966,0.41959 -1.5385,0.41959 -1.07229,0 -1.86485,-0.676 -0.76926,-0.69932 -0.76926,-1.77161 0,-1.67837 1.18885,-3.26349 1.18884,-1.58513 3.70639,-2.6108 2.51755,-1.02566 6.27056,-1.02566 4.19592,0 6.59692,1.00235 2.40099,0.97905 3.38004,3.12363 1.00236,2.14458 1.00236,5.6878 0,2.23782 -0.0233,3.79963 0,1.56182 -0.0233,3.47329 0,1.79492 0.58276,3.75301 0.60608,1.93479 0.60608,2.49424 0,0.97905 -0.93243,1.79492 -0.90911,0.79256 -2.07464,0.79256 -0.97905,0 -1.93479,-0.90911 -0.95573,-0.93243 -2.02802,-2.68073 z m -0.4196,-9.2077 q -1.39863,0.51283 -4.07936,1.0956 -2.65741,0.55945 -3.68308,0.83918 -1.02567,0.25642 -1.95809,1.04898 -0.93243,0.76925 -0.93243,2.16789 0,1.44526 1.0956,2.47093 1.0956,1.00236 2.86721,1.00236 1.88816,0 3.47329,-0.81588 1.60843,-0.83918 2.35437,-2.14457 0.86249,-1.44526 0.86249,-4.75538 z m 13.24222,-12.51782 h 0.69932 v -3.82294 q 0,-1.53851 0.0699,-2.401 0.0933,-0.8858 0.46622,-1.51519 0.37297,-0.6527 1.07229,-1.04898 0.69932,-0.41959 1.56181,-0.41959 1.21215,0 2.1912,0.90911 0.6527,0.60608 0.81587,1.49188 0.18649,0.8625 0.18649,2.47093 v 4.33578 h 2.33106 q 1.35202,0 2.05134,0.6527 0.72263,0.62939 0.72263,1.63175 0,1.28208 -1.02567,1.79492 -1.00236,0.51283 -2.89052,0.51283 h -1.18884 v 11.70194 q 0,1.49188 0.0932,2.30776 0.11655,0.79256 0.55946,1.30539 0.46621,0.48953 1.49188,0.48953 0.55945,0 1.51519,-0.18649 0.95574,-0.20979 1.49188,-0.20979 0.76925,0 1.37533,0.62938 0.62939,0.60608 0.62939,1.5152 0,1.5385 -1.67837,2.35437 -1.67837,0.81587 -4.8253,0.81587 -2.98377,0 -4.52227,-1.00235 -1.5385,-1.00236 -2.02803,-2.77397 -0.46621,-1.77161 -0.46621,-4.73206 v -12.21478 h -0.83918 q -1.37533,0 -2.09796,-0.6527 -0.72263,-0.6527 -0.72263,-1.65505 0,-1.00236 0.74594,-1.63175 0.76925,-0.6527 2.21451,-0.6527 z m 34.01203,21.72552 q -2.30775,1.79492 -4.47564,2.70404 -2.14458,0.8858 -4.82531,0.8858 -2.44761,0 -4.31246,-0.95573 -1.84155,-0.97905 -2.8439,-2.63411 -1.00236,-1.65505 -1.00236,-3.58984 0,-2.61079 1.65505,-4.45233 1.65506,-1.84154 4.54558,-2.47093 0.60608,-0.13986 3.00707,-0.62938 2.401,-0.48953 4.10268,-0.88581 1.72498,-0.41959 3.7297,-1.00236 -0.11655,-2.51755 -1.02567,-3.68308 -0.8858,-1.18884 -3.70639,-1.18884 -2.42431,0 -3.65977,0.67601 -1.21216,0.67601 -2.09796,2.02802 -0.86249,1.35202 -1.23546,1.79492 -0.34966,0.41959 -1.53851,0.41959 -1.07229,0 -1.86485,-0.676 -0.76925,-0.69932 -0.76925,-1.77161 0,-1.67837 1.18884,-3.26349 1.18885,-1.58513 3.7064,-2.6108 2.51755,-1.02566 6.27056,-1.02566 4.19592,0 6.59691,1.00235 2.401,0.97905 3.38004,3.12363 1.00236,2.14458 1.00236,5.6878 0,2.23782 -0.0233,3.79963 0,1.56182 -0.0233,3.47329 0,1.79492 0.58277,3.75301 0.60607,1.93479 0.60607,2.49424 0,0.97905 -0.93242,1.79492 -0.90912,0.79256 -2.07465,0.79256 -0.97905,0 -1.93478,-0.90911 -0.95574,-0.93243 -2.02803,-2.68073 z m -0.41959,-9.2077 q -1.39864,0.51283 -4.07936,1.0956 -2.65742,0.55945 -3.68308,0.83918 -1.02567,0.25642 -1.9581,1.04898 -0.93242,0.76925 -0.93242,2.16789 0,1.44526 1.0956,2.47093 1.0956,1.00236 2.8672,1.00236 1.88817,0 3.47329,-0.81588 1.60844,-0.83918 2.35438,-2.14457 0.86249,-1.44526 0.86249,-4.75538 z"
+     id="text1"
+     aria-label="the «play» button for your data" />
+</svg>
+`;
 
   /*
    * About dialog
@@ -13059,9 +13234,24 @@
       const author = this.root.constructor.versionInfo?.sharedComponents?.package?.author || {};
 
       this.DOM.header.html("");
-      this.DOM.header.append("p").html("Next level data graphics");
-      this.DOM.header.append("p").html("This chart is made with Vizabi, <br/> an open-source project originally <br/> built at " + url(author.name, author.url) + "<br/> Currently maintained and extended by <br/> Angie and team at "  + url("Encharted Media AB", "https://vizabi.com"));
-      this.DOM.header.append("p").html("If you would like to use these graphs, we <br/> can help you set them up and customise <br/>"  + mailto("info@enchart.me"));
+      this.DOM.header.append("p").html(url(VIZABI_CHARTS_LOGO, "https://vizabi.com"));
+      this.DOM.header.append("p").html(""
+        + "This chart is made with Vizabi, <br/>" 
+        + " a free open-source software <br/>"
+        + "that animates numbers over time, <br/>"
+        + "bringing them to life — so that <br/>"
+        + "the truth can win over buzzwords. <br/>"
+        + "<br/>"
+        + "Built at " + url(author.name, author.url) + ",<br/> "
+        + "Currently maintained and extended by <br/>"
+        + "Angie & Dmitry at Encharted Media AB, <br/>"
+        + "see " + url("vizabi.com", "https://vizabi.com")
+      );
+      this.DOM.header.append("p").html(""
+        + "Hire us to set up and customise <br/>"
+        + "these graphs for your data! <br/>"
+        + mailto("info@enchart.me")
+      );
     }
 
 
@@ -13111,95 +13301,24 @@
   decorated$e.add("about", About);
 
   /*
-   * Axes dialog
+   * Label dialog
    */
 
-  class Axes extends decorated$e {
+  class Label extends decorated$e {
     constructor(config) {
       config.template = `
       <div class='vzb-dialog-modal'>
-        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="axes" data-click="pinDialog"></span>
-        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="axes" data-click="dragDialog"></span>
-        <div class="vzb-dialog-title">
-          <span data-localise="buttons/axes"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="label" data-click="pinDialog"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="label" data-click="dragDialog"></span>
+        <div class="vzb-dialog-title"> 
+          <span data-localise="buttons/label"></span>
         </div>
+
         <div class="vzb-dialog-content">
-          <p class="vzb-dialog-sublabel">
-            <span data-localise="buttons/x"></span>
-            <span class="vzb-xaxis-selector"></span>
-          </p>
-          <div class="vzb-xaxis-minmax vzb-dialog-paragraph"></div>
-          <p class="vzb-dialog-sublabel">
-            <span data-localise="buttons/y"></span>
-            <span class="vzb-yaxis-selector"></span>
-          </p>
-          <div class="vzb-yaxis-minmax vzb-dialog-paragraph"></div>
-        </div>
-        <div class="vzb-dialog-buttons">
-          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
-            <span data-localise="buttons/ok"></span>
-          </div>
-        </div>
-      </div>    
-    `;
-
-      config.subcomponents = [{
-        type: IndicatorPicker,
-        placeholder: ".vzb-xaxis-selector",
-        options: {
-          submodel: "encoding",
-          targetProp: "x"
-        }
-      },{
-        type: decorated$a,
-        placeholder: ".vzb-xaxis-minmax",
-        state: {
-          submodel: "encoding.x.scale"
-        }
-      },{
-        type: IndicatorPicker,
-        placeholder: ".vzb-yaxis-selector",
-        options: {
-          submodel: "encoding",
-          targetProp: "y"
-        }
-      },{
-        type: decorated$a,
-        placeholder: ".vzb-yaxis-minmax",
-        state: {
-          submodel: "encoding.y.scale"
-        }
-      }];
-
-      super(config);
-    }
-
-  }
-
-  decorated$e.add("axes", Axes);
-
-  /*!
-   * VIZABI COLOR DIALOG
-   */
-
-  class Colors extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="colors" data-click="pinDialog"></span>
-        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="colors" data-click="dragDialog"></span>
-        
-        <div class="vzb-dialog-title">
-          <span data-localise="buttons/colors"></span>
-          <span class="vzb-caxis-selector"></span>
-        </div>
-      
-        <div class="vzb-dialog-content vzb-dialog-scrollable">
-          <div class="vzb-clegend-container">
-            <svg>
-              <g class="vzb-timedisplay"></g>
-            </svg>
-          </div>
+          <div class="vzb-enablelabelbox-switch"></div>
+          <span class="vzb-saxis-selector"></span>
+          <div class="vzb-dialog-sizeslider"></div>
+          <div class="vzb-removelabelbox-switch"></div>
         </div>
 
         <div class="vzb-dialog-buttons">
@@ -13210,47 +13329,42 @@
 
       </div>
     `;
-      
+
       config.subcomponents = [{
-        type: IndicatorPicker,
-        placeholder: ".vzb-caxis-selector",
+        type: SizeSlider,
+        placeholder: ".vzb-dialog-sizeslider",
         options: {
-          submodel: "encoding",
-          targetProp: "color",
-          showHoverValues: true
-        },
-        //model: config.root.model.stores.markers.get("legend")
-        state: {
-          get hoverKeyLabels() {
-            const legendMarker = config.root.model.markers?.[config.root.options?.markerNames?.legend || "legend"];
-            if (!legendMarker) return null;
-            if (legendMarker.state === STATUS.READY) {
-              //TODO: fix on multi dimensions config
-              const labelKey = legendMarker.data.space[0];
-              return legendMarker.dataArray.reduce((labels, data) => {
-                labels[data[labelKey]] = data.name;
-                return labels;
-              }, {});
-            }
-            
-            return null;
-          }
+          constantUnit: "unit/pixels",
+          submodelFunc: () => this.model.encoding.size_label.scale,
         }
       }, {
-        type: decorated$g,
-        placeholder: ".vzb-clegend-container",
+        type: IndicatorPicker,
+        placeholder: ".vzb-saxis-selector",
         options: {
-          colorModelName: "color",
-          legendModelName: config.root.options?.markerNames?.legend || "legend"
+          submodel: "encoding",
+          targetProp: "size_label",
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-removelabelbox-switch",
+        options: {
+          checkbox: "removeLabelBox",
+          submodel: "root.ui.chart.labels"
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-enablelabelbox-switch",
+        options: {
+          checkbox: "enabled",
+          submodel: "root.ui.chart.labels"
         }
       }];
-      
+
       super(config);
     }
-
   }
 
-  decorated$e.add("colors", Colors);
+  decorated$e.add("label", Label);
 
   /*!
    * VIZABI SHOW PANEL CONTROL
@@ -13874,25 +13988,28 @@
 
   decorated$e.add("find", decorated$7);
 
-  /*
-   * Label dialog
+  /*!
+   * VIZABI COLOR DIALOG
    */
 
-  class Label extends decorated$e {
+  class Colors extends decorated$e {
     constructor(config) {
       config.template = `
       <div class='vzb-dialog-modal'>
-        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="label" data-click="pinDialog"></span>
-        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="label" data-click="dragDialog"></span>
-        <div class="vzb-dialog-title"> 
-          <span data-localise="buttons/label"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="colors" data-click="pinDialog"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="colors" data-click="dragDialog"></span>
+        
+        <div class="vzb-dialog-title">
+          <span data-localise="buttons/colors"></span>
+          <span class="vzb-caxis-selector"></span>
         </div>
-
-        <div class="vzb-dialog-content">
-          <div class="vzb-enablelabelbox-switch"></div>
-          <span class="vzb-saxis-selector"></span>
-          <div class="vzb-dialog-sizeslider"></div>
-          <div class="vzb-removelabelbox-switch"></div>
+      
+        <div class="vzb-dialog-content vzb-dialog-scrollable">
+          <div class="vzb-clegend-container">
+            <svg>
+              <g class="vzb-timedisplay"></g>
+            </svg>
+          </div>
         </div>
 
         <div class="vzb-dialog-buttons">
@@ -13903,42 +14020,132 @@
 
       </div>
     `;
-
+      
       config.subcomponents = [{
-        type: SizeSlider,
-        placeholder: ".vzb-dialog-sizeslider",
-        options: {
-          constantUnit: "unit/pixels",
-          submodelFunc: () => this.model.encoding.size_label.scale,
-        }
-      }, {
         type: IndicatorPicker,
-        placeholder: ".vzb-saxis-selector",
+        placeholder: ".vzb-caxis-selector",
         options: {
           submodel: "encoding",
-          targetProp: "size_label",
+          targetProp: "color",
+          showHoverValues: true
+        },
+        //model: config.root.model.stores.markers.get("legend")
+        state: {
+          get hoverKeyLabels() {
+            const legendMarker = config.root.model.markers?.[config.root.options?.markerNames?.legend || "legend"];
+            if (!legendMarker) return null;
+            if (legendMarker.state === STATUS.READY) {
+              //TODO: fix on multi dimensions config
+              const labelKey = legendMarker.data.space[0];
+              return legendMarker.dataArray.reduce((labels, data) => {
+                labels[data[labelKey]] = data.name;
+                return labels;
+              }, {});
+            }
+            
+            return null;
+          }
         }
       }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-removelabelbox-switch",
+        type: decorated$g,
+        placeholder: ".vzb-clegend-container",
         options: {
-          checkbox: "removeLabelBox",
-          submodel: "root.ui.chart.labels"
+          colorModelName: "color",
+          legendModelName: config.root.options?.markerNames?.legend || "legend"
+        }
+      }];
+      
+      super(config);
+    }
+
+  }
+
+  decorated$e.add("colors", Colors);
+
+  /*
+   * Size dialog
+   */
+
+  class Presentation extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <div class="vzb-dialog-title"> 
+          <span data-localise="dialogs/presentation"></span>
+        </div>
+
+        <div class="vzb-dialog-content">
+          <div class="vzb-presentationmode-switch"></div>
+          <div class="vzb-decorations-switch"></div>
+          <div class="vzb-time-background-switch"></div>
+          <div class="vzb-titles-switch"></div>
+          <div class="vzb-time-trails-switch"></div>
+          <div class="vzb-overhang-switch"></div>
+          <div class="vzb-format-si-prefix-switch"></div>
+        </div>
+
+      </div>
+    `;
+
+      config.subcomponents = [{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-presentationmode-switch",
+        options: {
+          checkbox: "projector",
+          submodel: "services.layout"
         }
       }, {
         type: SimpleCheckbox,
-        placeholder: ".vzb-enablelabelbox-switch",
+        placeholder: ".vzb-decorations-switch",
         options: {
           checkbox: "enabled",
-          submodel: "root.ui.chart.labels"
+          prefix: "decorations",
+          submodel: "root.ui.chart.decorations"
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-time-background-switch",
+        options: {
+          checkbox: "timeInBackground",
+          submodel: "root.ui.chart"
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-titles-switch",
+        options: {
+          checkbox: "showTitles",
+          submodel: "root.ui.chart"
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-time-trails-switch",
+        options: {
+          checkbox: "timeInTrails",
+          submodel: "root.ui.chart"
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-overhang-switch",
+        options: {
+          checkbox: "overhang",
+          submodel: "root.ui.chart"
+        }
+      }, {
+        type: SimpleCheckbox,
+        placeholder: ".vzb-format-si-prefix-switch",
+        options: {
+          checkbox: "shortNumberFormat",
+          submodel: "root.services.locale"
         }
       }];
 
       super(config);
     }
+
+
   }
 
-  decorated$e.add("label", Label);
+  decorated$e.add("presentation", Presentation);
 
   /*
    * More options dialog
@@ -14048,6 +14255,758 @@
   }
 
   decorated$e.add("moreoptions", MoreOptions);
+
+  /*
+   * Size dialog
+   */
+
+  class Opacity extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <div class="vzb-dialog-title"> 
+          <span data-localise="buttons/opacity"></span>
+        </div>
+            
+        <div class="vzb-dialog-content">
+          <p class="vzb-dialog-sublabel">
+            <span data-localise="buttons/opacityRegular"></span>
+          </p>
+          <div class="vzb-dialog-bubbleopacity-regular"></div>
+
+          <p class="vzb-dialog-sublabel">
+            <span data-localise="buttons/opacityNonselect"></span>
+          </p>
+          <div class="vzb-dialog-bubbleopacity-selectdim"></div>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+      config.subcomponents = [{
+        type: SingleHandleSlider,
+        placeholder: ".vzb-dialog-bubbleopacity-regular",
+        options: {
+          value: "opacityRegular",
+          submodel: "root.ui.chart"
+        }
+      },{
+        type: SingleHandleSlider,
+        placeholder: ".vzb-dialog-bubbleopacity-selectdim",
+        options: {
+          value: "opacitySelectDim",
+          submodel: "root.ui.chart"
+        }
+      }];
+
+      super(config);
+    }
+  }
+
+  decorated$e.add("opacity", Opacity);
+
+  /*
+   * Size dialog
+   */
+
+  class Size extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="size" data-click="pinDialog"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="size" data-click="dragDialog"></span>
+        <div class="vzb-dialog-title"> 
+          <span data-localise="buttons/size"></span>
+          <div class="vzb-dialog-bubblesize"></div>
+          <span class="vzb-saxis-selector"></span>
+        </div>
+        <div class="vzb-dialog-content">
+          <span class="vzb-dialog-subtitle"></span>
+        </div>
+        <div class="vzb-dialog-buttons">
+          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+            <span data-localise="buttons/ok"></span>
+          </div>
+        </div>
+      </div>    
+    `;
+
+      config.subcomponents = [{
+        type: IndicatorPicker,
+        placeholder: ".vzb-saxis-selector",
+        options: {
+          submodel: "encoding",
+          targetProp: "size",
+          showHoverValues: true
+        }
+      },{
+        type: BubbleSize,
+        placeholder: ".vzb-dialog-bubblesize",
+        options: {
+          showArcs: true,
+          submodelFunc: () => this.model.encoding.size.scale,
+        }
+      }];
+
+      super(config);
+    }
+
+    draw() {
+      super.draw();
+
+      this.addReaction(this._updateSubtitle);
+    }
+
+    _updateSubtitle() {
+      const conceptProps = this.model.encoding.size.data.conceptProps;
+      const subtitle = getSubtitle(conceptProps?.name, conceptProps?.name_short);
+
+      this.element.select(".vzb-dialog-subtitle").text(subtitle || "");
+    }
+  }
+
+  decorated$e.add("size", Size);
+
+  /*
+   * Repeat dialog
+   */
+
+
+  class Repeat extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="colors" data-click="pinDialog"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="colors" data-click="dragDialog"></span>
+
+        <div class="vzb-dialog-title"> 
+          <span data-localise="buttons/repeat"></span>
+        </div>
+
+        <div class="vzb-dialog-content">
+          <div class="vzb-repeat-header">
+            <div class="vzb-useConnectedRowsAndColumns-switch"></div>
+          </div>
+          <div class="vzb-repeat-body">
+            <div class="vzb-repeat-grid"></div>
+          </div>
+        </div>
+    
+        <div class="vzb-dialog-buttons">
+          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+            <span data-localise="buttons/ok"></span>
+          </div>
+        </div>
+      </div>
+    `;
+
+      config.subcomponents = [{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-useConnectedRowsAndColumns-switch",
+        options: {
+          checkbox: "useConnectedRowsAndColumns",
+          submodelFunc: () => this.MDL.repeat,
+          setCheckboxFunc: (value) => this.MDL.repeat.config.useConnectedRowsAndColumns = value
+        }
+      }];
+
+      super(config);
+    }
+
+    setup(options) {
+      super.setup(options);
+
+      this.DOM.header = this.element.select(".vzb-repeat-header");
+      this.DOM.body = this.element.select(".vzb-repeat-body");
+      this.DOM.grid = this.element.select(".vzb-repeat-grid");
+    }
+
+    get MDL(){
+      return {
+        repeat: this.model.encoding.repeat
+      };
+    }
+
+    draw(){
+      super.draw();
+
+      this.addReaction(this.drawHeader);
+      this.addReaction(this.drawBody);
+    }
+
+
+    drawHeader(){
+      const header = this.DOM.header;
+      const localise = this.services.locale.auto();
+      const {allowEnc, row, column, useConnectedRowsAndColumns} = this.MDL.repeat;
+
+      header.selectAll("p").remove();
+
+      header.insert("p", "div")
+        .attr("class", "vzb-dialog-sublabel")
+        .html(localise("hint/repeat/addremovecharts"));
+
+      header.select(".vzb-useConnectedRowsAndColumns-switch")
+        .classed("vzb-hidden", !(row && row.length && column && column.length && allowEnc.length === 2));
+
+      if (useConnectedRowsAndColumns) {
+        header.append("p")
+          .html(allowEnc[0] + " " + localise("hint/repeat/issharedacrossrows"));
+        header.append("p")
+          .html(allowEnc[1] + " " + localise("hint/repeat/issharedacroscolumns"));
+      }
+    }
+
+    drawBody(){
+      const {rowcolumn, ncolumns, nrows} = this.MDL.repeat;
+      const repeat = this.MDL.repeat;
+      const localise = this.services.locale.auto();
+
+      this.DOM.grid
+        .style("grid-template-rows", "1fr ".repeat(nrows) + "30px")
+        .style("grid-template-columns", "1fr ".repeat(ncolumns) + "30px");
+
+      this.DOM.grid.selectAll("div").remove();
+
+      this.DOM.grid.selectAll("div")
+        .data(rowcolumn, d => repeat.getName(d))
+        .enter().append("div")
+        .attr("class", "vzb-repeat-segment")
+        .attr("title", d => JSON.stringify(d, null, 1))
+        .style("grid-row-start", (_, i) => repeat.getRowIndex(i) + 1)
+        .style("grid-column-start", (_, i) => repeat.getColumnIndex(i) + 1)
+        .html(() => ncolumns == 1 && nrows == 1 ? localise("hint/repeat/pressplus") : "")
+        .on("mouseover", (event, d) => {
+          this.root.element.select(".vzb-" + repeat.getName(d))
+            .classed("vzb-chart-highlight", true);
+        })
+        .on("mouseout", (event, d) => {
+          this.root.element.select(".vzb-" + repeat.getName(d))
+            .classed("vzb-chart-highlight", false);
+        });
+
+      if (ncolumns > 1) {
+        this.DOM.grid.selectAll("div.vzb-repeat-removecolumn")
+          .data(d3.range(ncolumns))
+          .enter().append("div")
+          .attr("class", "vzb-repeat-removecolumn")
+          .html("✖︎")
+          .style("grid-column-start", (_, i) => i + 1)
+          .on("click", (_, i) => {
+            this._remove("column", i);
+            this._clearHoverClasses(rowcolumn);
+          })
+          .on("mouseover", (_, i) => {
+            rowcolumn.forEach((d, index) => {
+              if (index % ncolumns == i)
+                this.root.element.select(".vzb-" + repeat.getName(d))
+                  .classed("vzb-chart-removepreview", true);
+            });
+          })
+          .on("mouseout", () => {
+            this._clearHoverClasses(rowcolumn, "vzb-chart-removepreview");
+          });
+      }
+
+      if (nrows > 1) {
+        this.DOM.grid.selectAll("div.vzb-repeat-removerow")
+          .data(d3.range(nrows))
+          .enter().append("div")
+          .attr("class", "vzb-repeat-removerow")
+          .html("✖︎")
+          .style("grid-row-start", (_, i) => i + 1)
+          .on("click", (_, i) => {
+            this._remove("row", i);
+            this._clearHoverClasses(rowcolumn);
+          })
+          .on("mouseover", (_, i) => {
+            rowcolumn.forEach((d, index) => {
+              if (Math.floor(index / ncolumns) == i)
+                this.root.element.select(".vzb-" + repeat.getName(d))
+                  .classed("vzb-chart-removepreview", true);
+            });
+          })
+          .on("mouseout", () => {
+            this._clearHoverClasses(rowcolumn, "vzb-chart-removepreview");
+          });
+      }
+
+      this.DOM.grid.append("div")
+        .attr("class", "vzb-repeat-addcolumn")
+        .html("✚")
+        .style("grid-row-start", 1)
+        .style("grid-row-end", nrows + 1)
+        .style("grid-column-start", ncolumns + 1)
+        .on("click", () => {
+          this._createNew("column");
+          this._clearHoverClasses(rowcolumn);
+        })
+        .on("mouseover", () => {
+          rowcolumn.forEach((d, i) => {
+            if ((i + 1) % ncolumns == 0)
+              this.root.element.select(".vzb-" + repeat.getName(d))
+                .classed("vzb-chart-addrightpreview", true);
+          });
+        })
+        .on("mouseout", () => {
+          this._clearHoverClasses(rowcolumn, "vzb-chart-addrightpreview");
+        });
+
+      this.DOM.grid.append("div")
+        .attr("class", "vzb-repeat-addrow")
+        .html("✚")
+        .style("grid-row-start", nrows + 1)
+        .style("grid-column-start", 1)
+        .style("grid-column-end", ncolumns + 1)
+        .on("click", () => {
+          this._createNew("row");
+          this._clearHoverClasses(rowcolumn);
+        })
+        .on("mouseover", () => {
+          rowcolumn.forEach((d, i) => {
+            if (Math.floor(i / ncolumns) + 1 == nrows)
+              this.root.element.select(".vzb-" + repeat.getName(d))
+                .classed("vzb-chart-addbelowpreview", true);
+          });
+        })
+        .on("mouseout", () => {
+          this._clearHoverClasses(rowcolumn, "vzb-chart-addbelowpreview");
+        });
+    }
+
+    _clearHoverClasses(array, cssclass){
+      array.forEach(d => {
+        const selection = this.root.element.select(".vzb-" + this.MDL.repeat.getName(d));
+
+        if(!cssclass || cssclass == "vzb-chart-highlight")
+          selection.classed("vzb-chart-highlight", false);
+
+        if(!cssclass || cssclass == "vzb-chart-removepreview")
+          selection.classed("vzb-chart-removepreview", false);
+
+        if(!cssclass || cssclass == "vzb-chart-addbelowpreview")
+          selection.classed("vzb-chart-addbelowpreview", false);
+
+        if(!cssclass || cssclass == "vzb-chart-addrightpreview")
+          selection.classed("vzb-chart-addrightpreview", false);
+      });
+    }
+
+    _remove(direction, index){
+      if(direction !== "row" && direction !== "column") return console.error("incorrect use of function _remove in repeat dialog");
+      const {ncolumns, nrows, useConnectedRowsAndColumns} = this.MDL.repeat;
+      mobx.runInAction(() => {
+        if(useConnectedRowsAndColumns) {
+          this.MDL.repeat.config[direction].splice(index, 1);
+        } else {
+          if(direction == "column"){
+            for (let i = 1; i <= nrows; i++) {
+              this.MDL.repeat.config.rowcolumn.splice(i * index, 1);
+            }
+            this.MDL.repeat.config.ncolumns = ncolumns - 1;
+          }
+          if (direction == "row") {
+            this.MDL.repeat.config.rowcolumn.splice(ncolumns * index, ncolumns);
+          }   
+        }
+      });
+    }
+
+    _createNew(direction){
+      if(direction !== "row" && direction !== "column") return console.error("incorrect use of function _createNew in repeat dialog");
+      const {ncolumns, nrows, allowEnc, useConnectedRowsAndColumns} = this.MDL.repeat;
+      mobx.runInAction(() => {
+        if(useConnectedRowsAndColumns) {
+          const newEncName = this._generateEncodingNames(direction);
+          this.model.config.encoding[newEncName] = {data: this._getConceptAndSourceAndSpaceOfLast(direction)};
+          this.MDL.repeat.config[direction].push(newEncName);
+        } else {
+          this.MDL.repeat.config.rowcolumn = this.MDL.repeat.rowcolumn;
+          if(direction == "column"){
+            for (let i = 1; i <= nrows; i++) {
+              const newEncNames = this._generateEncodingNames();
+              allowEnc.forEach(e => {
+                this.model.config.encoding[newEncNames[e]] = {data: this._getConceptAndSourceAndSpaceOfLast(e)};
+              });
+              this.MDL.repeat.config.rowcolumn.splice(i * ncolumns, 0, newEncNames);
+            }
+            this.MDL.repeat.config.ncolumns = ncolumns + 1;
+          }
+          if (direction == "row") {
+            for (let i = 1; i <= ncolumns; i++) {
+              const newEncNames = this._generateEncodingNames();
+              allowEnc.forEach(e => {
+                this.model.config.encoding[newEncNames[e]] = {data: this._getConceptAndSourceAndSpaceOfLast(e)};
+              });
+              this.MDL.repeat.config.rowcolumn.push(newEncNames);
+            }
+          }   
+        }
+      });
+    }
+
+    _getConceptAndSourceAndSpaceOfLast(arg){
+      const {rowcolumn, allowEnc} = this.MDL.repeat;
+
+      let alias = arg;
+
+      if(arg == "row") 
+        alias = allowEnc[0];
+        
+      if(arg == "column") 
+        alias = allowEnc[1];
+
+      return rowcolumn
+        .map(d => this.model.encoding[d[alias]]?.data)
+        .filter(f => f?.concept)
+        .map(d => Object.assign({ concept: d.concept }, d.config.source ? { source: d.config.source } : {}, d.config.space ? { space: d.config.space.slice(0) } : {}))
+        .at(-1) || { concept: "population_total" };
+    }
+
+    _generateEncodingNames(direction){
+      const {allowEnc} = this.MDL.repeat;
+
+      if(direction == "row") 
+        return this._generateEncodingName(allowEnc[0]);
+
+      if(direction == "column") 
+        return this._generateEncodingName(allowEnc[1]);
+      
+      return allowEnc.reduce((obj, alias) => {
+        obj[alias] = this._generateEncodingName(alias);
+        return obj;
+      }, {});
+    }
+    _generateEncodingName(alias){
+      const {rowcolumn} = this.MDL.repeat;
+      const prefix = alias; //can be "repeat_"+alias or something
+      return prefix + (d3.max(rowcolumn.map(d => +d[alias].replace(prefix,"") || 0)) + 1);
+    }
+
+
+
+  }
+
+
+  const decorated$6 = mobx.decorate(Repeat, {
+    "MDL": mobx.computed
+  });
+    
+  decorated$e.add("repeat", decorated$6);
+
+  class Technical extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <div class="vzb-dialog-title"> 
+          <span data-localise="dialogs/technical"></span>
+        </div>
+
+        <div class="vzb-dialog-content">
+          <div class="vzb-advancedshowandselect-switch"></div>
+          <div class="vzb-advancedmarkerspace-switch"></div>
+          <div class="vzb-showdatasources-switch"></div>
+        </div>
+
+      </div>
+    `;
+
+      config.subcomponents = [{
+      //   type: SimpleCheckbox,
+      //   placeholder: ".vzb-advancedshowandselect-switch",
+      //   options: {
+      //     checkbox: "enableSelectShowSwitch",
+      //     submodelFunc: () => this.root
+      //       .findChild({name: "dialogs"})
+      //       .findChild({name: "find"}).ui
+      //   }
+      // },{
+      //   type: SimpleCheckbox,
+      //   placeholder: ".vzb-advancedmarkerspace-switch",
+      //   options: {
+      //     checkbox: "enableMarkerSpaceOptions",
+      //     submodelFunc: () => this.root
+      //       .findChild({name: "dialogs"})
+      //       .findChild({name: "find"}).ui
+      //   }
+      // },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-showdatasources-switch",
+        options: {
+          checkbox: "showDataSources",
+          submodelFunc: () => this.root
+            .findChild({name: "tree-menu"}).ui
+        }
+      }];
+
+      super(config);
+    }
+
+  }
+
+  decorated$e.add("technical", Technical);
+
+  class Speed extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <div class="vzb-dialog-title"> 
+            <span data-localise="buttons/time"></span>
+        </div>
+            
+        <div class="vzb-dialog-content">
+          <p class="vzb-dialog-sublabel">
+            <span data-localise="hints/speed"></span>
+          </p>
+            
+          <form class="vzb-dialog-paragraph">
+            <div class="vzb-speed-slider"></div>
+          </form>
+          
+          <p class="vzb-dialog-sublabel">
+            <span data-localise="hints/forecastoptions"></span>
+          </p>
+
+          <form class="vzb-dialog-paragraph">
+            <div class="vzb-showforecast-switch"></div>
+            <div class="vzb-pausebeforeforecast-switch"></div>
+            <div class="vzb-showstripedpatternwhenforecast-switch"></div>
+            <div>
+              <span data-localise="hints/endbeforeforecast"></span>
+              <input type="text" class="vzb-endbeforeforecast-field" name="endbeforeforecast"/>
+            </div>
+            <div>
+              <span class="vzb-timeformatexample-hint" data-localise="hints/timeformatexample"></span>
+              <span class="vzb-timeformatexample-label"></span>
+            </div>
+          </form>
+
+          <p class="vzb-dialog-sublabel">
+          <span data-localise="hints/sparsedata"></span>
+          </p>
+
+          <form class="vzb-dialog-paragraph">
+            <span class="vzb-extrapolate-hint"></span>
+            <div class="vzb-extrapolate-slider"></div>
+          </form>
+        </div>
+      </div>  
+    `;
+
+      config.subcomponents = [{
+        type: SingleHandleSlider,
+        placeholder: ".vzb-speed-slider",
+        //model: ["state.time", "locale"],
+        options: {
+          value: "speed",
+          setValueFunc: "setSpeed",
+          domain: [1200, 900, 450, 200, 150, 100],
+          ROUND_DIGITS: 0,
+          submodel: "model.encoding.frame"
+        }
+      },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-showforecast-switch",
+        //model: ["state.time", "locale"],
+        options: {
+          checkbox: "showForecast",
+          submodel: "root.ui.chart"
+        }
+      },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-pausebeforeforecast-switch",
+        //model: ["state.time", "locale"],
+        options: {
+          checkbox: "pauseBeforeForecast",
+          submodel: "root.ui.chart",
+        }
+      },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-showstripedpatternwhenforecast-switch",
+        //model: ["ui.chart", "locale"],
+        options: {
+          checkbox: "showForecastOverlay",
+          submodel: "root.ui.chart"
+        }
+      },{
+        type: SingleHandleSlider,
+        placeholder: ".vzb-extrapolate-slider",
+        name: "extrapolate-slider",
+        options: {
+          value: "extrapolate",
+          setValueFunc: "setExtrapolate",
+          domain: d3.range(100),
+          ROUND_DIGITS: 0,
+          submodel: "model.encoding.frame"
+        }
+      }];
+
+      super(config);
+    }
+
+    setup() {
+      this.DOM = {
+        timeFormatExample: this.element.select(".vzb-timeformatexample-label"),
+        forecastField: this.element.select(".vzb-endbeforeforecast-field"),
+        extrapolateHint: this.element.select(".vzb-extrapolate-hint")
+      };
+
+      const _this = this;
+      this.DOM.forecastField
+        .on("keypress", function(event) {
+          if (event.charCode == 13 || event.keyCode == 13) {
+            //this prevents form submission action with subsequent page reload
+            event.preventDefault();
+            this.blur();
+          }
+        })
+        .on("change", function() {
+          //TODO: where is time parser nowdays
+          const frame = _this.MDL.frame;
+          const parsed = frame.parseValue(this.value);
+          if (isDate(parsed)) {
+            _this.root.ui.chart.endBeforeForecast = this.value;
+          }
+        });
+
+    }
+
+
+    get MDL() {
+      return {
+        frame: this.model.encoding.frame
+      };
+    }
+
+    draw() {
+      this.localise = this.services.locale.auto();
+
+      this.addReaction(this.updateForecastField);
+      this.addReaction(this.updateExtrapolateSlider);
+    }
+
+    updateForecastField() {
+      this.DOM.forecastField.property("value",
+        this.localise(this.root.ui.chart.endBeforeForecast)
+      );
+      this.DOM.timeFormatExample.text(this.localise(new Date()));
+    }
+
+    updateExtrapolateSlider(){
+      const sliderSize = this.MDL.frame.stepCount <= 2 ? 2 : this.MDL.frame.stepCount;
+      this.findChild({name: "extrapolate-slider"})
+        ._setDomain(d3.range(sliderSize));
+
+      const hintText = this.MDL.frame.extrapolate ? 
+        this.localise("hints/extendDataNSteps").replace("{n}", this.MDL.frame.extrapolate)
+        : this.localise("hints/dontExtendData");
+
+      this.DOM.extrapolateHint
+        .text(hintText)
+        .attr("title", this.localise("hints/extrapolation"));
+    }
+
+  }
+
+  const decorated$5 = mobx.decorate(Speed, {
+    "MDL": mobx.computed
+  });
+
+  decorated$e.add("speed", decorated$5);
+
+  /*
+   * Timedisplay dialog
+   */
+  class TimeDisplay extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class="vzb-dialog-modal">
+        <div class="vzb-dialog-title"></div>
+        <div class="vzb-dialog-content vzb-dialog-content-fixed"></div>
+        <div class="vzb-dialog-buttons"></div>
+      </div>`;
+    
+      config.subcomponents = [{
+        type: decorated$f,
+        placeholder: ".vzb-dialog-content"
+      }];
+      
+      super(config);
+    }
+  }
+
+  decorated$e.add("timedisplay", TimeDisplay);
+
+  /*
+   * Zoom dialog
+   */
+
+  class Zoom extends decorated$e {
+    constructor(config) {
+      config.template = `
+      <div class='vzb-dialog-modal'>
+        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="label" data-click="pinDialog"></span>
+        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="label" data-click="dragDialog"></span>
+        <div class="vzb-dialog-title"> 
+          <span></span>
+          <div class="vzb-dialog-zoom-buttonlist"></div>
+        </div>
+            
+            
+        <div class="vzb-dialog-content">
+          <div class="vzb-panwitharrow-switch"></div>
+          <div class="vzb-zoomonscrolling-switch"></div>
+          <div class="vzb-adaptminmaxzoom-switch"></div>
+        </div>
+      
+        <div class="vzb-dialog-buttons">
+          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+            <span><span/>
+          </div>
+        </div>
+      
+      </div>    
+    `;
+
+      config.subcomponents = [{
+        type: ZoomButtonList,
+        placeholder: ".vzb-dialog-zoom-buttonlist"
+      },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-panwitharrow-switch",
+        options: {
+          checkbox: "panWithArrow",
+          submodel: "root.ui.chart"
+        }
+      },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-zoomonscrolling-switch",
+        options: {
+          checkbox: "zoomOnScrolling",
+          submodel: "root.ui.chart"
+        }
+      },{
+        type: SimpleCheckbox,
+        placeholder: ".vzb-adaptminmaxzoom-switch",
+        options: {
+          checkbox: "adaptMinMaxZoom",
+          submodel: "root.ui.chart"
+        }
+      }];
+
+      super(config);
+    }
+
+    draw() {
+      super.draw();
+
+      this.DOM.title.select("span").text(this.localise("buttons/zoom"));
+      this.DOM.buttons.select("span").text(this.localise("buttons/ok"));
+    }
+  }
+
+  decorated$e.add("zoom", Zoom);
 
   class ShortcutForSwitch extends BaseComponent {
 
@@ -14594,7 +15553,7 @@
       //OPTIMISATION!
       //when there is a log of marks, run this function only after dragging timeslider was released or playing was stopped
       const timeSlider = () => this.root.findChild({type: "TimeSlider"});
-      if (listItems.data().length > 1000 && (this.MDL.frame.playing || timeSlider().ui.dragging)) return;
+      if (listItems.data().length > 1000 && (this.MDL.frame.playing || timeSlider()?.ui?.dragging)) return;
       //END OF OPTIMISATION
 
       listItems.data().forEach(d => {
@@ -14905,7 +15864,7 @@
 
   }
 
-  const decorated$6 = mobx.decorate(SectionFind, {
+  const decorated$4 = mobx.decorate(SectionFind, {
     "MDL": mobx.computed,
     "entitiesWithMissingDataInAllFrames": mobx.observable,
     "listReady": mobx.observable,
@@ -15085,11 +16044,25 @@
           const dim = this._getPrimaryDim();
           const prop = d.prop;
           const drilldownProps = this._getDrilldownProps();
-          const index = drilldownProps.indexOf(prop);
-          const oneLevelDeeper = drilldownProps[index + 1];
-          if (!oneLevelDeeper) return;
 
-          this.model.data.filter.addUsingLimitedStructure({dim, isness: "is--" + oneLevelDeeper, prop, key: d[KEY$2]});
+          let isness = null;
+          if (prop === dim) {
+            //Single item into dim section and prop subsection
+            //maybe use isness if we care about those
+            if (drilldownProps?.length) isness = d.isness[0]?.id || null;
+          } else {
+            //Multiple items. EXAMPLE:
+            //for primary dimension (dim="geo") add all counties (isness="is--county") of a state (prop="state" key="alabama")
+            if (drilldownProps?.length) { 
+              const index = drilldownProps.indexOf(prop);
+              const oneLevelDeeper = drilldownProps[index + 1];
+              if (index === -1 || !oneLevelDeeper) 
+                return console.error("Markercontrols Section Add: cannot add all within, drilldown level not found", {d, dim, drilldownProps});
+              isness = "is--" + oneLevelDeeper;
+            }
+          }
+
+          this.model.data.filter.addUsingLimitedStructure({dim, isness, prop, key: d[KEY$2]});
           this.parent._clearSearch();
         })
         .classed("vzb-dialog-all-entites", d => d.__allElements);
@@ -15098,7 +16071,7 @@
     }
   }
 
-  const decorated$5 = mobx.decorate(SectionAdd, {
+  const decorated$3 = mobx.decorate(SectionAdd, {
   });
 
   const KEY$1 = Symbol.for("key");
@@ -15267,11 +16240,25 @@
           const dim = this._getPrimaryDim();
           const prop = d.prop;
           const drilldownProps = this._getDrilldownProps();
-          const index = drilldownProps.indexOf(prop);
-          const oneLevelDeeper = drilldownProps[index + 1];
-          if (!oneLevelDeeper) return;
 
-          this.model.data.filter.deleteUsingLimitedStructure({dim, isness: "is--" + oneLevelDeeper, prop, key: d[KEY$1]});
+          let isness = null;
+          if (prop === dim) {
+            //Single item into dim section and prop subsection
+            //maybe use isness if we care about those
+            if (drilldownProps?.length) isness = d.isness[0]?.id || null;
+          } else {
+            //Multiple items. EXAMPLE:
+            //for primary dimension (dim="geo") add all counties (isness="is--county") of a state (prop="state" key="alabama")
+            if (drilldownProps?.length) { 
+              const index = drilldownProps.indexOf(prop);
+              const oneLevelDeeper = drilldownProps[index + 1];
+              if (index === -1 || !oneLevelDeeper) 
+                return console.error("Markercontrols Section Remove: cannot remove all within, drilldown level not found", {d, dim, drilldownProps});
+              isness = "is--" + oneLevelDeeper;
+            }
+          }
+
+          this.model.data.filter.deleteUsingLimitedStructure({dim, isness, prop, key: d[KEY$1]});
           this.parent._clearSearch();
         })
         .classed("vzb-dialog-all-entites", d => d.__allElements);
@@ -15280,7 +16267,7 @@
     }
   }
 
-  const decorated$4 = mobx.decorate(SectionRemove, {
+  const decorated$2 = mobx.decorate(SectionRemove, {
   });
 
   const ellipsis = (string, n)  => string.length > n ? string.substr(0, n) + "…" : string;
@@ -15457,7 +16444,7 @@
 
   }
 
-  const decorated$3 = mobx.decorate(SectionSwitch, {
+  const decorated$1 = mobx.decorate(SectionSwitch, {
     "items": mobx.observable
   });
 
@@ -15938,7 +16925,7 @@
     }
   }
 
-  const decorated$2 = mobx.decorate(SectionSlice, {
+  const decorated = mobx.decorate(SectionSlice, {
     "MDL": mobx.computed,
     "showAllEncs": mobx.observable,
     "proposedSpace": mobx.observable,
@@ -16002,13 +16989,13 @@
           submodel: "root.ui.chart"
         }
       },{
-        type: decorated$6,
+        type: decorated$4,
         placeholder: ".vzb-find"
       },{
-        type: decorated$5,
+        type: decorated$3,
         placeholder: ".vzb-add"
       },{
-        type: decorated$4,
+        type: decorated$2,
         placeholder: ".vzb-remove"
       },{
         type: ShortcutForSwitch,
@@ -16017,13 +17004,13 @@
       
       if (!config.default_ui.disableSwitch)
         config.subcomponents.push({
-          type: decorated$3,
+          type: decorated$1,
           placeholder: ".vzb-switch"
         });
         
       if (!config.default_ui.disableSlice)
         config.subcomponents.push({
-          type: decorated$2,
+          type: decorated,
           placeholder: ".vzb-slice"
         });
 
@@ -16098,7 +17085,7 @@
     
     updateUIStrings() {
       this.DOM.input_search.attr("placeholder", this.localise("placeholder/search") + "...");
-      this.DOM.title.text(this.localise("marker-plural/" + this.model.id.replace("-splash", "")));
+      this.DOM.title.text(this.localise("marker-plural/" + this.root.name));
     }
 
     updateSearch({command, arg} = this._getSearchTerm()) {
@@ -16263,843 +17250,6 @@
 
   decorated$e.add("markercontrols", MarkerControls);
 
-  /*
-   * Size dialog
-   */
-
-  class Presentation extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <div class="vzb-dialog-title"> 
-          <span data-localise="dialogs/presentation"></span>
-        </div>
-
-        <div class="vzb-dialog-content">
-          <div class="vzb-presentationmode-switch"></div>
-          <div class="vzb-decorations-switch"></div>
-          <div class="vzb-time-background-switch"></div>
-          <div class="vzb-titles-switch"></div>
-          <div class="vzb-time-trails-switch"></div>
-          <div class="vzb-overhang-switch"></div>
-          <div class="vzb-format-si-prefix-switch"></div>
-        </div>
-
-      </div>
-    `;
-
-      config.subcomponents = [{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-presentationmode-switch",
-        options: {
-          checkbox: "projector",
-          submodel: "services.layout"
-        }
-      }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-decorations-switch",
-        options: {
-          checkbox: "enabled",
-          prefix: "decorations",
-          submodel: "root.ui.chart.decorations"
-        }
-      }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-time-background-switch",
-        options: {
-          checkbox: "timeInBackground",
-          submodel: "root.ui.chart"
-        }
-      }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-titles-switch",
-        options: {
-          checkbox: "showTitles",
-          submodel: "root.ui.chart"
-        }
-      }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-time-trails-switch",
-        options: {
-          checkbox: "timeInTrails",
-          submodel: "root.ui.chart"
-        }
-      }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-overhang-switch",
-        options: {
-          checkbox: "overhang",
-          submodel: "root.ui.chart"
-        }
-      }, {
-        type: SimpleCheckbox,
-        placeholder: ".vzb-format-si-prefix-switch",
-        options: {
-          checkbox: "shortNumberFormat",
-          submodel: "root.services.locale"
-        }
-      }];
-
-      super(config);
-    }
-
-
-  }
-
-  decorated$e.add("presentation", Presentation);
-
-  /*
-   * Size dialog
-   */
-
-  class Opacity extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <div class="vzb-dialog-title"> 
-          <span data-localise="buttons/opacity"></span>
-        </div>
-            
-        <div class="vzb-dialog-content">
-          <p class="vzb-dialog-sublabel">
-            <span data-localise="buttons/opacityRegular"></span>
-          </p>
-          <div class="vzb-dialog-bubbleopacity-regular"></div>
-
-          <p class="vzb-dialog-sublabel">
-            <span data-localise="buttons/opacityNonselect"></span>
-          </p>
-          <div class="vzb-dialog-bubbleopacity-selectdim"></div>
-          </div>
-        </div>
-
-      </div>
-    `;
-
-      config.subcomponents = [{
-        type: SingleHandleSlider,
-        placeholder: ".vzb-dialog-bubbleopacity-regular",
-        options: {
-          value: "opacityRegular",
-          submodel: "root.ui.chart"
-        }
-      },{
-        type: SingleHandleSlider,
-        placeholder: ".vzb-dialog-bubbleopacity-selectdim",
-        options: {
-          value: "opacitySelectDim",
-          submodel: "root.ui.chart"
-        }
-      }];
-
-      super(config);
-    }
-  }
-
-  decorated$e.add("opacity", Opacity);
-
-  /*
-   * Repeat dialog
-   */
-
-
-  class Repeat extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="colors" data-click="pinDialog"></span>
-        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="colors" data-click="dragDialog"></span>
-
-        <div class="vzb-dialog-title"> 
-          <span data-localise="buttons/repeat"></span>
-        </div>
-
-        <div class="vzb-dialog-content">
-          <div class="vzb-repeat-header">
-            <div class="vzb-useConnectedRowsAndColumns-switch"></div>
-          </div>
-          <div class="vzb-repeat-body">
-            <div class="vzb-repeat-grid"></div>
-          </div>
-        </div>
-    
-        <div class="vzb-dialog-buttons">
-          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
-            <span data-localise="buttons/ok"></span>
-          </div>
-        </div>
-      </div>
-    `;
-
-      config.subcomponents = [{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-useConnectedRowsAndColumns-switch",
-        options: {
-          checkbox: "useConnectedRowsAndColumns",
-          submodelFunc: () => this.MDL.repeat,
-          setCheckboxFunc: (value) => this.MDL.repeat.config.useConnectedRowsAndColumns = value
-        }
-      }];
-
-      super(config);
-    }
-
-    setup(options) {
-      super.setup(options);
-
-      this.DOM.header = this.element.select(".vzb-repeat-header");
-      this.DOM.body = this.element.select(".vzb-repeat-body");
-      this.DOM.grid = this.element.select(".vzb-repeat-grid");
-    }
-
-    get MDL(){
-      return {
-        repeat: this.model.encoding.repeat
-      };
-    }
-
-    draw(){
-      super.draw();
-
-      this.addReaction(this.drawHeader);
-      this.addReaction(this.drawBody);
-    }
-
-
-    drawHeader(){
-      const header = this.DOM.header;
-      const localise = this.services.locale.auto();
-      const {allowEnc, row, column, useConnectedRowsAndColumns} = this.MDL.repeat;
-
-      header.selectAll("p").remove();
-
-      header.insert("p", "div")
-        .attr("class", "vzb-dialog-sublabel")
-        .html(localise("hint/repeat/addremovecharts"));
-
-      header.select(".vzb-useConnectedRowsAndColumns-switch")
-        .classed("vzb-hidden", !(row && row.length && column && column.length && allowEnc.length === 2));
-
-      if (useConnectedRowsAndColumns) {
-        header.append("p")
-          .html(allowEnc[0] + " " + localise("hint/repeat/issharedacrossrows"));
-        header.append("p")
-          .html(allowEnc[1] + " " + localise("hint/repeat/issharedacroscolumns"));
-      }
-    }
-
-    drawBody(){
-      const {rowcolumn, ncolumns, nrows} = this.MDL.repeat;
-      const repeat = this.MDL.repeat;
-      const localise = this.services.locale.auto();
-
-      this.DOM.grid
-        .style("grid-template-rows", "1fr ".repeat(nrows) + "30px")
-        .style("grid-template-columns", "1fr ".repeat(ncolumns) + "30px");
-
-      this.DOM.grid.selectAll("div").remove();
-
-      this.DOM.grid.selectAll("div")
-        .data(rowcolumn, d => repeat.getName(d))
-        .enter().append("div")
-        .attr("class", "vzb-repeat-segment")
-        .attr("title", d => JSON.stringify(d, null, 1))
-        .style("grid-row-start", (_, i) => repeat.getRowIndex(i) + 1)
-        .style("grid-column-start", (_, i) => repeat.getColumnIndex(i) + 1)
-        .html(() => ncolumns == 1 && nrows == 1 ? localise("hint/repeat/pressplus") : "")
-        .on("mouseover", (event, d) => {
-          this.root.element.select(".vzb-" + repeat.getName(d))
-            .classed("vzb-chart-highlight", true);
-        })
-        .on("mouseout", (event, d) => {
-          this.root.element.select(".vzb-" + repeat.getName(d))
-            .classed("vzb-chart-highlight", false);
-        });
-
-      if (ncolumns > 1) {
-        this.DOM.grid.selectAll("div.vzb-repeat-removecolumn")
-          .data(d3.range(ncolumns))
-          .enter().append("div")
-          .attr("class", "vzb-repeat-removecolumn")
-          .html("✖︎")
-          .style("grid-column-start", (_, i) => i + 1)
-          .on("click", (_, i) => {
-            this._remove("column", i);
-            this._clearHoverClasses(rowcolumn);
-          })
-          .on("mouseover", (_, i) => {
-            rowcolumn.forEach((d, index) => {
-              if (index % ncolumns == i)
-                this.root.element.select(".vzb-" + repeat.getName(d))
-                  .classed("vzb-chart-removepreview", true);
-            });
-          })
-          .on("mouseout", () => {
-            this._clearHoverClasses(rowcolumn, "vzb-chart-removepreview");
-          });
-      }
-
-      if (nrows > 1) {
-        this.DOM.grid.selectAll("div.vzb-repeat-removerow")
-          .data(d3.range(nrows))
-          .enter().append("div")
-          .attr("class", "vzb-repeat-removerow")
-          .html("✖︎")
-          .style("grid-row-start", (_, i) => i + 1)
-          .on("click", (_, i) => {
-            this._remove("row", i);
-            this._clearHoverClasses(rowcolumn);
-          })
-          .on("mouseover", (_, i) => {
-            rowcolumn.forEach((d, index) => {
-              if (Math.floor(index / ncolumns) == i)
-                this.root.element.select(".vzb-" + repeat.getName(d))
-                  .classed("vzb-chart-removepreview", true);
-            });
-          })
-          .on("mouseout", () => {
-            this._clearHoverClasses(rowcolumn, "vzb-chart-removepreview");
-          });
-      }
-
-      this.DOM.grid.append("div")
-        .attr("class", "vzb-repeat-addcolumn")
-        .html("✚")
-        .style("grid-row-start", 1)
-        .style("grid-row-end", nrows + 1)
-        .style("grid-column-start", ncolumns + 1)
-        .on("click", () => {
-          this._createNew("column");
-          this._clearHoverClasses(rowcolumn);
-        })
-        .on("mouseover", () => {
-          rowcolumn.forEach((d, i) => {
-            if ((i + 1) % ncolumns == 0)
-              this.root.element.select(".vzb-" + repeat.getName(d))
-                .classed("vzb-chart-addrightpreview", true);
-          });
-        })
-        .on("mouseout", () => {
-          this._clearHoverClasses(rowcolumn, "vzb-chart-addrightpreview");
-        });
-
-      this.DOM.grid.append("div")
-        .attr("class", "vzb-repeat-addrow")
-        .html("✚")
-        .style("grid-row-start", nrows + 1)
-        .style("grid-column-start", 1)
-        .style("grid-column-end", ncolumns + 1)
-        .on("click", () => {
-          this._createNew("row");
-          this._clearHoverClasses(rowcolumn);
-        })
-        .on("mouseover", () => {
-          rowcolumn.forEach((d, i) => {
-            if (Math.floor(i / ncolumns) + 1 == nrows)
-              this.root.element.select(".vzb-" + repeat.getName(d))
-                .classed("vzb-chart-addbelowpreview", true);
-          });
-        })
-        .on("mouseout", () => {
-          this._clearHoverClasses(rowcolumn, "vzb-chart-addbelowpreview");
-        });
-    }
-
-    _clearHoverClasses(array, cssclass){
-      array.forEach(d => {
-        const selection = this.root.element.select(".vzb-" + this.MDL.repeat.getName(d));
-
-        if(!cssclass || cssclass == "vzb-chart-highlight")
-          selection.classed("vzb-chart-highlight", false);
-
-        if(!cssclass || cssclass == "vzb-chart-removepreview")
-          selection.classed("vzb-chart-removepreview", false);
-
-        if(!cssclass || cssclass == "vzb-chart-addbelowpreview")
-          selection.classed("vzb-chart-addbelowpreview", false);
-
-        if(!cssclass || cssclass == "vzb-chart-addrightpreview")
-          selection.classed("vzb-chart-addrightpreview", false);
-      });
-    }
-
-    _remove(direction, index){
-      if(direction !== "row" && direction !== "column") return console.error("incorrect use of function _remove in repeat dialog");
-      const {ncolumns, nrows, useConnectedRowsAndColumns} = this.MDL.repeat;
-      mobx.runInAction(() => {
-        if(useConnectedRowsAndColumns) {
-          this.MDL.repeat.config[direction].splice(index, 1);
-        } else {
-          if(direction == "column"){
-            for (let i = 1; i <= nrows; i++) {
-              this.MDL.repeat.config.rowcolumn.splice(i * index, 1);
-            }
-            this.MDL.repeat.config.ncolumns = ncolumns - 1;
-          }
-          if (direction == "row") {
-            this.MDL.repeat.config.rowcolumn.splice(ncolumns * index, ncolumns);
-          }   
-        }
-      });
-    }
-
-    _createNew(direction){
-      if(direction !== "row" && direction !== "column") return console.error("incorrect use of function _createNew in repeat dialog");
-      const {ncolumns, nrows, allowEnc, useConnectedRowsAndColumns} = this.MDL.repeat;
-      mobx.runInAction(() => {
-        if(useConnectedRowsAndColumns) {
-          const newEncName = this._generateEncodingNames(direction);
-          this.model.config.encoding[newEncName] = {data: this._getConceptAndSourceAndSpaceOfLast(direction)};
-          this.MDL.repeat.config[direction].push(newEncName);
-        } else {
-          this.MDL.repeat.config.rowcolumn = this.MDL.repeat.rowcolumn;
-          if(direction == "column"){
-            for (let i = 1; i <= nrows; i++) {
-              const newEncNames = this._generateEncodingNames();
-              allowEnc.forEach(e => {
-                this.model.config.encoding[newEncNames[e]] = {data: this._getConceptAndSourceAndSpaceOfLast(e)};
-              });
-              this.MDL.repeat.config.rowcolumn.splice(i * ncolumns, 0, newEncNames);
-            }
-            this.MDL.repeat.config.ncolumns = ncolumns + 1;
-          }
-          if (direction == "row") {
-            for (let i = 1; i <= ncolumns; i++) {
-              const newEncNames = this._generateEncodingNames();
-              allowEnc.forEach(e => {
-                this.model.config.encoding[newEncNames[e]] = {data: this._getConceptAndSourceAndSpaceOfLast(e)};
-              });
-              this.MDL.repeat.config.rowcolumn.push(newEncNames);
-            }
-          }   
-        }
-      });
-    }
-
-    _getConceptAndSourceAndSpaceOfLast(arg){
-      const {rowcolumn, allowEnc} = this.MDL.repeat;
-
-      let alias = arg;
-
-      if(arg == "row") 
-        alias = allowEnc[0];
-        
-      if(arg == "column") 
-        alias = allowEnc[1];
-
-      return rowcolumn
-        .map(d => this.model.encoding[d[alias]]?.data)
-        .filter(f => f?.concept)
-        .map(d => Object.assign({ concept: d.concept }, d.config.source ? { source: d.config.source } : {}, d.config.space ? { space: d.config.space.slice(0) } : {}))
-        .at(-1) || { concept: "population_total" };
-    }
-
-    _generateEncodingNames(direction){
-      const {allowEnc} = this.MDL.repeat;
-
-      if(direction == "row") 
-        return this._generateEncodingName(allowEnc[0]);
-
-      if(direction == "column") 
-        return this._generateEncodingName(allowEnc[1]);
-      
-      return allowEnc.reduce((obj, alias) => {
-        obj[alias] = this._generateEncodingName(alias);
-        return obj;
-      }, {});
-    }
-    _generateEncodingName(alias){
-      const {rowcolumn} = this.MDL.repeat;
-      const prefix = alias; //can be "repeat_"+alias or something
-      return prefix + (d3.max(rowcolumn.map(d => +d[alias].replace(prefix,"") || 0)) + 1);
-    }
-
-
-
-  }
-
-
-  const decorated$1 = mobx.decorate(Repeat, {
-    "MDL": mobx.computed
-  });
-    
-  decorated$e.add("repeat", decorated$1);
-
-  class Speed extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <div class="vzb-dialog-title"> 
-            <span data-localise="buttons/time"></span>
-        </div>
-            
-        <div class="vzb-dialog-content">
-          <p class="vzb-dialog-sublabel">
-            <span data-localise="hints/speed"></span>
-          </p>
-            
-          <form class="vzb-dialog-paragraph">
-            <div class="vzb-speed-slider"></div>
-          </form>
-          
-          <p class="vzb-dialog-sublabel">
-            <span data-localise="hints/forecastoptions"></span>
-          </p>
-
-          <form class="vzb-dialog-paragraph">
-            <div class="vzb-showforecast-switch"></div>
-            <div class="vzb-pausebeforeforecast-switch"></div>
-            <div class="vzb-showstripedpatternwhenforecast-switch"></div>
-            <div>
-              <span data-localise="hints/endbeforeforecast"></span>
-              <input type="text" class="vzb-endbeforeforecast-field" name="endbeforeforecast"/>
-            </div>
-            <div>
-              <span class="vzb-timeformatexample-hint" data-localise="hints/timeformatexample"></span>
-              <span class="vzb-timeformatexample-label"></span>
-            </div>
-          </form>
-
-          <p class="vzb-dialog-sublabel">
-          <span data-localise="hints/sparsedata"></span>
-          </p>
-
-          <form class="vzb-dialog-paragraph">
-            <span class="vzb-extrapolate-hint"></span>
-            <div class="vzb-extrapolate-slider"></div>
-          </form>
-        </div>
-      </div>  
-    `;
-
-      config.subcomponents = [{
-        type: SingleHandleSlider,
-        placeholder: ".vzb-speed-slider",
-        //model: ["state.time", "locale"],
-        options: {
-          value: "speed",
-          setValueFunc: "setSpeed",
-          domain: [1200, 900, 450, 200, 150, 100],
-          ROUND_DIGITS: 0,
-          submodel: "model.encoding.frame"
-        }
-      },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-showforecast-switch",
-        //model: ["state.time", "locale"],
-        options: {
-          checkbox: "showForecast",
-          submodel: "root.ui.chart"
-        }
-      },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-pausebeforeforecast-switch",
-        //model: ["state.time", "locale"],
-        options: {
-          checkbox: "pauseBeforeForecast",
-          submodel: "root.ui.chart",
-        }
-      },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-showstripedpatternwhenforecast-switch",
-        //model: ["ui.chart", "locale"],
-        options: {
-          checkbox: "showForecastOverlay",
-          submodel: "root.ui.chart"
-        }
-      },{
-        type: SingleHandleSlider,
-        placeholder: ".vzb-extrapolate-slider",
-        name: "extrapolate-slider",
-        options: {
-          value: "extrapolate",
-          setValueFunc: "setExtrapolate",
-          domain: d3.range(100),
-          ROUND_DIGITS: 0,
-          submodel: "model.encoding.frame"
-        }
-      }];
-
-      super(config);
-    }
-
-    setup() {
-      this.DOM = {
-        timeFormatExample: this.element.select(".vzb-timeformatexample-label"),
-        forecastField: this.element.select(".vzb-endbeforeforecast-field"),
-        extrapolateHint: this.element.select(".vzb-extrapolate-hint")
-      };
-
-      const _this = this;
-      this.DOM.forecastField
-        .on("keypress", function(event) {
-          if (event.charCode == 13 || event.keyCode == 13) {
-            //this prevents form submission action with subsequent page reload
-            event.preventDefault();
-            this.blur();
-          }
-        })
-        .on("change", function() {
-          //TODO: where is time parser nowdays
-          const frame = _this.MDL.frame;
-          const parsed = frame.parseValue(this.value);
-          if (isDate(parsed)) {
-            _this.root.ui.chart.endBeforeForecast = this.value;
-          }
-        });
-
-    }
-
-
-    get MDL() {
-      return {
-        frame: this.model.encoding.frame
-      };
-    }
-
-    draw() {
-      this.localise = this.services.locale.auto();
-
-      this.addReaction(this.updateForecastField);
-      this.addReaction(this.updateExtrapolateSlider);
-    }
-
-    updateForecastField() {
-      this.DOM.forecastField.property("value",
-        this.localise(this.root.ui.chart.endBeforeForecast)
-      );
-      this.DOM.timeFormatExample.text(this.localise(new Date()));
-    }
-
-    updateExtrapolateSlider(){
-      const sliderSize = this.MDL.frame.stepCount <= 2 ? 2 : this.MDL.frame.stepCount;
-      this.findChild({name: "extrapolate-slider"})
-        ._setDomain(d3.range(sliderSize));
-
-      const hintText = this.MDL.frame.extrapolate ? 
-        this.localise("hints/extendDataNSteps").replace("{n}", this.MDL.frame.extrapolate)
-        : this.localise("hints/dontExtendData");
-
-      this.DOM.extrapolateHint
-        .text(hintText)
-        .attr("title", this.localise("hints/extrapolation"));
-    }
-
-  }
-
-  const decorated = mobx.decorate(Speed, {
-    "MDL": mobx.computed
-  });
-
-  decorated$e.add("speed", decorated);
-
-  class Technical extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <div class="vzb-dialog-title"> 
-          <span data-localise="dialogs/technical"></span>
-        </div>
-
-        <div class="vzb-dialog-content">
-          <div class="vzb-advancedshowandselect-switch"></div>
-          <div class="vzb-advancedmarkerspace-switch"></div>
-          <div class="vzb-showdatasources-switch"></div>
-        </div>
-
-      </div>
-    `;
-
-      config.subcomponents = [{
-      //   type: SimpleCheckbox,
-      //   placeholder: ".vzb-advancedshowandselect-switch",
-      //   options: {
-      //     checkbox: "enableSelectShowSwitch",
-      //     submodelFunc: () => this.root
-      //       .findChild({name: "dialogs"})
-      //       .findChild({name: "find"}).ui
-      //   }
-      // },{
-      //   type: SimpleCheckbox,
-      //   placeholder: ".vzb-advancedmarkerspace-switch",
-      //   options: {
-      //     checkbox: "enableMarkerSpaceOptions",
-      //     submodelFunc: () => this.root
-      //       .findChild({name: "dialogs"})
-      //       .findChild({name: "find"}).ui
-      //   }
-      // },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-showdatasources-switch",
-        options: {
-          checkbox: "showDataSources",
-          submodelFunc: () => this.root
-            .findChild({name: "tree-menu"}).ui
-        }
-      }];
-
-      super(config);
-    }
-
-  }
-
-  decorated$e.add("technical", Technical);
-
-  /*
-   * Size dialog
-   */
-
-  class Size extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="size" data-click="pinDialog"></span>
-        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="size" data-click="dragDialog"></span>
-        <div class="vzb-dialog-title"> 
-          <span data-localise="buttons/size"></span>
-          <div class="vzb-dialog-bubblesize"></div>
-          <span class="vzb-saxis-selector"></span>
-        </div>
-        <div class="vzb-dialog-content">
-          <span class="vzb-dialog-subtitle"></span>
-        </div>
-        <div class="vzb-dialog-buttons">
-          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
-            <span data-localise="buttons/ok"></span>
-          </div>
-        </div>
-      </div>    
-    `;
-
-      config.subcomponents = [{
-        type: IndicatorPicker,
-        placeholder: ".vzb-saxis-selector",
-        options: {
-          submodel: "encoding",
-          targetProp: "size",
-          showHoverValues: true
-        }
-      },{
-        type: BubbleSize,
-        placeholder: ".vzb-dialog-bubblesize",
-        options: {
-          showArcs: true,
-          submodelFunc: () => this.model.encoding.size.scale,
-        }
-      }];
-
-      super(config);
-    }
-
-    draw() {
-      super.draw();
-
-      this.addReaction(this._updateSubtitle);
-    }
-
-    _updateSubtitle() {
-      const conceptProps = this.model.encoding.size.data.conceptProps;
-      const subtitle = getSubtitle(conceptProps?.name, conceptProps?.name_short);
-
-      this.element.select(".vzb-dialog-subtitle").text(subtitle || "");
-    }
-  }
-
-  decorated$e.add("size", Size);
-
-  /*
-   * Timedisplay dialog
-   */
-  class TimeDisplay extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class="vzb-dialog-modal">
-        <div class="vzb-dialog-title"></div>
-        <div class="vzb-dialog-content vzb-dialog-content-fixed"></div>
-        <div class="vzb-dialog-buttons"></div>
-      </div>`;
-    
-      config.subcomponents = [{
-        type: decorated$f,
-        placeholder: ".vzb-dialog-content"
-      }];
-      
-      super(config);
-    }
-  }
-
-  decorated$e.add("timedisplay", TimeDisplay);
-
-  /*
-   * Zoom dialog
-   */
-
-  class Zoom extends decorated$e {
-    constructor(config) {
-      config.template = `
-      <div class='vzb-dialog-modal'>
-        <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="label" data-click="pinDialog"></span>
-        <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="label" data-click="dragDialog"></span>
-        <div class="vzb-dialog-title"> 
-          <span></span>
-          <div class="vzb-dialog-zoom-buttonlist"></div>
-        </div>
-            
-            
-        <div class="vzb-dialog-content">
-          <div class="vzb-panwitharrow-switch"></div>
-          <div class="vzb-zoomonscrolling-switch"></div>
-          <div class="vzb-adaptminmaxzoom-switch"></div>
-        </div>
-      
-        <div class="vzb-dialog-buttons">
-          <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
-            <span><span/>
-          </div>
-        </div>
-      
-      </div>    
-    `;
-
-      config.subcomponents = [{
-        type: ZoomButtonList,
-        placeholder: ".vzb-dialog-zoom-buttonlist"
-      },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-panwitharrow-switch",
-        options: {
-          checkbox: "panWithArrow",
-          submodel: "root.ui.chart"
-        }
-      },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-zoomonscrolling-switch",
-        options: {
-          checkbox: "zoomOnScrolling",
-          submodel: "root.ui.chart"
-        }
-      },{
-        type: SimpleCheckbox,
-        placeholder: ".vzb-adaptminmaxzoom-switch",
-        options: {
-          checkbox: "adaptMinMaxZoom",
-          submodel: "root.ui.chart"
-        }
-      }];
-
-      super(config);
-    }
-
-    draw() {
-      super.draw();
-
-      this.DOM.title.select("span").text(this.localise("buttons/zoom"));
-      this.DOM.buttons.select("span").text(this.localise("buttons/ok"));
-    }
-  }
-
-  decorated$e.add("zoom", Zoom);
-
   exports.About = About;
   exports.AddGeo = AddGeo;
   exports.Axes = Axes;
@@ -17125,28 +17275,28 @@
   exports.Icons = Icons;
   exports.IndicatorPicker = IndicatorPicker;
   exports.Label = Label;
-  exports.LabelSizeHelper = decorated$c;
-  exports.Labels = decorated$d;
+  exports.LabelSizeHelper = decorated$9;
+  exports.Labels = decorated$c;
   exports.LayoutService = LayoutService;
   exports.LegacyUtils = LegacyUtils;
   exports.LocaleService = LocaleService;
-  exports.MarkerContextmenu = decorated$b;
+  exports.MarkerContextmenu = decorated$8;
   exports.MarkerControls = MarkerControls;
   exports.MarkerControlsSection = MarkerControlsSection;
   exports.Menu = Menu;
-  exports.MinMaxInputs = decorated$a;
+  exports.MinMaxInputs = decorated$d;
   exports.MoreOptions = MoreOptions;
   exports.Opacity = Opacity;
   exports.OptionsButtonList = OptionsButtonList;
   exports.PlayButton = PlayButton;
   exports.Presentation = Presentation;
-  exports.Repeat = decorated$1;
+  exports.Repeat = decorated$6;
   exports.Repeater = Repeater;
-  exports.SectionAdd = decorated$5;
-  exports.SectionFind = decorated$6;
-  exports.SectionRemove = decorated$4;
-  exports.SectionSlice = decorated$2;
-  exports.SectionSwitch = decorated$3;
+  exports.SectionAdd = decorated$3;
+  exports.SectionFind = decorated$4;
+  exports.SectionRemove = decorated$2;
+  exports.SectionSlice = decorated;
+  exports.SectionSwitch = decorated$1;
   exports.ShortcutForSwitch = ShortcutForSwitch;
   exports.Show = Show;
   exports.SimpleCheckbox = SimpleCheckbox;
@@ -17154,14 +17304,15 @@
   exports.Size = Size;
   exports.SizeSlider = SizeSlider;
   exports.SpaceConfig = SpaceConfig;
-  exports.Speed = decorated;
-  exports.SteppedSlider = decorated$9;
+  exports.Speed = decorated$5;
+  exports.SteppedSlider = decorated$b;
   exports.Technical = Technical;
   exports.TextEllipsis = TextEllipsis;
   exports.TimeDisplay = TimeDisplay;
-  exports.TimeSlider = decorated$8;
+  exports.TimeSlider = decorated$a;
   exports.TreeMenu = TreeMenu;
   exports.Utils = Utils;
+  exports.VIZABI_CHARTS_LOGO = VIZABI_CHARTS_LOGO;
   exports.Zoom = Zoom;
   exports.ZoomButtonList = ZoomButtonList;
   exports._AddGeo = _AddGeo;
