@@ -1,6 +1,6 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import * as splitting from "https://cdn.jsdelivr.net/npm/splitting/+esm"
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.84.0/+esm"
 
 import UserLogin from "./auth/user-login.js";
 import Portfolio from "./portfolio.js"
