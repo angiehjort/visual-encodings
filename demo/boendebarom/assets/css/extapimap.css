@@ -997,10 +997,6 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .vzb-tool .vzb-extapimap .vzb-bmc-bivariate-legend span {
   text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
-.vzb-tool .vzb-extapimap .vzb-extapimap-svg {
-  position: absolute;
-  pointer-events: none;
-}
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg.vzb-zoomin {
   cursor: zoom-in;
 }
@@ -1012,6 +1008,10 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 }
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg.vzb-panhand.vzb-zooming {
   cursor: grabbing;
+}
+.vzb-tool .vzb-extapimap .vzb-extapimap-svg {
+  position: absolute;
+  pointer-events: none;
 }
 .vzb-tool .vzb-extapimap .vzb-extapimap-svg .vzb-bmc-titles {
   pointer-events: all;

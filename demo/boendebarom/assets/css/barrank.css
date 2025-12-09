@@ -203,9 +203,6 @@
 .vzb-tool .vzb-barrank .vzb-br-bars-svg .vzb-br-rank {
   font-weight: bolder;
 }
-.vzb-tool .vzb-barrank .vzb-br-footer {
-  width: 100%;
-}
 .vzb-tool .vzb-barrank .vzb-br-tooltip-svg {
   position: absolute;
   left: 0;

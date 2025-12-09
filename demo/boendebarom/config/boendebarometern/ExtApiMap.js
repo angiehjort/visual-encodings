@@ -38,12 +38,16 @@ export const VIZABI_MODEL = {
         },
       },
       "legend": {
-        "name": { "data": { "concept": "name" } },
-        "order": { "data": { "concept": "name" } }
+        "encoding": {
+          "name": { "data": { "concept": "name" } },
+          "order": { "data": { "concept": "name" } }
+        }
       },
       "legend_map": {
-        "name": { "data": { "concept": "name" } },
-        "order": { "data": { "concept": "name" } }
+        "encoding": {
+          "name": { "data": { "concept": "name" } },
+          "order": { "data": { "concept": "name" } }
+        }
       }
     }
   },
@@ -53,6 +57,7 @@ export const VIZABI_MODEL = {
       "markercontrols": {
         "disableSlice": true,
         "disableAddRemoveGroups": false,
+        "primaryDim": "geo",
         "drilldown": "region.kommun.regso",
         "shortcutForSwitch": true,
         "shortcutForSwitch_allow": ["kommun", "regso"],
@@ -69,6 +74,7 @@ export const VIZABI_MODEL = {
       "primaryDim": "geo"
     },
     "chart": {
+      "endBeforeForecast": "2022",
       "map": {
         "bounds": {
           "west": 4, "north": 69, "east": 25, "south": 56

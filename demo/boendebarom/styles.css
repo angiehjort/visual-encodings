@@ -266,11 +266,8 @@ a:hover {
   padding: 0;
   width: 100%;
 }
-.embedded-view .too-header,
-.embedded-view .too-header-divider,
-.embedded-view .too-see-also,
-.embedded-view .too-related-items,
-.embedded-view .too-footer {
+.embedded-view .too-above-stage,
+.embedded-view .too-below-stage {
   display: none;
 }
 .embedded-view .too-stage {
@@ -1289,6 +1286,8 @@ body .page-lang-rtl .chart-switcher-options {
   gap: 3px;
 }
 .too-menu .menu-items .menu-item .icon-heading-pair>.heading {
+  height: var(--header-height);
+  line-height: var(--header-height);
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1393,6 +1392,8 @@ body .page-lang-rtl .chart-switcher-options {
 }
 .too-menu .menu-items .menu-item .expanded .caption {
   font-size: 14px;
+  font-family: var(--theme-font-alt, "Brand Sans Alt", var(--fallback-font-alt));
+  color: var(--color-grey, #ccc);
 }
 @media (max-width: 728px) {
   .too-menu .menu-items .menu-item .expanded .caption {
@@ -1716,8 +1717,12 @@ body .page-lang-rtl .chart-switcher-options {
   text-align: center;
   width: 100%;
 }
+.too-howto-dialog .howto-content .howto-video iframe {
+  aspect-ratio: 16/9;
+}
 .too-howto-dialog .howto-content .links {
   text-align: center;
+  line-height: 1.5em;
 }
 .too-howto-dialog .howto-content .links a {
   white-space: nowrap;

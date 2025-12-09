@@ -260,11 +260,6 @@
 .vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-dimmed-selected.vzb-selected {
   opacity: 1;
 }
-.vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-bc-axis-x-title,
-.vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-bc-title {
-  fill: #607889;
-  pointer-events: none;
-}
 .vzb-rtl.vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-bc-axis-x-title text {
   direction: rtl;
   unicode-bidi: embed;
@@ -275,6 +270,11 @@
   unicode-bidi: embed;
 }
 
+.vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-bc-axis-x-title,
+.vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-bc-title {
+  fill: #607889;
+  pointer-events: none;
+}
 .vzb-tool .vzb-popbyage .vzb-popbyage-svg .vzb-bc-date {
   fill: #999;
   text-anchor: end;
@@ -454,6 +454,11 @@
   display: block;
   flex: 0 0 auto;
 }
+.vzb-rtl.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=side] .vzb-side-filter {
+  padding-left: 20px;
+  padding-right: 10px;
+}
+
 .vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=side] .vzb-side-filter {
   display: block;
   flex: 1 1 auto;
@@ -461,11 +466,6 @@
   max-width: 260px;
   padding-right: 20px;
 }
-.vzb-rtl.vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=side] .vzb-side-filter {
-  padding-left: 20px;
-  padding-right: 10px;
-}
-
 .vzb-tool.vzb-large.vzb-dialog-expand-true .vzb-dialogs-dialog.vzb-sidebar[data-dlg=side] .vzb-dialog-content-fixed {
   min-height: 0;
   max-height: initial;

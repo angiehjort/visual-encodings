@@ -425,14 +425,14 @@
   stroke: #999;
   stroke-width: 1px;
 }
-.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip text {
-  text-anchor: middle;
-}
 .vzb-rtl.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip text {
   direction: rtl;
   unicode-bidi: embed;
 }
 
+.vzb-tool .vzb-mountainchart .vzb-mountainchart-svg .vzb-mc-tooltip text {
+  text-anchor: middle;
+}
 .vzb-tool.vzb-large .vzb-mountainchart .vzb-mc-probe-value-head {
   font-size: 0.625em;
 }
@@ -502,11 +502,11 @@
 .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-show {
   flex-basis: 150px;
 }
-.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-howmany {
-  flex-basis: 85px;
-}
 .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-howmany .vzb-slider-holder {
   top: 8px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-howmany {
+  flex-basis: 85px;
 }
 .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=billy] .vzb-dialog-content .vzb-billy-count {
   padding-top: 9px;
@@ -540,11 +540,11 @@
   flex-basis: 60px;
   border-radius: 4px;
 }
-.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-howmany {
-  flex-basis: 85px;
-}
 .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-howmany .vzb-slider-holder {
   top: 8px;
+}
+.vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-howmany {
+  flex-basis: 85px;
 }
 .vzb-tool .vzb-dialogs .vzb-dialogs-dialog[data-dlg=dollarstreet] .vzb-dialog-content .vzb-dialog-flex-container .vzb-ds-count {
   padding-top: 9px;
@@ -606,7 +606,6 @@
   cursor: pointer;
   background-color: #fdfdfd;
   transition: all 0.5s ease-in-out;
-  margin-bottom: 0;
 }
 .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label:hover, .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label:focus, .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label:active {
   border: 1px solid #000;
@@ -615,6 +614,9 @@
 .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label path {
   stroke: #000;
   fill: #FFF;
+}
+.vzb-tool .vzb-dialogs-dialog[data-dlg=presets] label {
+  margin-bottom: 0;
 }
 .vzb-tool .vzb-dialogs-dialog[data-dlg=presets] input[type=radio] {
   display: none;

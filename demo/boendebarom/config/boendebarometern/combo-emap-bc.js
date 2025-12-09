@@ -47,12 +47,16 @@ export const VIZABI_MODEL = {
         }
       },
       "legend": {
-        "name": { "data": { "concept": "name" } },
-        "order": { "data": { "concept": "name" } }
+        "encoding": {
+          "name": { "data": { "concept": "name" } },
+          "order": { "data": { "concept": "name" } }
+        }
       },
       "legend_map": {
-        "name": { "data": { "concept": "name" } },
-        "order": { "data": { "concept": "name" } }
+        "encoding": {
+          "name": { "data": { "concept": "name" } },
+          "order": { "data": { "concept": "name" } }
+        }
       }
     }
   },
@@ -87,6 +91,7 @@ export const VIZABI_MODEL = {
       "drilldown": "region.kommun.regso"
     },
     "chart": {
+      "endBeforeForecast": "2022",
       "splitVertical": true,
       "splitRatio": 0.65,
       "map": {
