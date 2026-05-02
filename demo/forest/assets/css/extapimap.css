@@ -1168,6 +1168,18 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
   display: none;
 }
 
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content label {
+  display: inline;
+  margin-right: 5px;
+}
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-style label, .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-layers label {
+  display: block;
+}
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-engine,
+.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-style {
+  display: none;
+}
+
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors] > .vzb-dialog-modal > .vzb-dialog-content label {
   display: inline;
   margin-right: 5px;
@@ -1182,17 +1194,5 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-sidebar .vzb-caxis-selector,
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-sidebar .vzb-clegend-container, .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-bivariate .vzb-caxis-selector,
 .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapcolors].vzb-bivariate .vzb-clegend-container {
-  display: none;
-}
-
-.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content label {
-  display: inline;
-  margin-right: 5px;
-}
-.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-style label, .vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions] > .vzb-dialog-modal > .vzb-dialog-content .vzb-map-layers label {
-  display: block;
-}
-.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-engine,
-.vzb-dialogs .vzb-dialogs-dialog[data-dlg=mapoptions].vzb-sidebar .vzb-lmap-style {
   display: none;
 }

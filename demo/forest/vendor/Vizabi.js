@@ -1,4 +1,4 @@
-// http://vizabi.org v1.37.2 Copyright 2025 Jasper Heeffer and others at Gapminder Foundation
+// http://vizabi.org v1.38.0 Copyright 2026 Jasper Heeffer and others at Gapminder Foundation
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('mobx'), require('d3')) :
   typeof define === 'function' && define.amd ? define(['mobx', 'd3'], factory) :
@@ -2580,6 +2580,38 @@
       }
   }
 
+  /**
+   * Parse a concept list field (drill_up, scales, tags) from its raw string value
+   * into an array of strings. This is the single authoritative place for this parsing.
+   *
+   * New format: space-separated  e.g. "log linear"  or  "world_6region income_groups"
+   * Old formats (transitionary — emit a console warning to help track down datasets to migrate):
+   *   JSON array string:   '["log","linear"]'
+   *   Comma-separated:     '_root,newborn_infants'
+   */
+  function parseListField(value) {
+      if (!value) return [];
+      const str = String(value).trim();
+      if (!str) return [];
+      // Old format: JSON array string
+      if (str.startsWith('[')) {
+          try {
+              const parsed = JSON.parse(str);
+              if (Array.isArray(parsed)) {
+                  console.warn(`[DDF] Old-format JSON array in concept list field. Migrate dataset to space-separated format. Value: ${str}`);
+                  return parsed.map(s => String(s).trim()).filter(Boolean);
+              }
+          } catch(e) { /* not valid JSON — fall through to comma/space handling */ }
+      }
+      // Old format: comma-separated
+      if (str.includes(',')) {
+          console.warn(`[DDF] Old-format comma-separated value in concept list field. Migrate dataset to space-separated format. Value: ${str}`);
+          return str.split(',').map(s => s.trim()).filter(Boolean);
+      }
+      // New format: space-separated (multiple consecutive spaces = one separator)
+      return str.split(/\s+/).filter(Boolean);
+  }
+
   var utils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     isNumeric: isNumeric,
@@ -2638,7 +2670,8 @@
     lazyAsync: lazyAsync,
     isIterable: isIterable,
     stepBeforeInterpolator: stepBeforeInterpolator,
-    fieldsNullishCheck: fieldsNullishCheck
+    fieldsNullishCheck: fieldsNullishCheck,
+    parseListField: parseListField
   });
 
   const defaultType = config => mobx.observable({ config });
@@ -3693,7 +3726,7 @@
                       if (concept[drillup]) {
                           const dim = concept["domain"] || conceptId;
                           if (!result[dim]) result[dim] = {};
-                          const drillups = JSON.parse(concept[drillup]);
+                          const drillups = parseListField(concept[drillup]);
                           const entityQuery = { 
                               select: {
                                   key: [conceptId],
@@ -5195,7 +5228,7 @@
               let scale;
               if (scales[this.config.type]) {
                   scaleType = this.config.type;
-              } else if (concept?.scales && (scale = JSON.parse(concept.scales).filter(s => !this.allowedTypes || this.allowedTypes.includes(s))[0]) && scales[scale]) {
+              } else if (concept?.scales && (scale = parseListField(concept.scales).filter(s => !this.allowedTypes || this.allowedTypes.includes(s))[0]) && scales[scale]) {
                   scaleType = scale;            
               } else if (concept?.concept_type === "time") {
                   scaleType = "time";
@@ -7271,7 +7304,7 @@
       return models;
 
   };
-  vizabi.versionInfo = { version: "1.37.2", build: 1764340330649, package: {"homepage":"http://vizabi.org","name":"@vizabi/core","description":"Vizabi core (data layer)"} };
+  vizabi.versionInfo = { version: "1.38.0", build: 1777718526576, package: {"homepage":"http://vizabi.org","name":"@vizabi/core","description":"Vizabi core (data layer)"} };
   vizabi.utils = utils;
   vizabi.stores = stores;
   vizabi.dataSource = (cfg, id) =>{
